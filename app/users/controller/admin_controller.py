@@ -1,0 +1,24 @@
+from fastapi import HTTPException
+
+from app.users.service import AdminServices
+
+
+class AdminController:
+
+    @staticmethod
+    def create_new_admin(admin: dict):
+        try:
+            obj = AdminServices.create_new_admin(admin)
+            return obj
+        except Exception as e:
+            print(e)
+            raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500)
+
+    @staticmethod
+    def derogate_admin(admin_id: str):
+        try:
+            obj = AdminServices.derogate_admin(admin_id)
+            return obj
+        except Exception as e:
+            print(e)
+            raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500)
