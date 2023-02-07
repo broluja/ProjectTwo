@@ -1,12 +1,11 @@
-from pydantic import BaseModel
-from pydantic import UUID4
-from datetime import datetime
+from pydantic import BaseModel, UUID4
+from datetime import date
 
 
 class SubuserSchema(BaseModel):
     id: UUID4
     name: str
-    date_subscribed: datetime
+    date_subscribed: date
 
     class Config:
         orm_mode = True
@@ -14,7 +13,7 @@ class SubuserSchema(BaseModel):
 
 class SubuserSchemaIn(BaseModel):
     name: str
-    date_subscribed: datetime
+    date_subscribed: date
 
     class Config:
         orm_mode = True

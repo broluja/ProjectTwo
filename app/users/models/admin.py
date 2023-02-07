@@ -9,10 +9,10 @@ from app.db import Base
 class Admin(Base):
     __tablename__ = "admins"
     id = Column(String(50), primary_key=True, default=uuid4)
-    first_name = Column(String(50))
-    last_name = Column(String(50))
-    address = Column(String(100))
-    country = Column(String(100))
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    address = Column(String(100), nullable=False)
+    country = Column(String(100), nullable=False)
 
     user_id = Column(String(50), ForeignKey("users.id"))
     user = relationship("User", lazy='subquery')

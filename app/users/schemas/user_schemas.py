@@ -1,6 +1,5 @@
-from pydantic import BaseModel
-from pydantic import UUID4, EmailStr
-from datetime import datetime
+from pydantic import BaseModel, UUID4, EmailStr
+from datetime import date
 
 from .subuser_schemas import SubuserSchema
 
@@ -10,7 +9,7 @@ class UserSchema(BaseModel):
     email: str
     password_hashed: str
     username: str
-    date_subscribed: datetime
+    date_subscribed: date
     is_active: bool
     is_superuser: bool
 
@@ -25,13 +24,20 @@ class UserSchemaIn(BaseModel):
 
     class Config:
         orm_mode = True
+        schema_extra = {
+            "example": {
+                "email": "dummy@gmail.com",
+                "password": "password",
+                "username": "username"
+            }
+        }
 
 
 class UserSchemaOut(BaseModel):
     id: UUID4
     email: str
     username: str
-    date_subscribed: datetime
+    date_subscribed: date
     is_active: bool
     is_superuser: bool
 
@@ -44,7 +50,7 @@ class UserWithSubusersSchema(BaseModel):
     email: str
     password_hashed: str
     username: str
-    date_subscribed: datetime
+    date_subscribed: date
     is_active: bool
     is_superuser: bool
     subusers: list[SubuserSchema]

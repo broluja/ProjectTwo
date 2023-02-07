@@ -1,7 +1,8 @@
 import hashlib
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from app.users.controller import UserController, SubuserController, AdminController
+from app.users.controller.user_auth_controller import JWTBearer
 from app.users.schemas import *
 
 user_router = APIRouter(prefix="/api/users", tags=["Users"])
@@ -18,17 +19,17 @@ def register_user(user: UserSchemaIn):
 
 
 @user_router.get("/login",
-                 response_model=UserSchemaOut,
                  summary="Login",
                  description="Login User using email and password.")
 def login_user(email: str, password: str):
     password_hashed = hashlib.sha256(password.encode()).hexdigest()
-    return UserController.get_user_by_email_and_password(email, password_hashed)
+    return UserController.login_user(email, password_hashed)
 
 
 @user_router.get("/get-all-users",
                  response_model=list[UserSchema, ],
-                 description="Read all Users from Database. Admin route")
+                 description="Read all Users from Database. Admin route",
+                 dependencies=[Depends(JWTBearer("super_user"))])
 def get_all_users():
     return UserController.get_all_users()
 
@@ -91,11 +92,16 @@ def delete_subuser(subuser_id: str):
 admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
 
 
-@admin_router.post("/create-admin", response_model=AdminSchema)
+@admin_router.post("/create-admin", response_model=AdminSchema, description="Register new Admin. Admin route")
 def create_new_admin(admin: AdminSchemaIn):
     return AdminController.create_new_admin(vars(admin))
 
 
-@admin_router.delete("/delete-admin", response_model=AdminSchema)
+@admin_router.get("/read-all-admins", response_model=list[AdminSchema], description="Read all Admins. Admin route")
+def get_all_admins():
+    return AdminController.get_all_admins()
+
+
+@admin_router.delete("/delete-admin", response_model=UserSchema, description="Delete specific Admin by ID. Admin route")
 def remove_admin_credentials(admin_id: str):
     return AdminController.derogate_admin(admin_id)

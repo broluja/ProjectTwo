@@ -1,4 +1,4 @@
-from app.base.base_repository import BaseCRUDRepository
+from app.base import BaseCRUDRepository
 
 
 class AdminRepository(BaseCRUDRepository):

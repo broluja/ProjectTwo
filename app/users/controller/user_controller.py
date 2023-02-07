@@ -1,8 +1,10 @@
 from fastapi import HTTPException, Response
+from email_validator import validate_email, EmailNotValidError
 
 from app.users.service import UserServices
 from .subuser_controller import SubuserController
 from app.base.base_exception import AppException
+from app.users.service import sign_jwt
 
 
 class UserController:
@@ -10,7 +12,12 @@ class UserController:
     @staticmethod
     def create_user(email, password, username):
         try:
-            user = UserServices.create_new_user(email, password, username)
+            valid = validate_email(email)
+            valid_email = valid.email
+        except EmailNotValidError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        try:
+            user = UserServices.create_new_user(valid_email, password, username)
             return user
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -38,10 +45,12 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def get_user_by_email_and_password(email: str, password: str):
+    def login_user(email: str, password: str):
         try:
-            user = UserServices.get_user_by_email_and_password(email, password)
-            return user
+            user = UserServices.login_user(email, password)
+            if user.is_superuser:
+                return sign_jwt(user.id, "super_user")
+            return sign_jwt(user.id, "regular_user")
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
