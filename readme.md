@@ -1,6 +1,12 @@
 # Netflix like API made with FastAPI and SQLAlchemy
 
 
+## Table of contents
+* [Introduction](#Introduction)
+* [Technologies](#technologies)
+* [Installation](#Installation)
+
+
 # Introduction
 Search through movies, series, actors and directors with simple JWT 
 based User authentication and authorisation. Project is made as final
@@ -13,12 +19,6 @@ Technologies used on this project:
 + SQLAlchemy
 + FastAPI
 + Uvicorn
-
-
-## Table of contents
-* [Introduction](#Introduction)
-* [Technologies](#technologies)
-* [Installation](#Installation)
 
 
 ## Installation
