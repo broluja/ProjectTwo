@@ -96,7 +96,8 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
                      response_model=SubuserSchema,
                      summary="Subuser Registration",
                      description="Register new Subuser",
-                     dependencies=[Depends(JWTBearer(["regular_user"]))])
+                     dependencies=[Depends(JWTBearer(["regular_user"]))],
+                     status_code=status.HTTP_201_CREATED)
 def register_subuser(user_id: str, name: str):
     return SubuserController.create_subuser(user_id, name)
 
@@ -138,7 +139,8 @@ admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
 @admin_router.post("/create-admin",
                    response_model=AdminSchema,
                    description="Register new Admin. Admin route",
-                   dependencies=[Depends(JWTBearer(["super_user"]))])
+                   dependencies=[Depends(JWTBearer(["super_user"]))],
+                   status_code=status.HTTP_201_CREATED)
 def create_new_admin(admin: AdminSchemaIn):
     return AdminController.create_new_admin(admin.dict())
 
@@ -162,7 +164,10 @@ def remove_admin_credentials(admin_id: str):
 watch_movie = APIRouter(prefix="/api/watch_movie", tags=["Watch Movie"])
 
 
-@watch_movie.post("/", response_model=UserWatchMovieSchema, description="Select movie to watch")
+@watch_movie.post("/",
+                  response_model=UserWatchMovieSchema,
+                  description="Select movie to watch",
+                  status_code=status.HTTP_201_CREATED)
 def user_watch_movie(request: Request, title: str):
     user_id = request.cookies.get("user_id")
     return UserWatchMovieController.user_watch_movie(user_id, title)

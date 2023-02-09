@@ -2,7 +2,11 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.db.database import engine, Base
-from app.users.routes import user_router, subuser_router, admin_router
+from app.users.routes import user_router, subuser_router, admin_router, watch_movie
+from app.directors.routes import director_router
+from app.genres.routes import genre_router
+from app.actors.routes import actor_router
+from app.movies.routes import movie_router, movie_actor_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -13,6 +17,12 @@ def init_app():
     my_app.include_router(user_router)
     my_app.include_router(subuser_router)
     my_app.include_router(admin_router)
+    my_app.include_router(watch_movie)
+    my_app.include_router(movie_router)
+    my_app.include_router(actor_router)
+    my_app.include_router(movie_actor_router)
+    my_app.include_router(director_router)
+    my_app.include_router(genre_router)
     return my_app
 
 
