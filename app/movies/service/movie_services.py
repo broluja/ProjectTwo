@@ -8,13 +8,15 @@ from datetime import date
 class MovieServices:
 
     @staticmethod
-    def create_new_movie(title: str, year_published: str):
+    def create_new_movie(title: str, year_published: str, director_id: str, genre_id: str):
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
                 fields = {"title": title,
                           "date_added": date.today(),
-                          "year_published": year_published}
+                          "year_published": year_published,
+                          "director_id": director_id,
+                          "genre_id": genre_id}
                 return repository.create(fields)
         except Exception as e:
             raise e

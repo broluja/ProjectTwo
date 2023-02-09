@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.movies.controller import MovieController, MovieActorController
-from app.movies.schemas import MovieSchema, MovieSchemaIn, MovieWithActorsSchema
+from app.movies.schemas import *
 from app.users.controller import JWTBearer
 
 movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
@@ -20,6 +20,11 @@ def get_all_movies():
 @movie_router.get("/get-movie-actors", response_model=MovieWithActorsSchema)
 def get_movie_with_all_actors(movie_id: str):
     return MovieActorController.get_movie_with_actors(movie_id)
+
+
+@movie_router.get("/get-movie-director-and-genre", response_model=MovieWithDirectorAndGenreSchema)
+def get_movie_with_genre_and_director(movie_id: str):
+    return MovieActorController.get_movie_with_director_and_genre(movie_id)
 
 
 movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies_actors")

@@ -7,9 +7,9 @@ from app.movies.service import MovieServices
 class MovieController:
 
     @staticmethod
-    def create_movie(title: str, year_published: str):
+    def create_movie(title: str, year_published: str, director_id: str, genre_id: str):
         try:
-            movie = MovieServices.create_new_movie(title, year_published)
+            movie = MovieServices.create_new_movie(title, year_published, director_id, genre_id)
             return movie
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

@@ -12,12 +12,10 @@ class MovieActor(Base):
     id = Column(String(50), primary_key=True, default=uuid4)
     movie_id = Column(String(50), ForeignKey('movies.id'))
     actor_id = Column(String(50), ForeignKey('actors.id'))
-    rating = Column(Integer())
 
-    def __init__(self, movie_id: str, actor_id: str, rating: str = None):
+    def __init__(self, movie_id: str, actor_id: str):
         self.movie_id = movie_id
         self.actor_id = actor_id
-        self.rating = rating
 
 
 class Movie(Base):
@@ -26,10 +24,14 @@ class Movie(Base):
     title = Column(String(100), nullable=False)
     date_added = Column(Date(), default=date.today())
     year_published = Column(String(5), nullable=False)
+    director_id = Column(String(50), ForeignKey("directors.id"))
+    genre_id = Column(String(50), ForeignKey("genres.id"))
 
     actors = relationship('Actor', secondary="movie_actors", back_populates='movies', lazy='subquery')
 
-    def __init__(self, title: str, year_published: str, date_added: str = date.today()):
+    def __init__(self, title: str, year_published: str, director_id: str, genre_id: str, date_added: str = date.today()):
         self.title = title
         self.date_added = date_added
         self.year_published = year_published
+        self.director_id = director_id
+        self.genre_id = genre_id

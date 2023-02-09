@@ -3,6 +3,8 @@ from fastapi import HTTPException
 from app.base import AppException
 from app.movies.controller import MovieController
 from app.movies.service import MovieActorService
+from app.directors.service import DirectorServices
+from app.genres.service import GenreServices
 
 
 class MovieActorController:
@@ -21,6 +23,20 @@ class MovieActorController:
     def get_movie_with_actors(movie_id: str):
         try:
             movie = MovieController.get_movie_by_id(movie_id)
+            return movie
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_movie_with_director_and_genre(movie_id: str):
+        try:
+            movie = MovieController.get_movie_by_id(movie_id)
+            director = DirectorServices.get_director_by_id(movie.director_id)
+            genre = GenreServices.get_genre_by_id(movie.genre_id)
+            movie.director = director
+            movie.genre = genre
             return movie
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
