@@ -1,7 +1,7 @@
 from app.users.repositories import UserRepository
 from app.db.database import SessionLocal
 from app.users.models import User
-from app.users.exceptions import InvalidPasswordException
+from app.users.exceptions import InvalidCredentialsException
 
 
 class UserServices:
@@ -35,6 +35,15 @@ class UserServices:
             raise e
 
     @staticmethod
+    def search_users_by_mail(email: str):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                return repository.search_users_by_email(email)
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def login_user(email: str, password: str):
         try:
             with SessionLocal() as db:
@@ -42,7 +51,7 @@ class UserServices:
                 user = repository.read_user_by_email(email)
                 if user.password_hashed == password:
                     return user
-                raise InvalidPasswordException
+                raise InvalidCredentialsException
         except Exception as e:
             raise e
 

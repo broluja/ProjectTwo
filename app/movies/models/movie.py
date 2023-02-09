@@ -28,6 +28,7 @@ class Movie(Base):
     genre_id = Column(String(50), ForeignKey("genres.id"))
 
     actors = relationship('Actor', secondary="movie_actors", back_populates='movies', lazy='subquery')
+    users = relationship('User', secondary="user_watch_movies", back_populates='watched_movies', lazy='subquery')
 
     def __init__(self, title: str, year_published: str, director_id: str, genre_id: str, date_added: str = date.today()):
         self.title = title

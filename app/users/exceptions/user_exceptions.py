@@ -7,7 +7,7 @@ class UserEmailAlreadyRegisteredException(AppException):
     code = 400
 
 
-class InvalidPasswordException(AppException):
+class InvalidCredentialsException(AppException):
     """Exception raised on a wrong password during login action."""
     message = "Login failed. Check your credentials."
     code = 401

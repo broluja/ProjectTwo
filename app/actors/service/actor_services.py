@@ -27,3 +27,13 @@ class ActorServices:
                 return actors
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_actor_by_id(actor_id: str):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                actor = repository.read_by_id(actor_id)
+                return actor
+        except Exception as e:
+            raise e

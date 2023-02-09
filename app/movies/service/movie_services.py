@@ -40,3 +40,13 @@ class MovieServices:
                 return movie
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_movie_by_title(title: str):
+        try:
+            with SessionLocal() as db:
+                repository = MovieRepository(db, Movie)
+                movie = repository.read_movie_by_title(title)
+                return movie
+        except Exception as e:
+            raise e

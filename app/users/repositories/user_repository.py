@@ -1,6 +1,6 @@
 from app.base import BaseCRUDRepository
+from app.users.exceptions import InvalidCredentialsException
 from app.users.models import User
-from app.base import AppException
 
 
 class UserRepository(BaseCRUDRepository):
@@ -11,8 +11,16 @@ class UserRepository(BaseCRUDRepository):
             user = self.db.query(User).filter(User.email == email).first()
             if not user:
                 self.db.rollback()
-                raise AppException(message=f"Login failed. Check your credentials.", code=401)
+                raise InvalidCredentialsException
             return user
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def search_users_by_email(self, email: str):
+        try:
+            users = self.db.query(User).filter(User.email.ilike(f"%{email}%")).all()
+            return users
         except Exception as e:
             self.db.rollback()
             raise e

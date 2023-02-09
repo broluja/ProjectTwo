@@ -45,12 +45,22 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def search_users_by_email(email: str):
+        try:
+            users = UserServices.search_users_by_mail(email)
+            return users
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def login_user(email: str, password: str):
         try:
             user = UserServices.login_user(email, password)
             if user.is_superuser:
-                return sign_jwt(user.id, "super_user")
-            return sign_jwt(user.id, "regular_user")
+                return sign_jwt(user.id, "super_user"), user.id
+            return sign_jwt(user.id, "regular_user"), user.id
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:

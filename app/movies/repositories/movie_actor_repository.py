@@ -20,3 +20,13 @@ class MovieActorRepository(BaseCRUDRepository):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def delete_by_movie_id_and_actor_id(self, movie_id: str, actor_id: str):
+        try:
+            movie_actor = self.db.query(MovieActor).filter(MovieActor.actor_id == actor_id).filter(MovieActor.movie_id == movie_id).first()
+            self.db.delete(movie_actor)
+            self.db.commit()
+            self.db.refresh()
+        except Exception as e:
+            self.db.rollback()
+            raise e

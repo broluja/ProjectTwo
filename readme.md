@@ -1,4 +1,4 @@
-# Netflix like API made with FastAPI and SQLAlchemy
+# Netflix-like API made with FastAPI and SQLAlchemy
 
 
 ## Table of contents

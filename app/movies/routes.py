@@ -30,6 +30,15 @@ def get_movie_with_genre_and_director(movie_id: str):
 movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies_actors")
 
 
-@movie_actor_router.post("/add_actor_to_movie")
+@movie_actor_router.post("/add_actor_to_movie",
+                         dependencies=[Depends(JWTBearer(["super_user"]))],
+                         description="Add actor to Movie")
 def add_actor_to_movie(movie_id: str, actor_id: str):
     return MovieActorController.create_movie_actor(movie_id, actor_id)
+
+
+@movie_actor_router.delete("/remove_actor_to_movie",
+                           dependencies=[Depends(JWTBearer(["super_user"]))],
+                           description="Remove actor from Movie")
+def remove_actor_from_movie(movie_id: str, actor_id: str):
+    return MovieActorController.delete_movie_actor(movie_id, actor_id)

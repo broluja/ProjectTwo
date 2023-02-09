@@ -25,3 +25,14 @@ class ActorController:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_actor_by_id(actor_id: str):
+        try:
+            actor = ActorServices.get_actor_by_id(actor_id)
+            print(actor.movies)
+            return actor
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))

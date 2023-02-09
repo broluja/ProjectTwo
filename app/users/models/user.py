@@ -1,8 +1,23 @@
-from sqlalchemy import Column, String, Boolean, Date
+from sqlalchemy import Column, String, Boolean, Date, ForeignKey, Integer
 from uuid import uuid4
 from datetime import date
 
+from sqlalchemy.orm import relationship
+
 from app.db import Base
+
+
+class UserWatchMovie(Base):
+    __tablename__ = "user_watch_movies"
+    id = Column(String(50), primary_key=True, default=uuid4)
+    user_id = Column(String(50), ForeignKey("users.id"))
+    movie_id = Column(String(50), ForeignKey("movies.id"))
+    rating = Column(Integer(), nullable=True)
+
+    def __init__(self, user_id: str, movie_id: str, rating: int = None):
+        self.user_id = user_id
+        self.movie_id = movie_id
+        self.rating = rating
 
 
 class User(Base):
@@ -15,8 +30,10 @@ class User(Base):
     is_active = Column(Boolean)
     is_superuser = Column(Boolean, default=False)
 
-    def __init__(self, email, password_hashed, username, date_subscribed=date.today(), is_active=True,
-                 is_superuser=False):
+    watched_movies = relationship('Movie', secondary="user_watch_movies", back_populates='users', lazy='subquery')
+
+    def __init__(self, email: str, password_hashed: str, username: str, date_subscribed: str = date.today(),
+                 is_active: bool = True, is_superuser: bool = False):
         self.email = email
         self.password_hashed = password_hashed
         self.username = username

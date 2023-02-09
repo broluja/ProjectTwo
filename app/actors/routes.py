@@ -15,3 +15,8 @@ def create_new_actor(actor: ActorSchemaIn):
 @actor_router.get("/get-all-actors", response_model=list[ActorSchema], description="Read all Actors from DB")
 def get_all_actors():
     return ActorController.get_all_actors()
+
+
+@actor_router.get("/id/get-actor", response_model=ActorSchema, description="Read Actor by ID")
+def get_actor_by_id(actor_id: str):
+    return ActorController.get_actor_by_id(actor_id)
