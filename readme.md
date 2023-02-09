@@ -23,6 +23,7 @@ Technologies used on this project:
 
 ## Installation
 
+
 ### Create virtual environment
 #### PyCharm
 ```bash
@@ -46,6 +47,8 @@ Run command in project directory to create virtual env
 ```bash
 virtualenv venv
 ```
+
+
 ### Activate Virtual environment
 Open terminal and navigate to project directory, than run
 
@@ -58,16 +61,20 @@ Open terminal and navigate to project directory, than run
 | Windows  | cmd.exe    | C:\> venv\Scripts\activate.bat          |
 |          | PowerShell | PS C:\> venv\Scripts\Activate.ps1       |
 
+
 ### Dependencies
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install dependencies.
 ```bash
 pip install -r requirements.txt
 ```
-### Databse
+
+
+### Database
 Start MySQL server and execute all commands in **_init_db/init_db.sql_**
 
+
 ### Environment variables
-1. Create new file **_.env_**
+1. Create a new file **_.env_**
 2. Copy all consts from **env-template** to **_.env_**
 3. Assign values to const in .env file
 
