@@ -45,7 +45,7 @@ def login_user(username: str, email: str, password: str, response: Response):
                   summary="Ask for password change.",
                   description="Demand reset of password.")
 def forget_password(email: str):
-    UserController.forget_password(email)
+    UserController.change_password(email)
     return {"message": "Request granted. Instructions are sent to your email."}
 
 
@@ -54,7 +54,7 @@ def forget_password(email: str):
                   description="Demand reset of password.",
                   dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))])
 def reset_password(email: str):
-    UserController.forget_password(email)
+    UserController.change_password(email)
     return {"message": "Request granted. Instructions are sent to your email."}
 
 

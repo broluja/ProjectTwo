@@ -70,7 +70,7 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def forget_password(email: str):
+    def change_password(email: str):
         try:
             user = UserServices.get_user_by_email(email)
             if user:
@@ -96,7 +96,7 @@ class UserController:
     @staticmethod
     def search_users_by_email(email: str):
         try:
-            users = UserServices.search_users_by_mail(email)
+            users = UserServices.search_users_by_email(email)
             return users
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

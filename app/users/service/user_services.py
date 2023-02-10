@@ -56,7 +56,7 @@ class UserServices:
             raise e
 
     @staticmethod
-    def search_users_by_mail(email: str):
+    def search_users_by_email(email: str):
         try:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
