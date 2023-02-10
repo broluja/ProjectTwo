@@ -22,12 +22,22 @@ def register_user(user: UserSchemaIn):
     return UserController.create_user(**user.dict())
 
 
-@user_router.post("/login",
-                  summary="Login",
-                  description="Login User using email and password.")
+@user_router.post("/user-login",
+                  summary="User Login",
+                  description="Login User using email, password and username.")
+def login_user(email: str, password: str, username: str, response: Response):
+    password_hashed = hashlib.sha256(password.encode()).hexdigest()
+    token, user_id = UserController.login_user(email, password_hashed, username)
+    response.set_cookie(key="user_id", value=user_id)
+    return token
+
+
+@user_router.post("/admin-login",
+                  summary="User Login",
+                  description="Login User using email, password and username.")
 def login_user(email: str, password: str, response: Response):
     password_hashed = hashlib.sha256(password.encode()).hexdigest()
-    token, user_id = UserController.login_user(email, password_hashed)
+    token, user_id = UserController.login_admin(email, password_hashed)
     response.set_cookie(key="user_id", value=user_id)
     return token
 

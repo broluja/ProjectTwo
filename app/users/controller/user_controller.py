@@ -5,6 +5,7 @@ from app.users.service import UserServices
 from .subuser_controller import SubuserController
 from app.base.base_exception import AppException
 from app.users.service import sign_jwt
+from ..exceptions import UnknownProfileException, AdminLoginException
 
 
 class UserController:
@@ -55,12 +56,31 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def login_user(email: str, password: str):
+    def login_user(email: str, password: str, username: str):
+        try:
+            user = UserServices.login_user(email, password)
+            if user.is_superuser:
+                raise AdminLoginException(code=400, message="Use admin login.")
+            if user.username == username:
+                return sign_jwt(user.id, "regular_user"), user.id
+            else:
+                user_with_subs = UserController.get_user_with_all_subusers(user.id)
+                for sub in user_with_subs.subusers:
+                    if sub.name == username:
+                        return sign_jwt(user.id, "sub_user"), sub.id
+                raise UnknownProfileException
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def login_admin(email: str, password: str):
         try:
             user = UserServices.login_user(email, password)
             if user.is_superuser:
                 return sign_jwt(user.id, "super_user"), user.id
-            return sign_jwt(user.id, "regular_user"), user.id
+            raise AdminLoginException
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
@@ -90,10 +110,9 @@ class UserController:
     @staticmethod
     def get_user_with_all_subusers(user_id):
         try:
-            subusers = SubuserController.get_all_subusers()
-            subusers_for_user = [subuser for subuser in subusers if subuser.user_id == user_id]
+            subusers = SubuserController.get_subusers_by_user_id(user_id)
             user = UserServices.get_user_by_id(user_id)
-            user.subusers = subusers_for_user
+            user.subusers = subusers
             return user
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

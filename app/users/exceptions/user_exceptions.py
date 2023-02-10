@@ -23,6 +23,12 @@ class NonExistingUserIdException(AppException):
     """Exception raised when provided User's ID is non-existing."""
 
 
+class UnknownProfileException(AppException):
+    """Exception raised when provided username is non-existing."""
+    code = 401
+    message = "Unknown profile"
+
+
 class MaxLimitSubusersException(AppException):
     """Exception raised when User have reached Max number of subusers."""
     message = "You have reached Subusers Limit."
@@ -35,4 +41,10 @@ class AdminAlreadyCreatedException(AppException):
 class AdminSubuserException(AppException):
     """Exception is raised when Admin tries to create Subuser. Not allowed for Admins."""
     message = "Admins are not allowed to create Subusers."
+    code = 403
+
+
+class AdminLoginException(AppException):
+    """Exception is raised when user tries to log in as Admin."""
+    message = "You are not an Admin."
     code = 403
