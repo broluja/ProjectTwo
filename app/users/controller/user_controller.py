@@ -5,7 +5,9 @@ from app.users.service import UserServices
 from .subuser_controller import SubuserController
 from app.base.base_exception import AppException
 from app.users.service import sign_jwt
-from ..exceptions import UnknownProfileException, AdminLoginException
+from app.users.exceptions import UnknownProfileException, AdminLoginException
+from app.users.service import EmailServices
+from app.utils import generate_random_int
 
 
 class UserController:
@@ -18,7 +20,9 @@ class UserController:
         except EmailNotValidError as e:
             raise HTTPException(status_code=400, detail=str(e))
         try:
-            user = UserServices.create_new_user(valid_email, password, username)
+            code = generate_random_int(5)
+            user = UserServices.create_new_user(valid_email, password, username, code)
+            EmailServices.send_code_for_verification(user.email, code)
             return user
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

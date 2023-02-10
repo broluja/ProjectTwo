@@ -29,14 +29,16 @@ class User(Base):
     date_subscribed = Column(Date(), default=date.today())
     is_active = Column(Boolean)
     is_superuser = Column(Boolean, default=False)
+    code = Column(Integer(), nullable=True)
 
     watched_movies = relationship('Movie', secondary="user_watch_movies", back_populates='users', lazy='subquery')
 
     def __init__(self, email: str, password_hashed: str, username: str, date_subscribed: str = date.today(),
-                 is_active: bool = True, is_superuser: bool = False):
+                 is_active: bool = True, is_superuser: bool = False, code: int = None):
         self.email = email
         self.password_hashed = password_hashed
         self.username = username
         self.date_subscribed = date_subscribed
         self.is_active = is_active
         self.is_superuser = is_superuser
+        self.code = code

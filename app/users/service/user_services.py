@@ -7,11 +7,11 @@ from app.users.exceptions import InvalidCredentialsException
 class UserServices:
 
     @staticmethod
-    def create_new_user(email, password, username):
+    def create_new_user(email, password, username, code: int):
         try:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
-                fields = {"email": email, "password_hashed": password, "username": username}
+                fields = {"email": email, "password_hashed": password, "username": username, "code": code}
                 return repository.create(fields)
         except Exception as e:
             raise e

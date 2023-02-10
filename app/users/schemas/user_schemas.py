@@ -12,6 +12,7 @@ class UserSchema(BaseModel):
     date_subscribed: date
     is_active: bool
     is_superuser: bool
+    code: int
 
     class Config:
         orm_mode = True
