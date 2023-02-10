@@ -25,9 +25,6 @@ class UserRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def update_users_password(self):
-        pass
-
     def read_user_by_code(self, verification_code: int):
         try:
             user = self.db.query(User).filter(User.verification_code == verification_code).first()

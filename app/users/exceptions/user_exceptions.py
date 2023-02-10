@@ -21,7 +21,7 @@ class UnverifiedAccountException(AppException):
 
 class InvalidCredentialsException(AppException):
     """Exception raised on a wrong password during login action."""
-    message = "Login failed. Check your credentials."
+    message = "Check your credentials."
     code = 401
 
 

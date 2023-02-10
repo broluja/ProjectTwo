@@ -47,6 +47,15 @@ class UserServices:
             raise e
 
     @staticmethod
+    def get_user_by_email(email: str):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                return repository.read_user_by_email(email)
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def search_users_by_mail(email: str):
         try:
             with SessionLocal() as db:
@@ -87,6 +96,28 @@ class UserServices:
                 repository = UserRepository(db, User)
                 user = UserServices.get_user_by_id(user_id)
                 updates = {"is_superuser": superuser}
+                return repository.update(user, updates)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def generate_verification_code(user_id, code: int):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                user = UserServices.get_user_by_id(user_id)
+                updates = {"verification_code": code}
+                return repository.update(user, updates)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def reset_password_complete(code: int, password_hashed: str):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                user = repository.read_user_by_code(code)
+                updates = {"password_hashed": password_hashed, "verification_code": None}
                 return repository.update(user, updates)
         except Exception as e:
             raise e

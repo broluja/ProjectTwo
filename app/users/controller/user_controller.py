@@ -60,6 +60,40 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_user_by_email(email: str):
+        try:
+            user = UserServices.get_user_by_email(email)
+            return user
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def forget_password(email: str):
+        try:
+            user = UserServices.get_user_by_email(email)
+            if user:
+                code = generate_random_int(5)
+                obj = UserServices.generate_verification_code(user.id, code)
+                EmailServices.send_code_for_verification(user.email, code)
+                return obj
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def reset_password_complete(code: int, password_hashed: str):
+        try:
+            user = UserServices.reset_password_complete(code, password_hashed)
+            return user
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def search_users_by_email(email: str):
         try:
             users = UserServices.search_users_by_mail(email)

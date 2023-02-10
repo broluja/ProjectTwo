@@ -1,6 +1,6 @@
 import hashlib
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, HTTPException
 from starlette.requests import Request
 from starlette.responses import Response
 
@@ -34,11 +34,39 @@ def verify_user(verification_code: int):
 @user_router.post("/user-login",
                   summary="User Login",
                   description="Login User using email, password and username.")
-def login_user(email: str, password: str, username: str, response: Response):
+def login_user(username: str, email: str, password: str, response: Response):
     password_hashed = hashlib.sha256(password.encode()).hexdigest()
     token, user_id = UserController.login_user(email, password_hashed, username)
     response.set_cookie(key="user_id", value=user_id)
     return token
+
+
+@user_router.post("/user-forget-password",
+                  summary="Ask for password change.",
+                  description="Demand reset of password.")
+def forget_password(email: str):
+    UserController.forget_password(email)
+    return {"message": "Request granted. Instructions are sent to your email."}
+
+
+@user_router.post("/user-reset-password",
+                  summary="Reset user's password. User route.",
+                  description="Demand reset of password.",
+                  dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))])
+def reset_password(email: str):
+    UserController.forget_password(email)
+    return {"message": "Request granted. Instructions are sent to your email."}
+
+
+@user_router.post("/reset-password-complete",
+                  summary="Save new password. User route.",
+                  description="Set new password.")
+def reset_password_complete(code: int, password: str, new_password: str):
+    if password != new_password:
+        raise HTTPException(status_code=400, detail="Passwords must match. Try again")
+    password_hashed = hashlib.sha256(password.encode()).hexdigest()
+    UserController.reset_password_complete(code, password_hashed)
+    return {"message": "Reset password finished successfully. You can login now."}
 
 
 @user_router.post("/admin-login",

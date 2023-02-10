@@ -18,7 +18,7 @@ class JWTBearer(HTTPBearer):
             if not payload.get("valid"):
                 raise HTTPException(status_code=403, detail="Invalid or expired token.")
             if payload.get("role") not in self.role:
-                raise HTTPException(status_code=403, detail="User has no permission to access this route.")
+                raise HTTPException(status_code=403, detail="You have no permission to access this route.")
             return credentials.credentials
 
         raise HTTPException(status_code=403, detail="Invalid authorization code.")
