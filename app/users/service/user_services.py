@@ -1,7 +1,7 @@
 from app.users.repositories import UserRepository
 from app.db.database import SessionLocal
 from app.users.models import User
-from app.users.exceptions import InvalidCredentialsException
+from app.users.exceptions import InvalidCredentialsException, UnverifiedAccountException
 
 
 class UserServices:
@@ -11,8 +11,20 @@ class UserServices:
         try:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
-                fields = {"email": email, "password_hashed": password, "username": username, "code": code}
+                fields = {"email": email, "password_hashed": password, "username": username, "verification_code": code}
                 return repository.create(fields)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def verify_user(verification_code: int):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                user = repository.read_user_by_code(verification_code)
+                if user:
+                    obj = repository.update(user, {"verification_code": None})
+                return obj
         except Exception as e:
             raise e
 
@@ -51,6 +63,8 @@ class UserServices:
                 user = repository.read_user_by_email(email)
                 if user.password_hashed != password:
                     raise InvalidCredentialsException
+                if user.verification_code is not None:
+                    raise UnverifiedAccountException
                 return user
         except Exception as e:
             raise e

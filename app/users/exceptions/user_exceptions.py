@@ -7,6 +7,18 @@ class UserEmailAlreadyRegisteredException(AppException):
     code = 400
 
 
+class InvalidVerificationCode(AppException):
+    """Exception raised when user try to verify account with wrong verification code."""
+    message = "Verification code unrecognized."
+    code = 400
+
+
+class UnverifiedAccountException(AppException):
+    """Exception raised when user try to log in before account verification."""
+    message = "Please verify your account first. Check your email for verification code.."
+    code = 401
+
+
 class InvalidCredentialsException(AppException):
     """Exception raised on a wrong password during login action."""
     message = "Login failed. Check your credentials."

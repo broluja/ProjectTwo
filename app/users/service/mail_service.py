@@ -4,7 +4,6 @@ import asyncio
 
 from app.config import settings
 from app.email_templates.templates import USER_VERIFICATION_TEMPLATE, RESET_PASSWORD_TEMPLATE
-from app.utils import generate_random_int
 
 
 class EmailServices:

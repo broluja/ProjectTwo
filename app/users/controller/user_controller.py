@@ -30,6 +30,16 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def verify_user(verification_code: int):
+        try:
+            user = UserServices.verify_user(verification_code)
+            return user
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def get_all_users():
         try:
             users = UserServices.get_all_users()
