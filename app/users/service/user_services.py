@@ -49,9 +49,9 @@ class UserServices:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
                 user = repository.read_user_by_email(email)
-                if user.password_hashed == password:
-                    return user
-                raise InvalidCredentialsException
+                if user.password_hashed != password:
+                    raise InvalidCredentialsException
+                return user
         except Exception as e:
             raise e
 

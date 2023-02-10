@@ -98,11 +98,12 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
                      description="Register new Subuser",
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
                      status_code=status.HTTP_201_CREATED)
-def register_subuser(user_id: str, name: str):
+def register_subuser(request: Request, name: str):
+    user_id = request.cookies.get("user_id")
     return SubuserController.create_subuser(user_id, name)
 
 
-@subuser_router.get("/get-all-subuser",
+@subuser_router.get("/get-all-subusers",
                     response_model=list[SubuserSchema],
                     description="Read all Subusers from Database. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))])

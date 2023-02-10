@@ -18,11 +18,14 @@ def init_app():
     my_app.include_router(subuser_router)
     my_app.include_router(admin_router)
     my_app.include_router(watch_movie)
+
     my_app.include_router(movie_router)
-    my_app.include_router(actor_router)
     my_app.include_router(movie_actor_router)
+
+    my_app.include_router(actor_router)
     my_app.include_router(director_router)
     my_app.include_router(genre_router)
+
     return my_app
 
 

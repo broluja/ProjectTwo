@@ -30,3 +30,9 @@ class MaxLimitSubusersException(AppException):
 
 class AdminAlreadyCreatedException(AppException):
     """Exception is raised if you try to create admin when User is already Administrator."""
+
+
+class AdminSubuserException(AppException):
+    """Exception is raised when Admin tries to create Subuser. Not allowed for Admins."""
+    message = "Admins are not allowed to create Subusers."
+    code = 403

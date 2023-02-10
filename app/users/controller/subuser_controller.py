@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Response
+from fastapi import HTTPException
 
 from app.users.service import SubuserServices
 from app.base.base_exception import AppException
@@ -31,6 +31,16 @@ class SubuserController:
         try:
             subuser = SubuserServices.get_subuser_by_id(subuser_id)
             return subuser
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_subusers_by_user_id(user_id: str):
+        try:
+            subusers = SubuserServices.get_all_subusers_for_one_user(user_id)
+            return subusers
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
