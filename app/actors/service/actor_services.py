@@ -3,6 +3,9 @@ from app.actors.repositories import ActorRepository
 from app.actors.models import Actor
 
 
+PER_PAGE = 5
+
+
 class ActorServices:
 
     @staticmethod
@@ -19,11 +22,12 @@ class ActorServices:
             raise e
 
     @staticmethod
-    def get_all_actors():
+    def get_all_actors(page: int):
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actors = repository.read_all()
+                skip = (page - 1) * PER_PAGE
+                actors = repository.read_many(skip=skip, limit=PER_PAGE)
                 return actors
         except Exception as e:
             raise e

@@ -2,11 +2,11 @@ import uvicorn
 from fastapi import FastAPI
 
 from app.db.database import engine, Base
-from app.users.routes import user_router, subuser_router, admin_router, watch_movie
+from app.users.routes import user_router, subuser_router, admin_router
 from app.directors.routes import director_router
 from app.genres.routes import genre_router
 from app.actors.routes import actor_router
-from app.movies.routes import movie_router, movie_actor_router
+from app.movies.routes import movie_router, movie_actor_router, watch_movie
 
 
 Base.metadata.create_all(bind=engine)

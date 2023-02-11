@@ -1,8 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status, HTTPException
+from starlette.requests import Request
 
 from app.movies.controller import MovieController, MovieActorController
 from app.movies.schemas import *
-from app.users.controller import JWTBearer
+from app.users.controller import JWTBearer, UserWatchMovieController
+from app.users.schemas.user_watch_movie_schema import UserWatchMovieSchema
 
 movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
 
@@ -42,3 +44,29 @@ def add_actor_to_movie(movie_id: str, actor_id: str):
                            description="Remove actor from Movie")
 def remove_actor_from_movie(movie_id: str, actor_id: str):
     return MovieActorController.delete_movie_actor(movie_id, actor_id)
+
+
+watch_movie = APIRouter(prefix="/api/watch_movie", tags=["Watch Movie"])
+
+
+@watch_movie.post("/", description="Select movie to watch", status_code=status.HTTP_201_CREATED)
+def user_watch_movie(request: Request, title: str):
+    user_id = request.cookies.get("user_id")
+    return UserWatchMovieController.user_watch_movie(user_id, title)
+
+
+@watch_movie.put("/rate-movie", response_model=UserWatchMovieSchema, description="Rate Movie")
+def user_rate_movie(request: Request, title: str, rating: int):
+    if not 0 < rating <= 10:
+        raise HTTPException(status_code=400, detail="Rating must be between 1 and 10.")
+    user_id = request.cookies.get("user_id")
+    return UserWatchMovieController.user_rate_movie(user_id, title, rating)
+
+
+@watch_movie.get("/get-my-watched-movies",
+                 response_model=list[MovieSchema],
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+def get_my_watched_movies_list(request: Request):
+    user_id = request.cookies.get("user_id")
+    return UserWatchMovieController.get_my_watched_movies_list(user_id)
+    

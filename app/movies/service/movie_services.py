@@ -4,6 +4,8 @@ from app.db import SessionLocal
 
 from datetime import date
 
+PER_PAGE = 5
+
 
 class MovieServices:
 

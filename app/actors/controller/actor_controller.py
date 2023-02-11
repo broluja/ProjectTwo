@@ -17,9 +17,9 @@ class ActorController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def get_all_actors():
+    def get_all_actors(page: int):
         try:
-            actors = ActorServices.get_all_actors()
+            actors = ActorServices.get_all_actors(page)
             return actors
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
