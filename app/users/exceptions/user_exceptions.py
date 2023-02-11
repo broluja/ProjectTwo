@@ -15,7 +15,7 @@ class InvalidVerificationCode(AppException):
 
 class UnverifiedAccountException(AppException):
     """Exception raised when user try to log in before account verification."""
-    message = "Please verify your account first. Check your email for verification code.."
+    message = "Please verify your account first. Check your email for verification code."
     code = 401
 
 

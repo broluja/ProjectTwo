@@ -141,7 +141,6 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
 
 @subuser_router.post("/add-new-subuser",
                      response_model=SubuserSchema,
-                     summary="Subuser Registration",
                      description="Register new Subuser",
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
                      status_code=status.HTTP_201_CREATED)
@@ -169,16 +168,18 @@ def get_subuser_by_id(subuser_id: str):
 @subuser_router.put("/update-subuser-name",
                     response_model=SubuserSchema,
                     description="Update Subuser`s name",
-                    dependencies=[Depends(JWTBearer(["regular_user"]))])
-def update_subusers_name(subuser_id: str, name: str):
+                    dependencies=[Depends(JWTBearer(["sub_user"]))])
+def update_subusers_name(request: Request, name: str):
+    subuser_id = request.cookies.get("user_id")
     return SubuserController.update_subusers_name(subuser_id, name)
 
 
 @subuser_router.delete("/delete-subuser",
                        description="Delete specific Subuser by ID.",
                        dependencies=[Depends(JWTBearer(["regular_user"]))])
-def delete_subuser(subuser_id: str):
-    return SubuserController.delete_subuser(subuser_id)
+def delete_subuser(request: Request, subuser_name: str):
+    user_id = request.cookies.get("user_id")
+    return SubuserController.delete_subuser(user_id, subuser_name)
 
 
 admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])

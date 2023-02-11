@@ -2,7 +2,8 @@ from app.users.repositories import SubuserRepository
 from app.users.service import UserServices
 from app.db.database import SessionLocal
 from app.users.models import Subuser
-from app.users.exceptions import NonExistingUserIdException, MaxLimitSubusersException, AdminSubuserException
+from app.users.exceptions import NonExistingUserIdException, MaxLimitSubusersException, AdminSubuserException, \
+    UnknownProfileException
 
 MAX_NUMBER_SUBUSERS = 2
 
@@ -50,7 +51,7 @@ class SubuserServices:
         try:
             with SessionLocal() as db:
                 repository = SubuserRepository(db, Subuser)
-                subusers = repository.read_subusers_by_user_id(user_id)
+                subusers = repository.read_by_id(user_id)
                 return subusers
         except Exception as e:
             raise e
@@ -68,11 +69,14 @@ class SubuserServices:
             raise e
 
     @staticmethod
-    def delete_subuser(subuser_id: str):
+    def delete_subuser(user_id: str, subuser_name: str):
         try:
             with SessionLocal() as db:
                 repository = SubuserRepository(db, Subuser)
-                response = repository.delete(subuser_id)
+                subuser = repository.read_subusers_by_name(subuser_name)
+                if not subuser or subuser.user_id != user_id:
+                    raise UnknownProfileException
+                response = repository.delete(subuser.id)
                 return response
         except Exception as e:
             raise e
