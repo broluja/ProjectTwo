@@ -76,7 +76,7 @@ class UserController:
             if user:
                 code = generate_random_int(5)
                 obj = UserServices.generate_verification_code(user.id, code)
-                EmailServices.send_code_for_verification(user.email, code)
+                EmailServices.send_code_for_password_reset(user.email, code)
                 return obj
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

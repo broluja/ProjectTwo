@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, UUID4, EmailStr
 from datetime import date
 
@@ -12,7 +14,7 @@ class UserSchema(BaseModel):
     date_subscribed: date
     is_active: bool
     is_superuser: bool
-    verification_code: int
+    verification_code: Optional[int]
 
     class Config:
         orm_mode = True
