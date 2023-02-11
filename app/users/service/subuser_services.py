@@ -51,7 +51,7 @@ class SubuserServices:
         try:
             with SessionLocal() as db:
                 repository = SubuserRepository(db, Subuser)
-                subusers = repository.read_by_id(user_id)
+                subusers = repository.read_subusers_by_user_id(user_id)
                 return subusers
         except Exception as e:
             raise e

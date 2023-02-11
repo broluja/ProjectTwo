@@ -1,8 +1,8 @@
-from sqlalchemy import Column, String, Boolean, Date, ForeignKey, Integer
+from sqlalchemy import Column, String, Boolean, Date, ForeignKey, Integer, UniqueConstraint
 from uuid import uuid4
 from datetime import date
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 
 from app.db import Base
 
@@ -13,6 +13,8 @@ class UserWatchMovie(Base):
     user_id = Column(String(50), ForeignKey("users.id"))
     movie_id = Column(String(50), ForeignKey("movies.id"))
     rating = Column(Integer(), nullable=True)
+
+    __table_args__ = (UniqueConstraint("user_id", "movie_id", name="one_user_one_rating"),)
 
     def __init__(self, user_id: str, movie_id: str, rating: int = None):
         self.user_id = user_id

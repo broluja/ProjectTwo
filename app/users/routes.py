@@ -208,21 +208,3 @@ def get_all_admins():
                      dependencies=[Depends(JWTBearer(["super_user"]))])
 def remove_admin_credentials(admin_id: str):
     return AdminController.derogate_admin(admin_id)
-
-
-watch_movie = APIRouter(prefix="/api/watch_movie", tags=["Watch Movie"])
-
-
-@watch_movie.post("/",
-                  response_model=UserWatchMovieSchema,
-                  description="Select movie to watch",
-                  status_code=status.HTTP_201_CREATED)
-def user_watch_movie(request: Request, title: str):
-    user_id = request.cookies.get("user_id")
-    return UserWatchMovieController.user_watch_movie(user_id, title)
-
-
-@watch_movie.put("/", response_model=UserWatchMovieSchema, description="Rate Movie")
-def user_rate_movie(request: Request, title: str, rating: int):
-    user_id = request.cookies.get("user_id")
-    return UserWatchMovieController.user_rate_movie(user_id, title, rating)

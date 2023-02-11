@@ -44,6 +44,7 @@ class UserServices:
                 repository = UserRepository(db, User)
                 return repository.read_by_id(user_id)
         except Exception as e:
+            print(e)
             raise e
 
     @staticmethod

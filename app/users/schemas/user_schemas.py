@@ -56,6 +56,7 @@ class UserWithSubusersSchema(BaseModel):
     date_subscribed: date
     is_active: bool
     is_superuser: bool
+    code: Optional[int]
     subusers: list[SubuserSchema]
 
     class Config:

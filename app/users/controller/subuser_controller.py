@@ -45,6 +45,7 @@ class SubuserController:
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
+            print(e)
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod

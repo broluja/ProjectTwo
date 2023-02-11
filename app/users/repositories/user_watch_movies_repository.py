@@ -11,4 +11,13 @@ class UserWatchMovieRepository(BaseCRUDRepository):
                 UserWatchMovie.movie_id == movie_id).first()
             return user_watch_movie
         except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_movies_from_user(self, user_id: str):
+        try:
+            user_watch_movies = self.db.query(UserWatchMovie).filter(UserWatchMovie.user_id == user_id).all()
+            return user_watch_movies
+        except Exception as e:
+            self.db.rollback()
             raise e

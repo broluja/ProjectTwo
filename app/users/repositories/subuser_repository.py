@@ -12,3 +12,11 @@ class SubuserRepository(BaseCRUDRepository):
         except Exception as e:
             self.db.rollback()
             raise AppException(message=str(e), code=500)
+
+    def read_subusers_by_user_id(self, user_id: str):
+        try:
+            subuser = self.db.query(Subuser).filter(Subuser.user_id == user_id).all()
+            return subuser
+        except Exception as e:
+            self.db.rollback()
+            raise AppException(message=str(e), code=500)
