@@ -13,3 +13,10 @@ class EpisodeRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
+    def read_by_episode_name_and_series_id(self, name: str, series_id):
+        try:
+            episode = self.db.query(Episode).filter(Episode.name == name).filter(Episode.series_id == series_id).first()
+            return episode
+        except Exception as e:
+            self.db.rollback()
+            raise e

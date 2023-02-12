@@ -23,7 +23,7 @@ class SeriesRepository(BaseCRUDRepository):
 
     def read_series_by_title(self, title: str):
         try:
-            series = self.db.query(Series).filter(Series.title == title).all()
+            series = self.db.query(Series).filter(Series.title == title).first()
             return series
         except Exception as e:
             self.db.rollback()

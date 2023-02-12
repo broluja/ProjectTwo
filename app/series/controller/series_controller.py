@@ -27,6 +27,16 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_series_by_id(series_id: str):
+        try:
+            series = SeriesServices.get_series_by_id(series_id)
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def get_my_series(user_id: str):
         try:
             series = SeriesServices.get_my_series(user_id)

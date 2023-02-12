@@ -18,9 +18,9 @@ class EpisodeController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def get_all_episodes_by_series(series_id: str):
+    def get_all_episodes_by_series(series_title: str):
         try:
-            episodes = EpisodeServices.get_all_episodes_by_series(series_id)
+            episodes = EpisodeServices.get_all_episodes_by_series(series_title)
             return episodes
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

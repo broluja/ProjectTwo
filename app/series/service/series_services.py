@@ -35,6 +35,15 @@ class SeriesServices:
             raise e
 
     @staticmethod
+    def get_series_by_id(series_id: str):
+        try:
+            with SessionLocal() as db:
+                repository = SeriesRepository(db, Series)
+                return repository.read_by_id(series_id)
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def get_my_series(user_id: str):
         try:
             with SessionLocal() as db:
