@@ -11,6 +11,7 @@ class MovieSchema(BaseModel):
     title: str
     date_added: date
     year_published: str
+    link: str
     director_id: str
     genre_id: str
 
@@ -41,6 +42,7 @@ class MovieWithActorsSchema(BaseModel):
     title: str
     date_added: date
     year_published: str
+    link: str
 
     actors: list[ActorSchema]
 
@@ -53,6 +55,7 @@ class MovieWithDirectorAndGenreSchema(BaseModel):
     title: str
     date_added: date
     year_published: str
+    link: str
 
     director: DirectorSchema
     genre: GenreSchema

@@ -5,6 +5,7 @@ from sqlalchemy import Column, String, Date, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.db import Base
+from app.utils import generate_fake_url
 
 
 class MovieActor(Base):
@@ -24,6 +25,7 @@ class Movie(Base):
     title = Column(String(100), nullable=False)
     date_added = Column(Date(), default=date.today())
     year_published = Column(String(5), nullable=False)
+    link = Column(String(100), nullable=False, default=generate_fake_url)
     director_id = Column(String(50), ForeignKey("directors.id"))
     genre_id = Column(String(50), ForeignKey("genres.id"))
 

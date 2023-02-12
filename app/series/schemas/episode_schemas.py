@@ -4,6 +4,7 @@ from pydantic import BaseModel, UUID4
 class EpisodeSchema(BaseModel):
     id: UUID4
     name: str
+    link: str
     series_id: str
 
     class Config:
