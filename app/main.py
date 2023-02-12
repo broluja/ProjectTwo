@@ -7,6 +7,7 @@ from app.directors.routes import director_router
 from app.genres.routes import genre_router
 from app.actors.routes import actor_router
 from app.movies.routes import movie_router, movie_actor_router, watch_movie
+from app.series.routes import series_router, episode_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -21,6 +22,9 @@ def init_app():
 
     my_app.include_router(movie_router)
     my_app.include_router(movie_actor_router)
+
+    my_app.include_router(series_router)
+    my_app.include_router(episode_router)
 
     my_app.include_router(actor_router)
     my_app.include_router(director_router)
