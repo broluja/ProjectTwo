@@ -1,4 +1,6 @@
 from app.db import SessionLocal
+from app.series.models import Episode
+from app.series.repositories import EpisodeRepository
 from app.users.models.user import UserWatchEpisode
 from app.users.repositories import UserWatchEpisodeRepository
 
@@ -11,11 +13,13 @@ class UserWatchEpisodeServices:
             with SessionLocal() as db:
                 repository = UserWatchEpisodeRepository(db, UserWatchEpisode)
                 watched_episode = repository.read_user_watch_episode_by_user_id_and_episode_id(user_id, episode_id)
+                episode_repo = EpisodeRepository(db, Episode)
+                episode = episode_repo.read_by_id(episode_id)
                 if watched_episode:
-                    return {"message": "Watch episode again."}
+                    return {"message": "Watch episode again.", "link": episode.link}
                 fields = {"user_id": user_id, "episode_id": episode_id}
                 repository.create(fields)
-                return {"message": "Watch this episode now."}
+                return {"message": "Watch this episode now.", "link": episode.link}
         except Exception as e:
             raise e
 

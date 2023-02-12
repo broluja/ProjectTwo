@@ -12,13 +12,14 @@ class UserWatchMovieServices:
         try:
             with SessionLocal() as db:
                 repository = UserWatchMovieRepository(db, UserWatchMovie)
+                movie_repo = MovieRepository(db, Movie)
+                movie = movie_repo.read_by_id(movie_id)
                 watched_movie = repository.read_user_watch_movie_by_user_id_and_movie_id(user_id, movie_id)
-                print(watched_movie)
                 if watched_movie:
-                    return {"message": "Watch movie again."}
+                    return {"message": "Watch movie again.", "link": movie.link}
                 fields = {"user_id": user_id, "movie_id": movie_id}
                 repository.create(fields)
-                return {"message": "Watch this movie now."}
+                return {"message": "Watch this movie now.", "link": movie.link}
         except Exception as e:
             raise e
 

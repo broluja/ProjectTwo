@@ -1,9 +1,18 @@
+from sqlalchemy.exc import IntegrityError
+
 from app.base import BaseCRUDRepository, AppException
 from app.users.models import Subuser
 
 
 class SubuserRepository(BaseCRUDRepository):
     """Repository for Subuser Model"""
+
+    def create(self, attributes: dict):
+        try:
+            return super().create(attributes)
+        except IntegrityError as _:
+            self.db.rollback()
+            raise AppException(message="Subuser Name already taken", code=400)
 
     def read_subusers_by_name(self, name: str):
         try:

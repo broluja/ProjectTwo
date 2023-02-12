@@ -1,9 +1,10 @@
+"""Base Repository class with CRUD operations, which is inherited by every other repository Model."""
+
 from typing import Union, Type, TypeVar, Generic
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.exc import IntegrityError
 
-from .base_exception import AppException
+from app.base.base_exception import AppException
 from app.db import SessionLocal
 
 Model = TypeVar("Model")
@@ -22,9 +23,6 @@ class BaseCRUDRepository(Generic[Model]):
             self.db.add(db_obj)
             self.db.commit()
             self.db.refresh(db_obj)
-        except IntegrityError as e:
-            self.db.rollback()
-            raise AppException(message=f"{e.args[0]}", code=400)
         except Exception as e:
             self.db.rollback()
             raise e

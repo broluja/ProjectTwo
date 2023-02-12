@@ -4,10 +4,12 @@ from fastapi import APIRouter, status, Depends, HTTPException
 from starlette.requests import Request
 from starlette.responses import Response
 
-from app.users.controller import UserController, SubuserController, AdminController, UserWatchMovieController
+from app.db import SessionLocal
+from app.users.controller import UserController, SubuserController, AdminController
 from app.users.controller.user_auth_controller import JWTBearer
+from app.users.models.user import UserWatchMovie
+from app.users.repositories import UserWatchMovieRepository
 from app.users.schemas import *
-from app.users.schemas.user_watch_movie_schema import UserWatchMovieSchema
 
 user_router = APIRouter(prefix="/api/users", tags=["Users"])
 
@@ -81,14 +83,34 @@ def login_admin(email: str, password: str, response: Response):
 
 @user_router.get("/get-all-users",
                  response_model=list[UserSchema],
+                 summary="Get all users. Admin route.",
                  description="Read all Users from Database. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_all_users():
     return UserController.get_all_users()
 
 
+@user_router.get("/get-all-active-users",
+                 response_model=list[UserSchema],
+                 summary="Get all active users. Admin route.",
+                 description="Read all active Users from Database. Admin route",
+                 dependencies=[Depends(JWTBearer(["super_user"]))])
+def get_all_active_users():
+    return UserController.get_all_active_users()
+
+
+@user_router.get("/get-all-inactive-users",
+                 response_model=list[UserSchema],
+                 summary="Get all inactive users. Admin route.",
+                 description="Read all inactive Users from Database. Admin route",
+                 dependencies=[Depends(JWTBearer(["super_user"]))])
+def get_all_inactive_users():
+    return UserController.get_all_active_users(active=False)
+
+
 @user_router.get("/get-user-by-id",
                  response_model=UserSchema,
+                 summary="Get user by ID. Admin route.",
                  description="Read specific User by ID. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_user_by_id(user_id: str):
@@ -97,6 +119,7 @@ def get_user_by_id(user_id: str):
 
 @user_router.get("/search-user-by-email",
                  response_model=list[UserSchema],
+                 summary="Search for users by email. Admin route.",
                  description="Search Users by email. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
 def search_users_by_email(email: str):
@@ -105,6 +128,7 @@ def search_users_by_email(email: str):
 
 @user_router.get("/get-user-with-subusers",
                  response_model=UserWithSubusersSchema,
+                 summary="Get user by ID with all his subusers. Admin route.",
                  description="Read User`s Subusers. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_user_with_subusers(user_id: str):
@@ -113,6 +137,7 @@ def get_user_with_subusers(user_id: str):
 
 @user_router.get("/get-my-subusers",
                  response_model=UserWithSubusersSchema,
+                 summary="Get my Subusers. User route.",
                  description="Read my Subusers. User's route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))])
 def get_my_subusers(request: Request):
@@ -122,6 +147,7 @@ def get_my_subusers(request: Request):
 
 @user_router.put("/update-user",
                  response_model=UserSchema,
+                 summary="Update my username. User route.",
                  description="Update my username. User's route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))])
 def update_my_name(request: Request, username: str):
@@ -129,7 +155,17 @@ def update_my_name(request: Request, username: str):
     return UserController.update_username(user_id, username)
 
 
+@user_router.put("/deactivate-user",
+                 response_model=UserSchema,
+                 summary="Deactivate User. Admin route",
+                 description="Deactivate specific User.",
+                 dependencies=[Depends(JWTBearer(["super_user"]))])
+def update_my_name(user_id: str):
+    return UserController.deactivate_user(user_id)
+
+
 @user_router.delete("/delete-user",
+                    summary="Delete User. Admin route",
                     description="Delete specific User by ID. Admin Route",
                     dependencies=[Depends(JWTBearer(["super_user"]))])
 def delete_user(user_id: str):
@@ -141,6 +177,7 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
 
 @subuser_router.post("/add-new-subuser",
                      response_model=SubuserSchema,
+                     summary="Register new Subuser. User route",
                      description="Register new Subuser",
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
                      status_code=status.HTTP_201_CREATED)
@@ -151,6 +188,7 @@ def register_subuser(request: Request, name: str):
 
 @subuser_router.get("/get-all-subusers",
                     response_model=list[SubuserSchema],
+                    summary="Get all Subusers. Admin route",
                     description="Read all Subusers from Database. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_all_subusers():
@@ -159,6 +197,7 @@ def get_all_subusers():
 
 @subuser_router.get("/get-subuser-by-id",
                     response_model=SubuserSchema,
+                    summary="Get specific Subuser by ID. Admin route",
                     description="Read specific Subuser by ID. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_subuser_by_id(subuser_id: str):
@@ -167,6 +206,7 @@ def get_subuser_by_id(subuser_id: str):
 
 @subuser_router.put("/update-subuser-name",
                     response_model=SubuserSchema,
+                    summary="Update my username. Subuser route",
                     description="Update Subuser`s name",
                     dependencies=[Depends(JWTBearer(["sub_user"]))])
 def update_subusers_name(request: Request, name: str):
@@ -175,7 +215,8 @@ def update_subusers_name(request: Request, name: str):
 
 
 @subuser_router.delete("/delete-subuser",
-                       description="Delete specific Subuser by ID.",
+                       summary="Delete my Subuser. User route",
+                       description="Delete specific Subuser by subuser name.",
                        dependencies=[Depends(JWTBearer(["regular_user"]))])
 def delete_subuser(request: Request, subuser_name: str):
     user_id = request.cookies.get("user_id")
@@ -187,6 +228,7 @@ admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
 
 @admin_router.post("/create-admin",
                    response_model=AdminSchema,
+                   summary="Create new Admin. Admin route",
                    description="Register new Admin. Admin route",
                    dependencies=[Depends(JWTBearer(["super_user"]))],
                    status_code=status.HTTP_201_CREATED)
@@ -196,6 +238,7 @@ def create_new_admin(admin: AdminSchemaIn):
 
 @admin_router.get("/read-all-admins",
                   response_model=list[AdminSchema],
+                  summary="Get all Admins. Admin route",
                   description="Read all Admins. Admin route",
                   dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_all_admins():
@@ -204,7 +247,15 @@ def get_all_admins():
 
 @admin_router.delete("/delete-admin",
                      response_model=UserSchema,
+                     summary="Deactivate Admin status. Admin route",
                      description="Delete specific Admin by ID. Admin route",
                      dependencies=[Depends(JWTBearer(["super_user"]))])
 def remove_admin_credentials(admin_id: str):
     return AdminController.derogate_admin(admin_id)
+
+
+@admin_router.get("/movie-downloads")
+def get_movie_downloads():
+    db = SessionLocal()
+    repo = UserWatchMovieRepository(db, UserWatchMovie)
+    return repo.read_movie_downloads()

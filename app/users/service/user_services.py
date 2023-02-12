@@ -1,7 +1,7 @@
 from app.users.repositories import UserRepository
 from app.db.database import SessionLocal
 from app.users.models import User
-from app.users.exceptions import InvalidCredentialsException, UnverifiedAccountException
+from app.users.exceptions import InvalidCredentialsException, UnverifiedAccountException, InactiveUserException
 
 
 class UserServices:
@@ -34,6 +34,15 @@ class UserServices:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
                 return repository.read_all()
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_all_active_users(active=True):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                return repository.read_all_active_users(active=active)
         except Exception as e:
             raise e
 
@@ -75,6 +84,8 @@ class UserServices:
                     raise InvalidCredentialsException
                 if user.verification_code is not None:
                     raise UnverifiedAccountException
+                if not user.is_active:
+                    raise InactiveUserException
                 return user
         except Exception as e:
             raise e
@@ -86,6 +97,17 @@ class UserServices:
                 repository = UserRepository(db, User)
                 user = UserServices.get_user_by_id(user_id)
                 updates = {"username": username}
+                return repository.update(user, updates)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def deactivate_user(user_id: str):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                user = UserServices.get_user_by_id(user_id)
+                updates = {"is_active": False}
                 return repository.update(user, updates)
         except Exception as e:
             raise e

@@ -23,7 +23,7 @@ class UserController:
             code = generate_random_int(5)
             user = UserServices.create_new_user(valid_email, password, username, code)
             EmailServices.send_code_for_verification(user.email, code)
-            return user
+            return {"message": "Finish your registration. Instructions are sent to your email."}
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
@@ -43,6 +43,16 @@ class UserController:
     def get_all_users():
         try:
             users = UserServices.get_all_users()
+            return users
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_all_active_users(active=True):
+        try:
+            users = UserServices.get_all_active_users(active=active)
             return users
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -138,6 +148,16 @@ class UserController:
     def update_username(user_id: str, username: str):
         try:
             user = UserServices.update_username(user_id, username)
+            return user
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def deactivate_user(user_id: str):
+        try:
+            user = UserServices.deactivate_user(user_id)
             return user
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

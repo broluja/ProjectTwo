@@ -1,4 +1,8 @@
+"""Base Exception Class which is inherited by all other custom exceptions."""
+
+
 class AppException(Exception):
+    """Base Exception Model"""
     message = "Something went wrong"
     code = 500
 

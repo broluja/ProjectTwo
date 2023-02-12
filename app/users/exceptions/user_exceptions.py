@@ -14,8 +14,14 @@ class InvalidVerificationCode(AppException):
 
 
 class UnverifiedAccountException(AppException):
-    """Exception raised when user try to log in before account verification."""
+    """Exception raised when user tries to log in before account verification."""
     message = "Please verify your account first. Check your email for verification code."
+    code = 401
+
+
+class InactiveUserException(AppException):
+    """Exception raised when user with inactive status tries to log in."""
+    message = "Your account is inactive. Please contact our support team."
     code = 401
 
 
