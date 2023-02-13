@@ -32,6 +32,12 @@ def get_movie_with_genre_and_director(movie_id: str):
     return MovieActorController.get_movie_with_director_and_genre(movie_id)
 
 
+@movie_router.put("/update-movie", summary="Update Movie Data")
+def update_movie_data(movie: MovieSchemaIn, movie_id):
+    attributes = {key: value for key, value in vars(movie).items() if value}
+    return MovieController.update_movie_data(movie_id, attributes)
+
+
 @movie_router.delete("/delete-movie", description='Delete specific movie by ID', summary="Delete movie. Admin route.")
 def delete_movie(movie_id: str):
     return MovieController.delete_movie(movie_id)

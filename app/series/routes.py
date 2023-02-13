@@ -38,6 +38,12 @@ def get_series_by_episode_id(episode_id: str):
     return SeriesController.get_series_by_episode_id(episode_id)
 
 
+@series_router.put("/update-series", summary="Update Series Data")
+def update_series_data(series: SeriesSchemaIn, series_id: str):
+    attributes = {key: value for key, value in vars(series).items() if value}
+    return SeriesController.update_series_data(series_id, attributes)
+
+
 @series_router.delete("/delete-series",
                       description="Delete series with all episodes.",
                       summary="delete Series")

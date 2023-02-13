@@ -115,8 +115,18 @@ class MovieServices:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_least_popular_movies()
-                print(movies)
                 return movies
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def update_movie_data(movie_id: str, attributes: dict):
+        try:
+            with SessionLocal() as db:
+                repository = MovieRepository(db, Movie)
+                obj = repository.read_by_id(movie_id)
+                movie = repository.update(obj, attributes)
+                return movie
         except Exception as e:
             raise e
 

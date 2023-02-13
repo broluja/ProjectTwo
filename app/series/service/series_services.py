@@ -65,6 +65,17 @@ class SeriesServices:
             raise e
 
     @staticmethod
+    def update_series_data(series_id: str, attributes: dict):
+        try:
+            with SessionLocal() as db:
+                repo = SeriesRepository(db, Series)
+                obj = repo.read_by_id(series_id)
+                series = repo.update(obj, attributes)
+                return series
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def delete_series(series_id: str):
         try:
             with SessionLocal() as db:
