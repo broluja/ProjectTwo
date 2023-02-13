@@ -125,3 +125,11 @@ def show_worst_rated_movie():
 def show_latest_features():
     date_limit = get_day_before_one_month()
     return MovieController.get_latest_features(date_limit)
+
+
+@watch_movie.get("/show-movies-never-downloaded",
+                 summary="Show unpopular movies that never has been watched. Admin route.",
+                 dependencies=[Depends(JWTBearer(["super_user"]))],
+                 response_model=list[MovieSchema])
+def show_least_popular_movies():
+    return MovieController.show_least_popular_movies()

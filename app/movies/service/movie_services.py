@@ -110,6 +110,17 @@ class MovieServices:
             raise e
 
     @staticmethod
+    def show_least_popular_movies():
+        try:
+            with SessionLocal() as db:
+                repository = MovieRepository(db, Movie)
+                movies = repository.read_least_popular_movies()
+                print(movies)
+                return movies
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def delete_movie(movie_id: str):
         try:
             with SessionLocal() as db:

@@ -92,3 +92,14 @@ class MovieController:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def show_least_popular_movies():
+        try:
+            movies = MovieServices.show_least_popular_movies()
+            print(movies)
+            return movies
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
