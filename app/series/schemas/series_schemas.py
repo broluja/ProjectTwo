@@ -50,8 +50,8 @@ class SeriesWithDirectorAndGenreSchema(BaseModel):
     title: str
     date_added: date
     year_published: str
-    director_id: DirectorSchema
-    genre_id: GenreSchema
+    director: DirectorSchema
+    genre: GenreSchema
 
     class Config:
         orm_mode = True

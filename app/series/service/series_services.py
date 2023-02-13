@@ -48,10 +48,27 @@ class SeriesServices:
         try:
             with SessionLocal() as db:
                 watched_episodes_repository = UserWatchEpisodeRepository(db, UserWatchEpisode)
-                watched_episodes = watched_episodes_repository.read_by_user_id(user_id)
-                series = set([episode.series_id for episode in watched_episodes])
+                watched_episodes = watched_episodes_repository.read_users_episodes_and_series(user_id)
+                my_series = set(obj.title for obj in watched_episodes)
+                return my_series
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_series_by_episode_id(episode_id: str):
+        try:
+            with SessionLocal() as db:
+                repo = SeriesRepository(db, Series)
+                series = repo.read_series_by_episode_id(episode_id)
+                return series
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def delete_series(series_id: str):
+        try:
+            with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
-                series_objects = [repository.read_by_id(series_id) for series_id in series]
-                return series_objects
+                return repository.delete(series_id)
         except Exception as e:
             raise e

@@ -1,7 +1,7 @@
 from uuid import uuid4
 from datetime import date
 
-from sqlalchemy import Column, String, Date, ForeignKey
+from sqlalchemy import Column, String, Date, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from app.db import Base
@@ -20,6 +20,8 @@ class SeriesActor(Base):
 
 class Series(Base):
     __tablename__ = "series"
+    __table_args__ = (UniqueConstraint("title", "director_id", name="same_director_different_title"),)
+
     id = Column(String(50), primary_key=True, default=uuid4)
     title = Column(String(100), nullable=False)
     date_added = Column(Date(), default=date.today())
@@ -27,7 +29,8 @@ class Series(Base):
     director_id = Column(String(50), ForeignKey("directors.id"))
     genre_id = Column(String(50), ForeignKey("genres.id"))
 
-    actors = relationship('Actor', secondary="series_actors", back_populates='series', lazy='subquery')
+    actors = relationship("Actor", secondary="series_actors", back_populates='series', lazy='subquery')
+    episodes = relationship("Episode", cascade="all,delete", backref="series")
 
     def __init__(
             self,

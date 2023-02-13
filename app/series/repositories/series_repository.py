@@ -1,5 +1,5 @@
 from app.base import BaseCRUDRepository
-from app.series.models import Series
+from app.series.models import Series, Episode
 
 
 class SeriesRepository(BaseCRUDRepository):
@@ -24,6 +24,14 @@ class SeriesRepository(BaseCRUDRepository):
     def read_series_by_title(self, title: str):
         try:
             series = self.db.query(Series).filter(Series.title == title).first()
+            return series
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_series_by_episode_id(self, episode_id):
+        try:
+            series = self.db.query(Series).join(Episode).filter(Episode.id == episode_id).all()
             return series
         except Exception as e:
             self.db.rollback()

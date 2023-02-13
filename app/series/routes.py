@@ -3,7 +3,8 @@ from starlette.requests import Request
 
 from app.series.controller import SeriesController, EpisodeController
 from app.series.controller.series_actor_controller import SeriesActorController
-from app.series.schemas import SeriesSchemaIn, SeriesSchema, EpisodeSchema, EpisodeSchemaIn, SeriesWithActorsSchema
+from app.series.schemas import SeriesSchemaIn, SeriesSchema, EpisodeSchema, EpisodeSchemaIn, SeriesWithActorsSchema, \
+    SeriesWithDirectorAndGenreSchema
 from app.users.controller import JWTBearer
 from app.users.controller.user_watch_episode_controller import UserWatchEpisodeController
 from app.users.schemas.user_watch_episode_schema import UserWatchEpisodeSchema
@@ -13,7 +14,8 @@ series_router = APIRouter(tags=["Series"], prefix="/api/series")
 
 @series_router.post("/create-new-series",
                     description="Add new Series",
-                    dependencies=[Depends(JWTBearer(["super_user"]))])
+                    dependencies=[Depends(JWTBearer(["super_user"]))],
+                    response_model=SeriesWithDirectorAndGenreSchema)
 def create_new_series(series: SeriesSchemaIn):
     return SeriesController.create_series(**series.dict())
 
@@ -24,12 +26,23 @@ def get_all_series():
 
 
 @series_router.get("/get-my-series",
-                   response_model=list[SeriesSchema],
                    summary="Get my series",
                    description="Get all series User watched")
 def get_my_series(request: Request):
     user_id = request.cookies.get("user_id")
     return SeriesController.get_my_series(user_id)
+
+
+@series_router.get("/get-series-by-episode-id")
+def get_series_by_episode_id(episode_id: str):
+    return SeriesController.get_series_by_episode_id(episode_id)
+
+
+@series_router.delete("/delete-series",
+                      description="Delete series with all episodes.",
+                      summary="delete Series")
+def delete_series(series_id: str):
+    return SeriesController.delete_series(series_id)
 
 
 episode_router = APIRouter(tags=["Episodes"], prefix="/api/episodes")

@@ -128,7 +128,7 @@ def show_latest_features():
 
 
 @watch_movie.get("/show-movies-never-downloaded",
-                 summary="Show unpopular movies that never has been watched. Admin route.",
+                 summary="Show unpopular movies that never have been watched. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))],
                  response_model=list[MovieSchema])
 def show_least_popular_movies():
