@@ -50,3 +50,18 @@ class UserWatchMovieServices:
                 return movie_objects
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_popular_movies():
+        try:
+            with SessionLocal() as db:
+                repository = UserWatchMovieRepository(db, UserWatchMovie)
+                movies = repository.read_movie_downloads()
+                movie_repo = MovieRepository(db, Movie)
+                response = {}
+                for movie_id, views in movies[:10]:
+                    movie = movie_repo.read_by_id(movie_id)
+                    response.update({movie.title: views})
+                return response
+        except Exception as e:
+            raise e

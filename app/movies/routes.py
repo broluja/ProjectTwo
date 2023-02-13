@@ -69,4 +69,9 @@ def user_rate_movie(request: Request, title: str, rating: int):
 def get_my_watched_movies_list(request: Request):
     user_id = request.cookies.get("user_id")
     return UserWatchMovieController.get_my_watched_movies_list(user_id)
+
+
+@watch_movie.get("/movie-downloads", description="Get top ten movies.", summary="Top Ten Movies. User route.")
+def get_movie_downloads():
+    return UserWatchMovieController.get_popular_movies()
     

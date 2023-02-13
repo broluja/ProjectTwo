@@ -3,6 +3,8 @@ from sqlalchemy.sql.functions import count
 from app.base import BaseCRUDRepository
 from app.users.models.user import UserWatchMovie
 
+PER_PAGE = 5
+
 
 class UserWatchMovieRepository(BaseCRUDRepository):
     """Repository for UserWatchMovie Model"""

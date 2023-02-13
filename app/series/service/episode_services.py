@@ -1,4 +1,4 @@
-from app.series.exceptions.series_exceptions import UnknownSeriesException
+from app.series.exceptions.series_exceptions import UnknownSeriesException, UnknownEpisodeException
 from app.series.models import Episode, Series
 from app.series.repositories import EpisodeRepository, SeriesRepository
 from app.db import SessionLocal
@@ -37,8 +37,13 @@ class EpisodeServices:
             with SessionLocal() as db:
                 series_repository = SeriesRepository(db, Series)
                 series = series_repository.read_series_by_title(title)
+                if not series:
+                    raise UnknownSeriesException
                 episodes_repository = EpisodeRepository(db, Episode)
-                return episodes_repository.read_by_episode_name_and_series_id(name, series.id)
+                episode = episodes_repository.read_by_episode_name_and_series_id(name, series.id)
+                if not episode:
+                    raise UnknownEpisodeException
+                return episode
         except Exception as e:
             raise e
 

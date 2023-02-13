@@ -2,6 +2,7 @@ from uuid import uuid4
 from datetime import date
 
 from sqlalchemy import Column, String, Date, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.db import Base
 
@@ -25,6 +26,8 @@ class Series(Base):
     year_published = Column(String(5), nullable=False)
     director_id = Column(String(50), ForeignKey("directors.id"))
     genre_id = Column(String(50), ForeignKey("genres.id"))
+
+    actors = relationship('Actor', secondary="series_actors", back_populates='series', lazy='subquery')
 
     def __init__(
             self,

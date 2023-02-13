@@ -4,11 +4,8 @@ from fastapi import APIRouter, status, Depends, HTTPException
 from starlette.requests import Request
 from starlette.responses import Response
 
-from app.db import SessionLocal
 from app.users.controller import UserController, SubuserController, AdminController
 from app.users.controller.user_auth_controller import JWTBearer
-from app.users.models.user import UserWatchMovie
-from app.users.repositories import UserWatchMovieRepository
 from app.users.schemas import *
 
 user_router = APIRouter(prefix="/api/users", tags=["Users"])
@@ -252,10 +249,3 @@ def get_all_admins():
                      dependencies=[Depends(JWTBearer(["super_user"]))])
 def remove_admin_credentials(admin_id: str):
     return AdminController.derogate_admin(admin_id)
-
-
-@admin_router.get("/movie-downloads")
-def get_movie_downloads():
-    db = SessionLocal()
-    repo = UserWatchMovieRepository(db, UserWatchMovie)
-    return repo.read_movie_downloads()

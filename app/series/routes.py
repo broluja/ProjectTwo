@@ -3,7 +3,7 @@ from starlette.requests import Request
 
 from app.series.controller import SeriesController, EpisodeController
 from app.series.controller.series_actor_controller import SeriesActorController
-from app.series.schemas import SeriesSchemaIn, SeriesSchema, EpisodeSchema, EpisodeSchemaIn
+from app.series.schemas import SeriesSchemaIn, SeriesSchema, EpisodeSchema, EpisodeSchemaIn, SeriesWithActorsSchema
 from app.users.controller import JWTBearer
 from app.users.controller.user_watch_episode_controller import UserWatchEpisodeController
 from app.users.schemas.user_watch_episode_schema import UserWatchEpisodeSchema
@@ -18,7 +18,7 @@ def create_new_series(series: SeriesSchemaIn):
     return SeriesController.create_series(**series.dict())
 
 
-@series_router.get("/get-all-series", description="Get all Series from DB", response_model=list[SeriesSchema])
+@series_router.get("/get-all-series", description="Get all Series from DB", response_model=list[SeriesWithActorsSchema])
 def get_all_series():
     return SeriesController.read_all_series()
 

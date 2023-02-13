@@ -15,6 +15,7 @@ class Actor(Base):
     country = Column(String(50))
 
     movies = relationship('Movie', secondary="movie_actors", back_populates='actors', lazy="subquery")
+    series = relationship('Series', secondary="series_actors", back_populates='actors', lazy="subquery")
 
     def __init__(self, first_name: str, last_name: str, date_of_birth: str, country: str):
         self.first_name = first_name
