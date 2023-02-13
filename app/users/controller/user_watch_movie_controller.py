@@ -48,3 +48,13 @@ class UserWatchMovieController:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_best_rated_movie(best: bool = True):
+        try:
+            movie = UserWatchMovieServices.get_best_rated_movie(best)
+            return movie
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))

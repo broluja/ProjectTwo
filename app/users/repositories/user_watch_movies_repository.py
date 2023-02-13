@@ -1,4 +1,4 @@
-from sqlalchemy.sql.functions import count
+from sqlalchemy.sql.functions import count, func
 
 from app.base import BaseCRUDRepository
 from app.users.models.user import UserWatchMovie
@@ -30,6 +30,27 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         try:
             movie_downloads = self.db.query(UserWatchMovie.movie_id, count()).group_by(UserWatchMovie.movie_id)
             return movie_downloads
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_movies_by_rating(self, best=True):
+        try:
+            if best:
+                subquery = self.db.query(UserWatchMovie.movie_id.label("movie"),
+                                         func.avg(UserWatchMovie.rating).label("rating")).group_by(
+                    UserWatchMovie.movie_id.label("movie")).subquery()
+                max_rating = self.db.query(func.max(subquery.c.rating.label("rating")))
+                movie = self.db.query(subquery.c.movie.label("movie"), subquery.c.rating.label("rating")).filter(
+                    subquery.c.rating.label("rating") == max_rating)
+            else:
+                subquery = self.db.query(UserWatchMovie.movie_id.label("movie"),
+                                         func.avg(UserWatchMovie.rating).label("rating")).group_by(
+                    UserWatchMovie.movie_id.label("movie")).subquery()
+                min_rating = self.db.query(func.min(subquery.c.rating.label("rating")))
+                movie = self.db.query(subquery.c.movie.label("movie"), subquery.c.rating.label("rating")).filter(
+                    subquery.c.rating.label("rating") == min_rating)
+            return movie
         except Exception as e:
             self.db.rollback()
             raise e

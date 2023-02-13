@@ -46,7 +46,7 @@ def remove_actor_from_movie(movie_id: str, actor_id: str):
     return MovieActorController.delete_movie_actor(movie_id, actor_id)
 
 
-watch_movie = APIRouter(prefix="/api/watch_movie", tags=["Watch Movie"])
+watch_movie = APIRouter(prefix="/api/watch-movie", tags=["Watch Movie"])
 
 
 @watch_movie.post("/", description="Select movie to watch", status_code=status.HTTP_201_CREATED)
@@ -71,7 +71,24 @@ def get_my_watched_movies_list(request: Request):
     return UserWatchMovieController.get_my_watched_movies_list(user_id)
 
 
-@watch_movie.get("/movie-downloads", description="Get top ten movies.", summary="Top Ten Movies. User route.")
-def get_movie_downloads():
+@watch_movie.get("/top-ten-movies", description="Get top ten movies.", summary="Top Ten Movies. User route.")
+def get_top_ten_movies():
     return UserWatchMovieController.get_popular_movies()
-    
+
+
+@watch_movie.get("/search-movies",
+                 description="Search movies by name.",
+                 summary="Search Movies by title.",
+                 response_model=list[MovieWithActorsSchema])
+def search_movies_by_title(title: str):
+    return MovieController.search_movies_by_name(title)
+
+
+@watch_movie.get("/best-rated-movie", description="Show best rated movie",)
+def show_best_rated_movie():
+    return UserWatchMovieController.get_best_rated_movie(best=True)
+
+
+@watch_movie.get("/worst-rated-movie", description="Show worst rated movie")
+def show_worst_rated_movie():
+    return UserWatchMovieController.get_best_rated_movie(best=False)

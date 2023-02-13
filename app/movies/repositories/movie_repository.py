@@ -6,9 +6,12 @@ from app.movies.exceptions import NonExistingMovieTitleException
 class MovieRepository(BaseCRUDRepository):
     """Repository for Movie Model"""
 
-    def read_movie_by_title(self, title: str):
+    def read_movie_by_title(self, title: str, search=False):
         try:
-            movie = self.db.query(Movie).filter(Movie.title == title).first()
+            if search:
+                movie = self.db.query(Movie).filter(Movie.title.ilike(f"%{title}%")).all()
+            else:
+                movie = self.db.query(Movie).filter(Movie.title == title).first()
             if not movie:
                 self.db.rollback()
                 raise NonExistingMovieTitleException

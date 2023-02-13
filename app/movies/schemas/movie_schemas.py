@@ -38,9 +38,7 @@ class MovieSchemaIn(BaseModel):
 
 
 class MovieWithActorsSchema(BaseModel):
-    id: UUID4
     title: str
-    date_added: date
     year_published: str
     link: str
 
@@ -51,14 +49,25 @@ class MovieWithActorsSchema(BaseModel):
 
 
 class MovieWithDirectorAndGenreSchema(BaseModel):
-    id: UUID4
     title: str
-    date_added: date
     year_published: str
     link: str
 
     director: DirectorSchema
     genre: GenreSchema
+
+    class Config:
+        orm_mode = True
+
+
+class MovieFullSchema(BaseModel):
+    title: str
+    year_published: str
+    link: str
+
+    director: DirectorSchema
+    genre: GenreSchema
+    actors: list[ActorSchema]
 
     class Config:
         orm_mode = True

@@ -65,3 +65,18 @@ class UserWatchMovieServices:
                 return response
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_best_rated_movie(best: bool = True):
+        try:
+            with SessionLocal() as db:
+                movie_repo = MovieRepository(db, Movie)
+                repository = UserWatchMovieRepository(db, UserWatchMovie)
+                movie = repository.read_movies_by_rating(best)
+                response = []
+                for movie_id, rating in movie:
+                    movie = movie_repo.read_by_id(movie_id)
+                    response.append({movie.title: rating})
+                return response
+        except Exception as e:
+            raise e
