@@ -1,3 +1,6 @@
+from app.directors.exceptions.director_exceptions import NonExistingDirectorException
+from app.directors.models import Director
+from app.directors.repositories import DirectorRepository
 from app.movies.models import Movie
 from app.movies.repositories import MovieRepository
 from app.db import SessionLocal
@@ -60,6 +63,21 @@ class MovieServices:
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_movie_by_title(title, search=True)
                 return movies
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def search_movies_by_director(director: str):
+        try:
+            with SessionLocal() as db:
+                director_repo = DirectorRepository(db, Director)
+                obj = director_repo.read_directors_by_last_name(director, search=False)
+                if not obj:
+                    raise NonExistingDirectorException(message=f"No movies by director: {director}")
+                repository = MovieRepository(db, Movie)
+                movies = repository.read_all()
+                response = [movie for movie in movies if movie.director_id == obj.id]
+                return response
         except Exception as e:
             raise e
 

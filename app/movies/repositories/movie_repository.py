@@ -27,3 +27,11 @@ class MovieRepository(BaseCRUDRepository):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def read_movie_by_director(self, director: str):
+        try:
+
+            return
+        except Exception as e:
+            self.db.rollback()
+            raise e

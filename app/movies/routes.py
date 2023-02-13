@@ -76,12 +76,20 @@ def get_top_ten_movies():
     return UserWatchMovieController.get_popular_movies()
 
 
-@watch_movie.get("/search-movies",
+@watch_movie.get("/search-movies-title",
                  description="Search movies by name.",
                  summary="Search Movies by title.",
                  response_model=list[MovieWithActorsSchema])
 def search_movies_by_title(title: str):
     return MovieController.search_movies_by_name(title)
+
+
+@watch_movie.get("/search-movies-director",
+                 description="Search movies by name.",
+                 summary="Search Movies by director.",
+                 response_model=list[MovieWithActorsSchema])
+def search_movies_by_director(director: str):
+    return MovieController.search_movies_by_director(director)
 
 
 @watch_movie.get("/best-rated-movie", description="Show best rated movie",)

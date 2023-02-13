@@ -45,3 +45,13 @@ class MovieController:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def search_movies_by_director(director: str):
+        try:
+            movies = MovieServices.search_movies_by_director(director)
+            return movies
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
