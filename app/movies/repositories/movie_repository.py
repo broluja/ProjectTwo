@@ -28,10 +28,10 @@ class MovieRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_movie_by_director(self, director: str):
+    def read_latest_releases(self, date_limit: str):
         try:
-
-            return
+            movies = self.db.query(Movie).filter(Movie.date_added >= date_limit).all()
+            return movies
         except Exception as e:
             self.db.rollback()
             raise e

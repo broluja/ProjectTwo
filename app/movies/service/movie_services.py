@@ -1,6 +1,9 @@
 from app.directors.exceptions.director_exceptions import NonExistingDirectorException
 from app.directors.models import Director
 from app.directors.repositories import DirectorRepository
+from app.genres.exceptions.genre_exceptions import NonExistingGenreException
+from app.genres.models import Genre
+from app.genres.repositories import GenreRepository
 from app.movies.models import Movie
 from app.movies.repositories import MovieRepository
 from app.db import SessionLocal
@@ -81,3 +84,36 @@ class MovieServices:
         except Exception as e:
             raise e
 
+    @staticmethod
+    def search_movies_by_genre(genre: str):
+        try:
+            with SessionLocal() as db:
+                genre_repo = GenreRepository(db, Genre)
+                obj = genre_repo.read_genres_by_name(genre, search=False)
+                if not obj:
+                    raise NonExistingGenreException(message=f"No movies with genre: {genre}")
+                repository = MovieRepository(db, Movie)
+                movies = repository.read_all()
+                response = [movie for movie in movies if movie.genre_id == obj.id]
+                return response
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_latest_features(date_limit: str):
+        try:
+            with SessionLocal() as db:
+                repository = MovieRepository(db, Movie)
+                movies = repository.read_latest_releases(date_limit)
+                return movies
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def delete_movie(movie_id: str):
+        try:
+            with SessionLocal() as db:
+                repository = MovieRepository(db, Movie)
+                return repository.delete(movie_id)
+        except Exception as e:
+            raise e

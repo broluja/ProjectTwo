@@ -49,7 +49,7 @@ class BaseCRUDRepository(Generic[Model]):
             obj = self.db.query(self.model).filter(self.model.id == model_id).first()
             if not obj:
                 self.db.rollback()
-                raise AppException(message=f"ID: {model_id} does not exist in Database.", code=400)
+                raise AppException(message=f"{(self.model.__name__)} ID: {model_id} does not exist in Database.", code=400)
             return obj
         except Exception as e:
             self.db.rollback()

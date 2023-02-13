@@ -1,7 +1,7 @@
 from uuid import uuid4
 from datetime import date
 
-from sqlalchemy import Column, String, Date, ForeignKey
+from sqlalchemy import Column, String, Date, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from app.db import Base
@@ -31,6 +31,8 @@ class Movie(Base):
 
     actors = relationship('Actor', secondary="movie_actors", back_populates='movies', lazy='subquery')
     users = relationship('User', secondary="user_watch_movies", back_populates='watched_movies', lazy='subquery')
+
+    __table_args__ = (UniqueConstraint("title", "director_id", name="same_director_different_title"),)
 
     def __init__(self, title: str, year_published: str, director_id: str, genre_id: str,
                  date_added: str = date.today()):

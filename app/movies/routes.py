@@ -3,13 +3,16 @@ from starlette.requests import Request
 
 from app.movies.controller import MovieController, MovieActorController
 from app.movies.schemas import *
-from app.users.controller import JWTBearer, UserWatchMovieController
+from app.users.controller import UserWatchMovieController, JWTBearer
 from app.users.schemas.user_watch_movie_schema import UserWatchMovieSchema
+from app.utils import get_day_before_one_month
 
 movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
 
 
-@movie_router.post("/add-movie", response_model=MovieSchema, dependencies=[Depends(JWTBearer(["super_user"]))])
+@movie_router.post("/add-movie",
+                   response_model=MovieWithDirectorAndGenreSchema,
+                   dependencies=[Depends(JWTBearer(["super_user"]))])
 def add_new_movie(movie: MovieSchemaIn):
     return MovieController.create_movie(**vars(movie))
 
@@ -27,6 +30,11 @@ def get_movie_with_all_actors(movie_id: str):
 @movie_router.get("/get-movie-director-and-genre", response_model=MovieWithDirectorAndGenreSchema)
 def get_movie_with_genre_and_director(movie_id: str):
     return MovieActorController.get_movie_with_director_and_genre(movie_id)
+
+
+@movie_router.delete("/delete-movie", description='Delete specific movie by ID', summary="Delete movie. Admin route.")
+def delete_movie(movie_id: str):
+    return MovieController.delete_movie(movie_id)
 
 
 movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies_actors")
@@ -92,6 +100,14 @@ def search_movies_by_director(director: str):
     return MovieController.search_movies_by_director(director)
 
 
+@watch_movie.get("/search-movies-genre",
+                 description="Search movies by genre.",
+                 summary="Search Movies by genre.",
+                 response_model=list[MovieWithActorsSchema])
+def search_movies_by_genre(genre: str):
+    return MovieController.search_movies_by_genre(genre)
+
+
 @watch_movie.get("/best-rated-movie", description="Show best rated movie",)
 def show_best_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=True)
@@ -100,3 +116,12 @@ def show_best_rated_movie():
 @watch_movie.get("/worst-rated-movie", description="Show worst rated movie")
 def show_worst_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=False)
+
+
+@watch_movie.get("/show-latest-features",
+                 description="Show latest released movies.",
+                 summary="Show latest features",
+                 response_model=list[MovieWithActorsSchema])
+def show_latest_features():
+    date_limit = get_day_before_one_month()
+    return MovieController.get_latest_features(date_limit)
