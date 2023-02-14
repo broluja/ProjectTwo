@@ -41,3 +41,44 @@ class ActorServices:
                 return actor
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_actor_by_last_name(actor: str):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                actors = repository.read_actors_by_last_name(actor)
+                return actors
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_actor_movies(last_name: str):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                actor = repository.read_actors_by_last_name(last_name, literal=True)
+                return actor
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def update_actor(actor_id, attributes):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                actor = repository.read_by_id(actor_id)
+                actor = repository.update(actor, attributes)
+                return actor
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def delete_actor(actor_id: str):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                actor = repository.delete(actor_id)
+                return actor
+        except Exception as e:
+            raise e

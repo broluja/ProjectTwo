@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from starlette.responses import Response
 
 from app.actors.service import ActorServices
 from app.base import AppException
@@ -30,8 +31,47 @@ class ActorController:
     def get_actor_by_id(actor_id: str):
         try:
             actor = ActorServices.get_actor_by_id(actor_id)
-            print(actor.movies)
             return actor
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_actor_by_last_name(actor: str):
+        try:
+            actors = ActorServices.get_actor_by_last_name(actor)
+            return actors
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_actor_movies(last_name: str):
+        try:
+            actor = ActorServices.get_actor_movies(last_name)
+            return [movie.title for movie in actor.movies]
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def update_actor(actor_id: str, attributes: dict):
+        try:
+            actor = ActorServices.update_actor(actor_id, attributes)
+            return actor
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def delete_actor(actor_id: str):
+        try:
+            ActorServices.delete_actor(actor_id)
+            return Response(content=f"Actor with ID: {actor_id} deleted.", status_code=200)
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:

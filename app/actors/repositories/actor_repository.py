@@ -13,9 +13,12 @@ class ActorRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_actors_by_last_name(self, last_name: str):
+    def read_actors_by_last_name(self, last_name: str, literal=False):
         try:
-            actors = self.db.query(Actor).filter(Actor.last_name.ilike(f"%{last_name}%").all())
+            if literal:
+                actors = self.db.query(Actor).filter(Actor.last_name == last_name).first()
+            else:
+                actors = self.db.query(Actor).filter(Actor.last_name.ilike(f"%{last_name}%")).all()
             return actors
         except Exception as e:
             self.db.rollback()
