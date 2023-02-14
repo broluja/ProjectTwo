@@ -6,6 +6,7 @@ class UserWatchMovieSchema(BaseModel):
     user_id: str
     movie_id: str
     rating: int = None
+    date_watched: str
 
     class Config:
         orm_mode = True

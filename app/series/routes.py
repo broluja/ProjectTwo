@@ -125,3 +125,25 @@ def user_rate_episode(request: Request, episode_name: str, series_title: str, ra
 def get_my_series(request: Request):
     user_id = request.cookies.get("user_id")
     return SeriesController.get_my_series(user_id)
+
+
+@watch_episode.get("/search-series", response_model=list[SeriesWithActorsSchema], description="Search for Series")
+def search_series_by_name(series: str):
+    return SeriesController.get_series_by_name(series)
+
+
+@watch_episode.get("/get-popular-series", description="Get most popular Series.")
+def get_most_popular_series():
+    series = UserWatchEpisodeController.get_most_popular_series()
+    sorted_series = {k: f"Users watch: {v}" for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}
+    return sorted_series
+
+
+@watch_episode.get("/get-best-rated-episodes", description="Get best rated episodes.")
+def get_best_rated_episodes():
+    return EpisodeController.get_best_rated_episode()
+
+
+@watch_episode.get("/get-worst-rated-episodes", description="Get worst rated episodes.")
+def get_worst_rated_episodes():
+    return EpisodeController.get_best_rated_episode(best=False)

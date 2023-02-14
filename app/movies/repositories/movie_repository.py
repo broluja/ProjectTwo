@@ -1,5 +1,3 @@
-from sqlalchemy import distinct
-
 from app.base import BaseCRUDRepository
 from app.movies.models import Movie
 from app.movies.exceptions import NonExistingMovieTitleException

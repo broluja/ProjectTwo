@@ -21,9 +21,12 @@ class SeriesRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_series_by_title(self, title: str):
+    def read_series_by_title(self, title: str, search=False):
         try:
-            series = self.db.query(Series).filter(Series.title == title).first()
+            if search:
+                series = self.db.query(Series).filter(Series.title.ilike(f"%{title}%")).all()
+            else:
+                series = self.db.query(Series).filter(Series.title == title).first()
             return series
         except Exception as e:
             self.db.rollback()
@@ -31,7 +34,7 @@ class SeriesRepository(BaseCRUDRepository):
 
     def read_series_by_episode_id(self, episode_id):
         try:
-            series = self.db.query(Series).join(Episode).filter(Episode.id == episode_id).all()
+            series = self.db.query(Series).join(Episode).filter(Episode.id == episode_id).first()
             return series
         except Exception as e:
             self.db.rollback()

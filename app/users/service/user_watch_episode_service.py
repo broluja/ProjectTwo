@@ -1,6 +1,8 @@
+from collections import defaultdict
+
 from app.db import SessionLocal
-from app.series.models import Episode
-from app.series.repositories import EpisodeRepository
+from app.series.models import Episode, Series
+from app.series.repositories import EpisodeRepository, SeriesRepository
 from app.users.models.user import UserWatchEpisode
 from app.users.repositories import UserWatchEpisodeRepository
 
@@ -41,3 +43,18 @@ class UserWatchEpisodeServices:
     @staticmethod
     def get_my_watched_series_episodes_list(user_id: str, series_id):
         pass
+
+    @staticmethod
+    def get_most_popular_series():
+        try:
+            with SessionLocal() as db:
+                repo = UserWatchEpisodeRepository(db, UserWatchEpisode)
+                episodes = repo.read_episode_views()
+                series_repo = SeriesRepository(db, Series)
+                response = {}
+                for series_id, views in episodes:
+                    series = series_repo.read_by_id(series_id)
+                    response.update({series.title: views})
+                return response
+        except Exception as e:
+            raise e

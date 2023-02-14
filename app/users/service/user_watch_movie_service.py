@@ -71,8 +71,8 @@ class UserWatchMovieServices:
         try:
             with SessionLocal() as db:
                 movie_repo = MovieRepository(db, Movie)
-                repository = UserWatchMovieRepository(db, UserWatchMovie)
-                movie = repository.read_movies_by_rating(best)
+                user_watch_repo = UserWatchMovieRepository(db, UserWatchMovie)
+                movie = user_watch_repo.read_movies_by_rating(best)
                 response = []
                 for movie_id, rating in movie:
                     movie = movie_repo.read_by_id(movie_id)

@@ -6,6 +6,7 @@ class UserWatchEpisodeSchema(BaseModel):
     user_id: str
     episode_id: str
     rating: int = None
+    date_watched: str
 
     class Config:
         orm_mode = True

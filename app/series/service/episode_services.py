@@ -2,6 +2,8 @@ from app.series.exceptions.series_exceptions import UnknownSeriesException, Unkn
 from app.series.models import Episode, Series
 from app.series.repositories import EpisodeRepository, SeriesRepository
 from app.db import SessionLocal
+from app.users.models.user import UserWatchEpisode
+from app.users.repositories import UserWatchEpisodeRepository
 
 PER_PAGE = 5
 
@@ -53,6 +55,21 @@ class EpisodeServices:
             with SessionLocal() as db:
                 repository = EpisodeRepository(db, Episode)
                 return repository.read_by_id(episode_id)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_best_rated_episode(best: bool = True):
+        try:
+            with SessionLocal() as db:
+                repository = UserWatchEpisodeRepository(db, UserWatchEpisode)
+                episode = repository.read_best_rated_episode(best=best)
+                episode_repository = EpisodeRepository(db, Episode)
+                response = []
+                for episode_id, rating in episode:
+                    obj = episode_repository.read_by_id(episode_id)
+                    response.append({obj.name: round(rating, 2)})
+                return response
         except Exception as e:
             raise e
 

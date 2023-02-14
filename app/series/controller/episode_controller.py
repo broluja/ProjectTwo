@@ -38,6 +38,16 @@ class EpisodeController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_best_rated_episode(best: bool = True):
+        try:
+            episodes = EpisodeServices.get_best_rated_episode(best=best)
+            return episodes
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def update_episode(episode_id: str, attributes: dict):
         try:
             episode = EpisodeServices.update_episode(episode_id, attributes)

@@ -30,5 +30,11 @@ class UserWatchEpisodeController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def get_my_watched_movies_list(user_id: str):
-        pass
+    def get_most_popular_series():
+        try:
+            series = UserWatchEpisodeServices.get_most_popular_series()
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))

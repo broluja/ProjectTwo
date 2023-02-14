@@ -65,6 +65,16 @@ class SeriesServices:
             raise e
 
     @staticmethod
+    def get_series_by_name(series: str):
+        try:
+            with SessionLocal() as db:
+                repo = SeriesRepository(db, Series)
+                series = repo.read_series_by_title(series, search=True)
+                return series
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def update_series_data(series_id: str, attributes: dict):
         try:
             with SessionLocal() as db:

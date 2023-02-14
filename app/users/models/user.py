@@ -9,32 +9,36 @@ from app.db import Base
 
 class UserWatchMovie(Base):
     __tablename__ = "user_watch_movies"
+    __table_args__ = (UniqueConstraint("user_id", "movie_id", name="one_user_one_rating"),)
+
     id = Column(String(50), primary_key=True, default=uuid4)
     user_id = Column(String(50), ForeignKey("users.id"))
     movie_id = Column(String(50), ForeignKey("movies.id"))
     rating = Column(Integer(), nullable=True)
+    date_watched = Column(Date(), default=date.today())
 
-    __table_args__ = (UniqueConstraint("user_id", "movie_id", name="one_user_one_rating"),)
-
-    def __init__(self, user_id: str, movie_id: str, rating: int = None):
+    def __init__(self, user_id: str, movie_id: str, rating: int = None, date_watched: str = date.today()):
         self.user_id = user_id
         self.movie_id = movie_id
         self.rating = rating
+        self.date_watched = date_watched
 
 
 class UserWatchEpisode(Base):
     __tablename__ = "user_watch_episodes"
+    __table_args__ = (UniqueConstraint("user_id", "episode_id", name="one_user_one_rate"),)
+
     id = Column(String(50), primary_key=True, default=uuid4)
     user_id = Column(String(50), ForeignKey("users.id"))
     episode_id = Column(String(50), ForeignKey("episodes.id"))
     rating = Column(Integer(), nullable=True)
+    date_watched = Column(Date(), default=date.today())
 
-    __table_args__ = (UniqueConstraint("user_id", "episode_id", name="one_user_one_rate"),)
-
-    def __init__(self, user_id: str, episode_id: str, rating: int = None):
+    def __init__(self, user_id: str, episode_id: str, rating: int = None, date_watched: str = date.today()):
         self.user_id = user_id
         self.episode_id = episode_id
         self.rating = rating
+        self.date_watched = date_watched
 
 
 class User(Base):

@@ -64,6 +64,16 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_series_by_name(series: str):
+        try:
+            series = SeriesServices.get_series_by_name(series)
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def update_series_data(series_id: str, attributes: dict):
         try:
             series = SeriesServices.update_series_data(series_id, attributes)

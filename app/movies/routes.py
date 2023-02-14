@@ -87,7 +87,9 @@ def get_my_watched_movies_list(request: Request):
 
 @watch_movie.get("/top-ten-movies", description="Get top ten movies.", summary="Top Ten Movies. User route.")
 def get_top_ten_movies():
-    return UserWatchMovieController.get_popular_movies()
+    top_ten = UserWatchMovieController.get_popular_movies()
+    sorted_movies = {k: f"Views: {v}" for k, v in sorted(top_ten.items(), key=lambda item: item[1], reverse=True)}
+    return sorted_movies
 
 
 @watch_movie.get("/search-movies-title",
