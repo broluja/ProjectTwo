@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from starlette.responses import Response
 
 from app.directors.service import DirectorServices
 from app.base.base_exception import AppException
@@ -57,13 +58,20 @@ class DirectorController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def update_director(director_id: str, first_name: str = None, last_name: str = None, country: str = None):
+    def update_director(director_id: str, attributes: dict):
         try:
-            director = DirectorServices.update_director(director_id=director_id,
-                                                        first_name=first_name,
-                                                        last_name=last_name,
-                                                        country=country)
+            director = DirectorServices.update_director(director_id, attributes)
             return director
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def delete_director(director_id: str):
+        try:
+            DirectorServices.delete_director(director_id)
+            return Response(content=f"Director with ID: {director_id} deleted.", status_code=200)
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:

@@ -20,7 +20,7 @@ def get_all_directors():
     return DirectorController.get_all_directors()
 
 
-@director_router.get("/id", response_model=DirectorSchema, description="Read Director using ID", deprecated=True)
+@director_router.get("/id", response_model=DirectorSchema, description="Read Director using ID")
 def get_director_by_id(director_id: str):
     return DirectorController.get_director_by_id(director_id)
 
@@ -43,5 +43,13 @@ def search_directors_by_country(country: str):
                      response_model=DirectorSchema,
                      description="Update Director`s data",
                      dependencies=[Depends(JWTBearer(["super_user"]))])
-def update_director(director_id: str, first_name: str = None, last_name: str = None, country: str = None):
-    return DirectorController.update_director(director_id, first_name, last_name, country)
+def update_director(director_id: str, director: DirectorSchemaIn):
+    attributes = {key: value for key, value in vars(director).items() if value}
+    return DirectorController.update_director(director_id, attributes)
+
+
+@director_router.delete("/delete-director",
+                        summary="Delete Director",
+                        dependencies=[Depends(JWTBearer(["super_user"]))])
+def delete_director(director_id: str):
+    return DirectorController.delete_director(director_id)

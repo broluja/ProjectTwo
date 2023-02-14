@@ -52,13 +52,20 @@ class DirectorServices:
             raise e
 
     @staticmethod
-    def update_director(**kwargs):
+    def update_director(director_id, attributes):
         try:
             with SessionLocal() as db:
                 repository = DirectorRepository(db, Director)
-                director_id = kwargs.pop("director_id")
                 director = repository.read_by_id(director_id)
-                fields = {key: value for key, value in kwargs.items() if value is not None}
-                return repository.update(director, fields)
+                return repository.update(director, attributes)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def delete_director(director_id):
+        try:
+            with SessionLocal() as db:
+                repository = DirectorRepository(db, Director)
+                return repository.delete(director_id)
         except Exception as e:
             raise e
