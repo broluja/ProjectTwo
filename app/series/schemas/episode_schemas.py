@@ -13,7 +13,6 @@ class EpisodeSchema(BaseModel):
 
 class EpisodeSchemaIn(BaseModel):
     name: str
-    series_id: str
 
     class Config:
         orm_mode = True

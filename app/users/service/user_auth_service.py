@@ -7,13 +7,14 @@ from app.users.exceptions import InvalidTokenException
 
 USER_SECRET = settings.USER_SECRET
 JWT_ALGORITHM = settings.ALGORYTHM
+TOKEN_DURATION_SECONDS = 3600
 
 
 def sign_jwt(user_id: str, role: str) -> Dict[str, str]:
     payload = {
         "user_id": user_id,
         "role": role,
-        "expires": time.time() + 1200
+        "expires": time.time() + TOKEN_DURATION_SECONDS
     }
     token = jwt.encode(payload, USER_SECRET, algorithm=JWT_ALGORITHM)
 

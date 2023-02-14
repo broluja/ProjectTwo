@@ -48,6 +48,25 @@ class EpisodeServices:
             raise e
 
     @staticmethod
+    def get_episode_by_id(episode_id: str):
+        try:
+            with SessionLocal() as db:
+                repository = EpisodeRepository(db, Episode)
+                return repository.read_by_id(episode_id)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def update_episode(episode_id: str, attributes: dict):
+        try:
+            with SessionLocal() as db:
+                repository = EpisodeRepository(db, Episode)
+                obj = repository.read_by_id(episode_id)
+                return repository.update(obj, attributes)
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def delete_episode(episode_id: str):
         try:
             with SessionLocal() as db:

@@ -3,8 +3,7 @@ from starlette.requests import Request
 
 from app.series.controller import SeriesController, EpisodeController
 from app.series.controller.series_actor_controller import SeriesActorController
-from app.series.schemas import SeriesSchemaIn, SeriesSchema, EpisodeSchema, EpisodeSchemaIn, SeriesWithActorsSchema, \
-    SeriesWithDirectorAndGenreSchema
+from app.series.schemas import *
 from app.users.controller import JWTBearer
 from app.users.controller.user_watch_episode_controller import UserWatchEpisodeController
 from app.users.schemas.user_watch_episode_schema import UserWatchEpisodeSchema
@@ -23,14 +22,6 @@ def create_new_series(series: SeriesSchemaIn):
 @series_router.get("/get-all-series", description="Get all Series from DB", response_model=list[SeriesWithActorsSchema])
 def get_all_series():
     return SeriesController.read_all_series()
-
-
-@series_router.get("/get-my-series",
-                   summary="Get my series",
-                   description="Get all series User watched")
-def get_my_series(request: Request):
-    user_id = request.cookies.get("user_id")
-    return SeriesController.get_my_series(user_id)
 
 
 @series_router.get("/get-series-by-episode-id")
@@ -65,8 +56,32 @@ def create_new_episode(episode: EpisodeSchemaIn):
 @episode_router.get("/get-all-episodes-for-series",
                     response_model=list[EpisodeSchema],
                     description="Get all episodes from a Series")
-def get_all_episodes_from_series(series_title: str):
+def get_all_episodes_for_series(series_title: str):
     return EpisodeController.get_all_episodes_by_series(series_title)
+
+
+@episode_router.get("/get-episode-by-id",
+                    summary="Get episode by ID",
+                    response_model=EpisodeSchema,
+                    dependencies=[Depends(JWTBearer(["super_user"]))])
+def get_episode_by_id(episode_id: str):
+    return EpisodeController.get_episode_by_id(episode_id)
+
+
+@episode_router.put("/update-episode",
+                    summary="Update Episode",
+                    dependencies=[Depends(JWTBearer(["super_user"]))],
+                    response_model=EpisodeSchema)
+def update_episode(episode_id: str, episode: EpisodeSchemaIn):
+    attributes = {key: value for key, value in vars(episode).items() if value}
+    return EpisodeController.update_episode(episode_id, attributes)
+
+
+@episode_router.delete("/delete-episode-by-id",
+                       summary="Delete episode by ID",
+                       dependencies=[Depends(JWTBearer(["super_user"]))])
+def delete_episode(episode_id: str):
+    return EpisodeController.delete_episode(episode_id)
 
 
 series_actor_router = APIRouter(tags=["SeriesActors"], prefix="/api/series_actors")
@@ -101,3 +116,12 @@ def user_rate_episode(request: Request, episode_name: str, series_title: str, ra
         raise HTTPException(status_code=400, detail="Rating must be between 1 and 10.")
     user_id = request.cookies.get("user_id")
     return UserWatchEpisodeController.user_rate_episode(user_id, episode_name, series_title, rating)
+
+
+@watch_episode.get("/get-my-series",
+                   summary="Get my series",
+                   description="Get all series User watched",
+                   dependencies=[Depends(JWTBearer(["regular_user"]))])
+def get_my_series(request: Request):
+    user_id = request.cookies.get("user_id")
+    return SeriesController.get_my_series(user_id)

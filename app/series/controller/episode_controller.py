@@ -28,6 +28,26 @@ class EpisodeController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_episode_by_id(episode_id: str):
+        try:
+            episode = EpisodeServices.get_episode_by_id(episode_id)
+            return episode
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def update_episode(episode_id: str, attributes: dict):
+        try:
+            episode = EpisodeServices.update_episode(episode_id, attributes)
+            return episode
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def delete_episode(episode_id: str):
         try:
             EpisodeServices.delete_episode(episode_id)
