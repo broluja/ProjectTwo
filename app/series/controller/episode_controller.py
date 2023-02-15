@@ -21,6 +21,8 @@ class EpisodeController:
     def get_all_episodes_by_series(series_title: str):
         try:
             episodes = EpisodeServices.get_all_episodes_by_series(series_title)
+            if not episodes:
+                Response(content=f"No Episodes for Series: {series_title}.", status_code=200)
             return episodes
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -41,6 +43,8 @@ class EpisodeController:
     def get_best_rated_episode(best: bool = True):
         try:
             episodes = EpisodeServices.get_best_rated_episode(best=best)
+            if not episodes:
+                return Response(content=f"We have not generated episode popularity list yet.", status_code=200)
             return episodes
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

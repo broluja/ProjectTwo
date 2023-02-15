@@ -27,6 +27,8 @@ class MovieController:
     def get_all_movies():
         try:
             movies = MovieServices.get_all_movies()
+            if not movies:
+                return Response(content=f"No Movies in our Database yet.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -47,6 +49,8 @@ class MovieController:
     def search_movies_by_name(title: str):
         try:
             movies = MovieServices.search_movies_by_name(title)
+            if not movies:
+                return Response(content=f"No Movie with title: {title} in our Database.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -57,6 +61,8 @@ class MovieController:
     def search_movies_by_director(director: str):
         try:
             movies = MovieServices.search_movies_by_director(director)
+            if not movies:
+                return Response(content=f"No Movie from Director: {director} in our Database.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -67,6 +73,8 @@ class MovieController:
     def search_movies_by_genre(genre: str):
         try:
             movies = MovieServices.search_movies_by_genre(genre)
+            if not movies:
+                return Response(content=f"No Movie with genre: {genre} in our Database.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -77,6 +85,8 @@ class MovieController:
     def get_latest_features(date_limit: str):
         try:
             movie = MovieServices.get_latest_features(date_limit)
+            if not movie:
+                return Response(content="No movies in latest list.", status_code=200)
             return movie
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -107,7 +117,8 @@ class MovieController:
     def show_least_popular_movies():
         try:
             movies = MovieServices.show_least_popular_movies()
-            print(movies)
+            if not movies:
+                return Response(content="We have not yet generated movie popularity list.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

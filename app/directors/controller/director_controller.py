@@ -21,6 +21,8 @@ class DirectorController:
     def get_all_directors():
         try:
             directors = DirectorServices.get_all_directors()
+            if not directors:
+                return Response("No directors in our Database yet.", status_code=200)
             return directors
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -41,6 +43,8 @@ class DirectorController:
     def search_directors_by_last_name(last_name: str):
         try:
             director = DirectorServices.search_directors_by_last_name(last_name)
+            if not director:
+                return Response(content=f"No Director with last name: {last_name} in our Database.", status_code=200)
             return director
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -51,6 +55,8 @@ class DirectorController:
     def search_directors_by_first_name(first_name: str):
         try:
             director = DirectorServices.search_directors_by_first_name(first_name)
+            if not director:
+                return Response(content=f"No Director with first name: {first_name} in our Database.", status_code=200)
             return director
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -61,6 +67,8 @@ class DirectorController:
     def search_directors_by_country(country: str):
         try:
             director = DirectorServices.search_directors_by_country(country)
+            if not director:
+                return Response(content=f"No Director with first name: {country} in our Database.", status_code=200)
             return director
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

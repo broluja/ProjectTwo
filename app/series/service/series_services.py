@@ -1,6 +1,9 @@
 from app.directors.exceptions.director_exceptions import NonExistingDirectorException
 from app.directors.models import Director
 from app.directors.repositories import DirectorRepository
+from app.genres.exceptions.genre_exceptions import NonExistingGenreException
+from app.genres.models import Genre
+from app.genres.repositories import GenreRepository
 from app.series.models import Series
 from app.series.repositories import SeriesRepository
 from app.users.models.user import UserWatchEpisode
@@ -89,6 +92,21 @@ class SeriesServices:
                 return series
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_series_by_genre(genre):
+        try:
+            with SessionLocal() as db:
+                genre_repo = GenreRepository(db, Genre)
+                genre_obj = genre_repo.read_genres_by_name(genre, search=False)
+                if not genre_obj:
+                    raise NonExistingGenreException
+                series_repo = SeriesRepository(db, Series)
+                series = series_repo.read_series_by_genre_id(genre_obj.id)
+                return series
+        except Exception as e:
+            raise e
+
 
     @staticmethod
     def update_series_data(series_id: str, attributes: dict):

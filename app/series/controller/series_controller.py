@@ -27,6 +27,8 @@ class SeriesController:
     def read_all_series():
         try:
             series = SeriesServices.read_all_series()
+            if not series:
+                return Response(content="We have no Series in our Database.", status_code=200)
             return series
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -37,6 +39,8 @@ class SeriesController:
     def get_series_by_director_name(director: str):
         try:
             series = SeriesServices.get_series_by_director_name(director)
+            if not series:
+                return Response(content=f"No Series from Director: {director}.", status_code=200)
             return series
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -57,6 +61,8 @@ class SeriesController:
     def get_my_series(user_id: str):
         try:
             series = SeriesServices.get_my_series(user_id)
+            if not series:
+                return Response(content="You have not watched any series yet.", status_code=200)
             return series
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -77,6 +83,20 @@ class SeriesController:
     def get_series_by_name(series: str):
         try:
             series = SeriesServices.get_series_by_name(series)
+            if not series:
+                return Response(content=f"No Series with name: {series}.", status_code=200)
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_series_by_genre(genre: str):
+        try:
+            series = SeriesServices.get_series_by_genre(genre)
+            if not series:
+                return Response(content=f"No Series with genre: {genre}.", status_code=200)
             return series
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

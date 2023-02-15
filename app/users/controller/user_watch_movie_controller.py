@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from starlette.responses import Response
 
 from app.base import AppException
 from app.movies.service import MovieServices
@@ -33,6 +34,8 @@ class UserWatchMovieController:
     def get_my_watched_movies_list(user_id: str):
         try:
             movies = UserWatchMovieServices.get_my_watched_movies_list(user_id)
+            if not movies:
+                return Response(content="You have not watched any movie yet.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -43,6 +46,8 @@ class UserWatchMovieController:
     def get_popular_movies():
         try:
             movies = UserWatchMovieServices.get_popular_movies()
+            if not movies:
+                return Response(content="We have not yet generated movie popularity list.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -53,6 +58,8 @@ class UserWatchMovieController:
     def get_best_rated_movie(best: bool = True):
         try:
             movie = UserWatchMovieServices.get_best_rated_movie(best)
+            if not movie:
+                return Response(content="We have not yet generated movie popularity list.", status_code=200)
             return movie
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
