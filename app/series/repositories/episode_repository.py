@@ -7,7 +7,7 @@ class EpisodeRepository(BaseCRUDRepository):
 
     def read_by_series_id(self, series_id: str):
         try:
-            episodes = self.db.query(Episode).filter(Episode.series_id == series_id).all()
+            episodes = self.db.query(Episode).filter(Episode.series_id == series_id).order_by(Episode.name).all()
             return episodes
         except Exception as e:
             self.db.rollback()

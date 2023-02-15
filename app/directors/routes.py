@@ -27,16 +27,23 @@ def get_director_by_id(director_id: str):
 
 @director_router.get("/search-directors-by-last-name",
                      response_model=list[DirectorSchema],
+                     description="Search Directors by First Name")
+def search_directors_by_first_name(first_name: str):
+    return DirectorController.search_directors_by_first_name(first_name.strip())
+
+
+@director_router.get("/search-directors-by-last-name",
+                     response_model=list[DirectorSchema],
                      description="Search Directors by Last Name")
 def search_directors_by_last_name(last_name: str):
-    return DirectorController.search_directors_by_last_name(last_name)
+    return DirectorController.search_directors_by_last_name(last_name.strip())
 
 
 @director_router.get("/search-directors-by-country",
                      response_model=list[DirectorSchema],
                      description="Search Directors by Country")
 def search_directors_by_country(country: str):
-    return DirectorController.search_directors_by_country(country)
+    return DirectorController.search_directors_by_country(country.strip())
 
 
 @director_router.put("/id",

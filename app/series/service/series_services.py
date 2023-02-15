@@ -1,3 +1,6 @@
+from app.directors.exceptions.director_exceptions import NonExistingDirectorException
+from app.directors.models import Director
+from app.directors.repositories import DirectorRepository
 from app.series.models import Series
 from app.series.repositories import SeriesRepository
 from app.users.models.user import UserWatchEpisode
@@ -40,6 +43,19 @@ class SeriesServices:
             with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
                 return repository.read_by_id(series_id)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_series_by_director_name(director: str):
+        try:
+            with SessionLocal() as db:
+                director_repo = DirectorRepository(db, Director)
+                obj = director_repo.read_directors_by_last_name(director, search=False)
+                if not obj:
+                    raise NonExistingDirectorException(message=f"We do not have {director} in our Database.")
+                series_repo = SeriesRepository(db, Series)
+                return series_repo.read_series_by_director_id(obj.id)
         except Exception as e:
             raise e
 

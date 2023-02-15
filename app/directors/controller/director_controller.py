@@ -48,6 +48,16 @@ class DirectorController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def search_directors_by_first_name(first_name: str):
+        try:
+            director = DirectorServices.search_directors_by_first_name(first_name)
+            return director
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def search_directors_by_country(country: str):
         try:
             director = DirectorServices.search_directors_by_country(country)

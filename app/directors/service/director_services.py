@@ -43,6 +43,15 @@ class DirectorServices:
             raise e
 
     @staticmethod
+    def search_directors_by_first_name(first_name: str):
+        try:
+            with SessionLocal() as db:
+                repository = DirectorRepository(db, Director)
+                return repository.read_directors_by_first_name(first_name)
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def search_directors_by_country(country: str):
         try:
             with SessionLocal() as db:
