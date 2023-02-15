@@ -33,7 +33,7 @@ def get_genre_by_id(genre_id: str):
 
 @genre_router.get("/search-genres-by-name", response_model=list[GenreSchema], description="Search Genres by Name")
 def search_genres_by_name(name: str):
-    return GenreController.search_genres_by_name(name)
+    return GenreController.search_genres_by_name(name.strip())
 
 
 @genre_router.put("/id",

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from starlette.requests import Request
+from starlette.responses import Response
 
 from app.series.controller import SeriesController, EpisodeController
 from app.series.controller.series_actor_controller import SeriesActorController
@@ -22,13 +23,6 @@ def create_new_series(series: SeriesSchemaIn):
 @series_router.get("/get-all-series", description="Get all Series from DB", response_model=list[SeriesWithActorsSchema])
 def get_all_series():
     return SeriesController.read_all_series()
-
-
-@series_router.get("/search-series-by-director",
-                   description="Search for Series by Director",
-                   summary="Search Series by Director Last Name")
-def get_series_by_director_name(director: str):
-    return SeriesController.get_series_by_director_name(director.strip())
 
 
 @series_router.get("/get-series-by-episode-id")
@@ -64,7 +58,10 @@ def create_new_episode(episode: EpisodeSchemaIn):
                     response_model=list[EpisodeSchema],
                     description="Get all episodes from a Series")
 def get_all_episodes_for_series(series_title: str):
-    return EpisodeController.get_all_episodes_by_series(series_title)
+    episodes = EpisodeController.get_all_episodes_by_series(series_title)
+    if not episodes:
+        Response(content=f"No Episodes for Series: {series_title}.", status_code=404)
+    return episodes
 
 
 @episode_router.get("/get-episode-by-id",
@@ -97,27 +94,33 @@ series_actor_router = APIRouter(tags=["SeriesActors"], prefix="/api/series_actor
 @series_actor_router.post("/add-actor-to-series",
                           dependencies=[Depends(JWTBearer(["super_user"]))],
                           description="Add actor to Series")
-def add_actor_to_movie(series_id: str, actor_id: str):
+def add_actor_to_series(series_id: str, actor_id: str):
     return SeriesActorController.create_series_actor(series_id, actor_id)
 
 
 @series_actor_router.delete("/remove-actor-from-series",
                             dependencies=[Depends(JWTBearer(["super_user"]))],
                             description="Remove actor from Series")
-def remove_actor_from_movie(series_id: str, actor_id: str):
+def remove_actor_from_series(series_id: str, actor_id: str):
     return SeriesActorController.delete_series_actor(series_id, actor_id)
 
 
 watch_episode = APIRouter(prefix="/api/watch_episode", tags=["Watch Episode"])
 
 
-@watch_episode.post("/", description="Select episode to watch", status_code=status.HTTP_201_CREATED)
+@watch_episode.post("/",
+                    description="Select episode to watch",
+                    status_code=status.HTTP_201_CREATED,
+                    summary="Watch Episode. User Route.")
 def user_watch_episode(request: Request, episode_name: str, series_title: str):
     user_id = request.cookies.get("user_id")
     return UserWatchEpisodeController.user_watch_episode(user_id, episode_name, series_title)
 
 
-@watch_episode.put("/rate-episode", response_model=UserWatchEpisodeSchema, description="Rate Series Episode")
+@watch_episode.put("/rate-episode",
+                   response_model=UserWatchEpisodeSchema,
+                   description="Rate Series Episode",
+                   summary="Rate Episode. User Route.")
 def user_rate_episode(request: Request, episode_name: str, series_title: str, rating: int):
     if not 0 < rating <= 10:
         raise HTTPException(status_code=400, detail="Rating must be between 1 and 10.")
@@ -131,26 +134,60 @@ def user_rate_episode(request: Request, episode_name: str, series_title: str, ra
                    dependencies=[Depends(JWTBearer(["regular_user"]))])
 def get_my_series(request: Request):
     user_id = request.cookies.get("user_id")
-    return SeriesController.get_my_series(user_id)
+    my_series = SeriesController.get_my_series(user_id)
+    if not my_series:
+        return Response(content="You have not watched any series yet.", status_code=404)
+    return my_series
 
 
 @watch_episode.get("/search-series", response_model=list[SeriesWithActorsSchema], description="Search for Series")
 def search_series_by_name(series: str):
-    return SeriesController.get_series_by_name(series.strip())
+    series = SeriesController.get_series_by_name(series.strip())
+    if not series:
+        return Response(content=f"No Series with name: {series}.", status_code=404)
+    return series
+
+
+@watch_episode.get("/search-series-by-genre",
+                   response_model=list[SeriesWithActorsSchema],
+                   description="Search for Series")
+def search_series_by_genre(genre: str):
+    series = SeriesController.get_series_by_name(genre.strip())
+    if not series:
+        return Response(content=f"No Series with Genre: {genre}.", status_code=404)
+    return series
+
+
+@watch_episode.get("/search-series-by-director",
+                   description="Search for Series by Director",
+                   summary="Search Series by Director Last Name")
+def get_series_by_director_name(director: str):
+    series = SeriesController.get_series_by_director_name(director.strip())
+    if not series:
+        return Response(content=f"No Series from Director: {director}.", status_code=404)
+    return series
 
 
 @watch_episode.get("/get-popular-series", description="Get most popular Series.")
 def get_most_popular_series():
     series = UserWatchEpisodeController.get_most_popular_series()
+    if not series:
+        return Response(content=f"We have not generated series popularity list yet.", status_code=404)
     sorted_series = {k: f"Users watch: {v}" for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}
     return sorted_series
 
 
 @watch_episode.get("/get-best-rated-episodes", description="Get best rated episodes.")
 def get_best_rated_episodes():
-    return EpisodeController.get_best_rated_episode()
+    episode = EpisodeController.get_best_rated_episode()
+    if not episode:
+        return Response(content=f"We have not generated episode popularity list yet.", status_code=404)
+    return episode
 
 
 @watch_episode.get("/get-worst-rated-episodes", description="Get worst rated episodes.")
 def get_worst_rated_episodes():
-    return EpisodeController.get_best_rated_episode(best=False)
+    episode = EpisodeController.get_best_rated_episode(best=False)
+    if not episode:
+        return Response(content=f"We have not generated episode popularity list yet.", status_code=404)
+    return episode

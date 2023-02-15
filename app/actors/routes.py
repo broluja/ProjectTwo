@@ -23,13 +23,13 @@ def get_actor_by_id(actor_id: str):
 
 
 @actor_router.get("/get-actor-by-last-name", response_model=list[ActorSchema], description="Read Actor by Last Name")
-def get_actor_by_id(actor: str):
-    return ActorController.get_actor_by_last_name(actor)
+def get_actor_last_name(actor: str):
+    return ActorController.get_actor_by_last_name(actor.strip())
 
 
 @actor_router.get("/get-actor-movies")
 def get_actor_movies(actor_last_name: str):
-    return ActorController.get_actor_movies(actor_last_name)
+    return ActorController.get_actor_movies(actor_last_name.strip())
 
 
 @actor_router.put("/id/update-actor",
