@@ -102,12 +102,12 @@ class UserServices:
             raise e
 
     @staticmethod
-    def deactivate_user(user_id: str):
+    def deactivate_user(user_id: str, activity=False):
         try:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
                 user = UserServices.get_user_by_id(user_id)
-                updates = {"is_active": False}
+                updates = {"is_active": activity}
                 return repository.update(user, updates)
         except Exception as e:
             raise e

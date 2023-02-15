@@ -155,9 +155,9 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def deactivate_user(user_id: str):
+    def deactivate_user(user_id: str, activity: bool = False):
         try:
-            user = UserServices.deactivate_user(user_id)
+            user = UserServices.deactivate_user(user_id, activity)
             return user
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

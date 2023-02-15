@@ -156,8 +156,17 @@ def update_my_name(request: Request, username: str):
                  summary="Deactivate User. Admin route",
                  description="Deactivate specific User.",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
-def update_my_name(user_id: str):
+def deactivate_user(user_id: str):
     return UserController.deactivate_user(user_id)
+
+
+@user_router.put("/activate-user",
+                 response_model=UserSchema,
+                 summary="Activate User. Admin route",
+                 description="Activate specific User.",
+                 dependencies=[Depends(JWTBearer(["super_user"]))])
+def deactivate_user(user_id: str):
+    return UserController.deactivate_user(user_id, activity=True)
 
 
 @user_router.delete("/delete-user",
