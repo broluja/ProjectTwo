@@ -8,6 +8,7 @@ from app.series.schemas import *
 from app.users.controller import JWTBearer
 from app.users.controller.user_watch_episode_controller import UserWatchEpisodeController
 from app.users.schemas.user_watch_episode_schema import UserWatchEpisodeSchema
+from app.utils import get_day_before_one_month
 
 series_router = APIRouter(tags=["Series"], prefix="/api/series")
 
@@ -169,3 +170,16 @@ def get_best_rated_episodes():
 @watch_episode.get("/get-worst-rated-episodes", description="Get worst rated episodes.")
 def get_worst_rated_episodes():
     return EpisodeController.get_best_rated_episode(best=False)
+
+
+@watch_episode.get("/get-latest-features",
+                   summary="Get latest features.",
+                   description="Show recent released series.")
+def get_latest_features():
+    date_limit = get_day_before_one_month()
+    return SeriesController.get_latest_features(date_limit)
+
+
+@watch_episode.get("/show-series-never-downloaded")
+def show_least_popular_series():
+    return SeriesController.show_series_never_downloaded()

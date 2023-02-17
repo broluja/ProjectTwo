@@ -127,7 +127,7 @@ def show_worst_rated_movie():
 
 
 @watch_movie.get("/show-latest-features",
-                 description="Show latest released movies.",
+                 description="Show recent released movies.",
                  summary="Show latest features",
                  response_model=list[MovieWithActorsSchema])
 def show_latest_features():
@@ -137,7 +137,6 @@ def show_latest_features():
 
 @watch_movie.get("/show-movies-never-downloaded",
                  summary="Show unpopular movies that never have been watched. Admin route.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))],
-                 response_model=list[MovieSchema])
+                 dependencies=[Depends(JWTBearer(["super_user"]))])
 def show_least_popular_movies():
     return MovieController.show_least_popular_movies()

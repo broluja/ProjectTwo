@@ -39,9 +39,8 @@ class MovieRepository(BaseCRUDRepository):
 
     def read_least_popular_movies(self):
         try:
-            subquery = self.db.query(UserWatchMovie.movie_id).distinct().all()
-            ids = [obj.movie_id for obj in subquery]
-            result = self.db.query(Movie).filter(Movie.id.not_in(ids)).all()
+            sub = self.db.query(UserWatchMovie.movie_id.label('movie')).subquery('sub')
+            result = self.db.query(Movie.title.label("Movie"), Movie.id.label('ID')).filter(Movie.id.not_in(sub)).all()
             return result
         except Exception as e:
             self.db.rollback()

@@ -118,7 +118,7 @@ class MovieController:
         try:
             movies = MovieServices.show_least_popular_movies()
             if not movies:
-                return Response(content="We have not yet generated movie popularity list.", status_code=200)
+                return Response(content="There are no movies that never have been downloaded.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

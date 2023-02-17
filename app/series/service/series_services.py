@@ -107,6 +107,25 @@ class SeriesServices:
         except Exception as e:
             raise e
 
+    @staticmethod
+    def get_latest_features(date_limit: str):
+        try:
+            with SessionLocal() as db:
+                repository = SeriesRepository(db, Series)
+                series = repository.read_latest_releases(date_limit)
+                return series
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def show_series_never_downloaded():
+        try:
+            with SessionLocal() as db:
+                repository = SeriesRepository(db, Series)
+                series = repository.read_least_popular_series()
+                return series
+        except Exception as e:
+            raise e
 
     @staticmethod
     def update_series_data(series_id: str, attributes: dict):

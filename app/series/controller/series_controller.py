@@ -104,6 +104,30 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_latest_features(date_limit: str):
+        try:
+            series = SeriesServices.get_latest_features(date_limit)
+            if not series:
+                return Response(content="No series in latest list.", status_code=200)
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def show_series_never_downloaded():
+        try:
+            series = SeriesServices.show_series_never_downloaded()
+            if not series:
+                return Response(content="There are no series that never have been downloaded.", status_code=200)
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def update_series_data(series_id: str, attributes: dict):
         try:
             series = SeriesServices.update_series_data(series_id, attributes)

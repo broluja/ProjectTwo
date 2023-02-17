@@ -1,5 +1,8 @@
+from sqlalchemy import distinct
+
 from app.base import BaseCRUDRepository
 from app.series.models import Series, Episode
+from app.users.models.user import UserWatchEpisode
 
 
 class SeriesRepository(BaseCRUDRepository):
@@ -36,6 +39,25 @@ class SeriesRepository(BaseCRUDRepository):
         try:
             series = self.db.query(Series).join(Episode).filter(Episode.id == episode_id).first()
             return series
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_latest_releases(self, date_limit: str):
+        try:
+            series = self.db.query(Series).filter(Series.date_added >= date_limit).all()
+            return series
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_least_popular_series(self):
+        try:
+            sub1 = self.db.query(distinct(UserWatchEpisode.episode_id.label('episode'))).subquery('sub1')
+            sub2 = self.db.query(Series.id).join(Episode).filter(
+                Series.id == Episode.series_id).filter(Episode.id.in_(sub1)).distinct().subquery('sub2')
+            result = self.db.query(Series.id, Series.title).filter(Series.id.not_in(sub2))
+            return result
         except Exception as e:
             self.db.rollback()
             raise e
