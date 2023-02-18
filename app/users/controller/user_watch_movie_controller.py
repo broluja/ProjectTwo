@@ -23,8 +23,8 @@ class UserWatchMovieController:
     def user_rate_movie(user_id: str, title: str, rating: int):
         try:
             movie = MovieServices.get_movie_by_title(title)
-            rate_movie = UserWatchMovieServices.rate_movie(user_id, movie.id, rating)
-            return rate_movie
+            rated_movie = UserWatchMovieServices.rate_movie(user_id, movie.id, rating)
+            return rated_movie
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
@@ -61,6 +61,18 @@ class UserWatchMovieController:
             if not movie:
                 return Response(content="We have not yet generated movie popularity list.", status_code=200)
             return movie
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_my_recommendations(user_id: str, page: int):
+        try:
+            movies = UserWatchMovieServices.get_my_recommendations(user_id, page)
+            if not movies:
+                return MovieServices.get_all_movies(page)
+            return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:

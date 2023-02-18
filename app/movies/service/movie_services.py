@@ -30,11 +30,12 @@ class MovieServices:
             raise e
 
     @staticmethod
-    def get_all_movies():
+    def get_all_movies(page: int):
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
-                movies = repository.read_all()
+                skip = (page - 1) * PER_PAGE
+                movies = repository.read_many(skip=skip, limit=PER_PAGE)
                 return movies
         except Exception as e:
             raise e

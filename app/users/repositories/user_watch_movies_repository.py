@@ -1,6 +1,8 @@
 from sqlalchemy.sql.functions import count, func
 
 from app.base import BaseCRUDRepository
+from app.genres.models import Genre
+from app.movies.models import Movie
 from app.users.models.user import UserWatchMovie
 
 PER_PAGE = 5
@@ -51,6 +53,17 @@ class UserWatchMovieRepository(BaseCRUDRepository):
                 movie = self.db.query(subquery.c.movie.label("movie"), subquery.c.rating.label("rating")).filter(
                     subquery.c.rating.label("rating") == min_rating)
             return movie
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_users_recommendations(self, user_id: str):
+        try:
+            res = self.db.query(UserWatchMovie.movie_id, Movie.director_id.label("director_ID"),
+                                Genre.id.label("Genre_ID")).\
+                join(Movie, UserWatchMovie.movie_id == Movie.id).\
+                join(Genre, Movie.genre_id == Genre.id).all()
+            return res
         except Exception as e:
             self.db.rollback()
             raise e

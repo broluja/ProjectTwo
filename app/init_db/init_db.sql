@@ -1,8 +1,8 @@
-CREATE USER 'broluja'@'localhost' IDENTIFIED BY 'broluja';
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'username';
 GRANT CREATE, ALTER, DROP, INSERT, UPDATE, DELETE, SELECT, REFERENCES, RELOAD
-on *.* TO 'broluja'@'localhost' WITH GRANT OPTION;
+on *.* TO 'username'@'localhost' WITH GRANT OPTION;
 
 FLUSH PRIVILEGES;
 
-CREATE DATABASE IF NOT EXISTS fletnix;
+CREATE DATABASE IF NOT EXISTS database_name;
 

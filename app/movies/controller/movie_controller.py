@@ -24,11 +24,11 @@ class MovieController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def get_all_movies():
+    def get_all_movies(page: int):
         try:
-            movies = MovieServices.get_all_movies()
+            movies = MovieServices.get_all_movies(page)
             if not movies:
-                return Response(content=f"No Movies in our Database yet.", status_code=200)
+                return Response(content=f"End of query.", status_code=200)
             return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

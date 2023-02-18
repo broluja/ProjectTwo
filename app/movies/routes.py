@@ -18,8 +18,8 @@ def add_new_movie(movie: MovieSchemaIn):
 
 
 @movie_router.get("/get-all-movies", response_model=list[MovieWithActorsSchema], description="Read all Movies from DB")
-def get_all_movies():
-    return MovieController.get_all_movies()
+def get_all_movies(page: int = 1):
+    return MovieController.get_all_movies(page)
 
 
 @movie_router.get("/get-movie-actors", response_model=MovieWithActorsSchema)
@@ -74,7 +74,9 @@ def user_rate_movie(request: Request, title: str, rating: int):
     if not 0 < rating <= 10:
         raise HTTPException(status_code=400, detail="Rating must be between 1 and 10.")
     user_id = request.cookies.get("user_id")
-    return UserWatchMovieController.user_rate_movie(user_id, title, rating)
+    obj = UserWatchMovieController.user_rate_movie(user_id, title, rating)
+    print(obj.__dict__)
+    return obj
 
 
 @watch_movie.get("/get-my-watched-movies",
@@ -140,3 +142,12 @@ def show_latest_features():
                  dependencies=[Depends(JWTBearer(["super_user"]))])
 def show_least_popular_movies():
     return MovieController.show_least_popular_movies()
+
+
+@watch_movie.get("/get-my-recommendations",
+                 summary="Show recommended Movies. User route.",
+                 description="Show User recommended Movies.",
+                 response_model=list[MovieSchema])
+def get_my_recommendations(request: Request, page: int = 1):
+    user_id = request.cookies.get("user_id")
+    return UserWatchMovieController.get_my_recommendations(user_id, page)
