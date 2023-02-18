@@ -22,8 +22,8 @@ def create_new_series(series: SeriesSchemaIn):
 
 
 @series_router.get("/get-all-series", description="Get all Series from DB", response_model=list[SeriesWithActorsSchema])
-def get_all_series():
-    return SeriesController.read_all_series()
+def get_all_series(page: int = 1):
+    return SeriesController.read_all_series(page)
 
 
 @series_router.get("/get-series-by-episode-id")
@@ -183,3 +183,12 @@ def get_latest_features():
 @watch_episode.get("/show-series-never-downloaded")
 def show_least_popular_series():
     return SeriesController.show_series_never_downloaded()
+
+
+@watch_episode.get("/get-users-series-recommendations",
+                   summary="Show Users recommendations. User Route.",
+                   description="Show series recommendations for User")
+def get_users_series_recommendations(request: Request, page: int = 1):
+    user_id = request.cookies.get("user_id")
+    return UserWatchEpisodeController.get_users_recommendations(user_id, page)
+

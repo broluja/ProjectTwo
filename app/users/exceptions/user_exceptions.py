@@ -66,3 +66,9 @@ class AdminLoginException(AppException):
     """Exception is raised when user tries to log in as Admin."""
     message = "You are not an Admin."
     code = 403
+
+
+class NonExistingAdminIdException(AppException):
+    """Exception raised when provided Administrator's ID is non-existing."""
+    message = "Unknown Admin ID."
+    code = 404

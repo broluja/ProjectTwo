@@ -3,6 +3,7 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.sql.functions import count
 
 from app.base import BaseCRUDRepository
+from app.genres.models import Genre
 from app.series.models import Episode, Series
 from app.users.models.user import UserWatchEpisode
 
@@ -69,6 +70,18 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
                 episode = self.db.query(subquery.c.episode.label("episode"), subquery.c.rating.label("rating")).filter(
                     subquery.c.rating.label("rating") == min_rating)
             return episode
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_users_affinities(self, user_id: str):
+        try:
+            sq = self.db.query(UserWatchEpisode.episode_id, Genre.id.label("Genre_ID")). \
+                join(Episode, UserWatchEpisode.episode_id == Episode.id). \
+                join(Series, Series.id == Episode.series_id).\
+                join(Genre, Series.genre_id == Genre.id).filter(UserWatchEpisode.user_id == user_id).subquery('sq')
+            result = self.db.query(sq.c.Genre_ID).distinct().all()
+            return result
         except Exception as e:
             self.db.rollback()
             raise e

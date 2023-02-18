@@ -86,9 +86,9 @@ class UserWatchMovieServices:
         try:
             with SessionLocal() as db:
                 user_watch_movie_repo = UserWatchMovieRepository(db, UserWatchMovie)
-                users_movies = user_watch_movie_repo.read_users_recommendations(user_id)
+                users_affinities = user_watch_movie_repo.read_users_affinities(user_id)
                 movies_repo = MovieRepository(db, Movie)
-                genres = [movie.Genre_ID for movie in users_movies]
+                genres = [affinity.Genre_ID for affinity in users_affinities]
                 return movies_repo.read_movies_by_group_of_genres(page, genres)
         except Exception as e:
             raise e

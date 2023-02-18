@@ -4,6 +4,8 @@ from app.base import BaseCRUDRepository
 from app.series.models import Series, Episode
 from app.users.models.user import UserWatchEpisode
 
+PER_PAGE = 5
+
 
 class SeriesRepository(BaseCRUDRepository):
     """Repository for Series Model"""
@@ -58,6 +60,15 @@ class SeriesRepository(BaseCRUDRepository):
                 Series.id == Episode.series_id).filter(Episode.id.in_(sub1)).distinct().subquery('sub2')
             result = self.db.query(Series.id, Series.title).filter(Series.id.not_in(sub2))
             return result
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_movies_by_group_of_genres(self, page, genres):
+        try:
+            skip = (page - 1) * PER_PAGE
+            movies = self.db.query(Series).filter(Series.genre_id.in_(genres)).offset(skip).limit(PER_PAGE).all()
+            return movies
         except Exception as e:
             self.db.rollback()
             raise e

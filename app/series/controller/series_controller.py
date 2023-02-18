@@ -24,9 +24,9 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def read_all_series():
+    def read_all_series(page):
         try:
-            series = SeriesServices.read_all_series()
+            series = SeriesServices.read_all_series(page)
             if not series:
                 return Response(content="We have no Series in our Database.", status_code=200)
             return series

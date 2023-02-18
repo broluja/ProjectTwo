@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from starlette.responses import Response
 
 from app.base import AppException
-from app.series.service import EpisodeServices
+from app.series.service import EpisodeServices, SeriesServices
 from app.users.service import UserWatchEpisodeServices
 
 
@@ -36,6 +36,18 @@ class UserWatchEpisodeController:
             series = UserWatchEpisodeServices.get_most_popular_series()
             if not series:
                 return Response(content=f"We have not generated series popularity list yet.", status_code=200)
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_users_recommendations(user_id: str, page: int):
+        try:
+            series = UserWatchEpisodeServices.get_users_recommendations(user_id, page)
+            if not series:
+                return SeriesServices.read_all_series(page)
             return series
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

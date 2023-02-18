@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from app.db import SessionLocal
 from app.series.models import Episode, Series
 from app.series.repositories import EpisodeRepository, SeriesRepository
@@ -56,5 +54,17 @@ class UserWatchEpisodeServices:
                     series = series_repo.read_by_id(series_id)
                     response.update({series.title: views})
                 return response
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_users_recommendations(user_id: str, page: int):
+        try:
+            with SessionLocal() as db:
+                user_watch_episode_repo = UserWatchEpisodeRepository(db, UserWatchEpisode)
+                users_affinities = user_watch_episode_repo.read_users_affinities(user_id)
+                series_repo = SeriesRepository(db, Series)
+                genres = [affinity.Genre_ID for affinity in users_affinities]
+                return series_repo.read_movies_by_group_of_genres(page, genres)
         except Exception as e:
             raise e

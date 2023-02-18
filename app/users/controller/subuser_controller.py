@@ -21,6 +21,8 @@ class SubuserController:
     def get_all_subusers():
         try:
             subusers = SubuserServices.get_all_subusers()
+            if not subusers:
+                return Response(content="There are no Subusers created in our Database.", status_code=200)
             return subusers
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

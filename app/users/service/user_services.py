@@ -1,6 +1,6 @@
-from app.users.repositories import UserRepository
+from app.users.repositories import UserRepository, SubuserRepository
 from app.db.database import SessionLocal
-from app.users.models import User
+from app.users.models import User, Subuser
 from app.users.exceptions import InvalidCredentialsException, UnverifiedAccountException, InactiveUserException
 
 
@@ -149,7 +149,12 @@ class UserServices:
     def delete_user(user_id: str):
         try:
             with SessionLocal() as db:
-                repository = UserRepository(db, User)
-                return repository.delete(user_id)
+                subuser_repo = SubuserRepository(db, Subuser)
+                subs = subuser_repo.read_subusers_by_user_id(user_id)
+                user_repo = UserRepository(db, User)
+                if subs:
+                    for sub in subs:
+                        subuser_repo.delete(sub.id)
+                return user_repo.delete(user_id)
         except Exception as e:
             raise e

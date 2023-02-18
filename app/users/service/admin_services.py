@@ -1,5 +1,5 @@
 from app.db import SessionLocal
-from app.users.exceptions import NonExistingUserIdException, AdminAlreadyCreatedException
+from app.users.exceptions import NonExistingUserIdException, AdminAlreadyCreatedException, NonExistingAdminIdException
 from app.users.repositories import AdminRepository
 from app.users.models import Admin
 from app.users.service import UserServices
@@ -29,6 +29,8 @@ class AdminServices:
             with SessionLocal() as db:
                 admin_repository = AdminRepository(db, Admin)
                 admin = admin_repository.read_by_id(admin_id)
+                if not admin:
+                    raise NonExistingAdminIdException
                 obj = UserServices.update_admin_status(admin.user_id, superuser=False)
                 admin_repository.delete(admin_id)
                 return obj

@@ -32,11 +32,12 @@ class SeriesServices:
             raise e
 
     @staticmethod
-    def read_all_series():
+    def read_all_series(page):
         try:
             with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
-                return repository.read_all()
+                skip = (page - 1) * PER_PAGE
+                return repository.read_many(skip=skip, limit=PER_PAGE)
         except Exception as e:
             raise e
 

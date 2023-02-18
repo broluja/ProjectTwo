@@ -57,12 +57,11 @@ class UserWatchMovieRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_users_recommendations(self, user_id: str):
+    def read_users_affinities(self, user_id: str):
         try:
-            res = self.db.query(UserWatchMovie.movie_id, Movie.director_id.label("director_ID"),
-                                Genre.id.label("Genre_ID")).\
+            res = self.db.query(UserWatchMovie.movie_id, Genre.id.label("Genre_ID")).\
                 join(Movie, UserWatchMovie.movie_id == Movie.id).\
-                join(Genre, Movie.genre_id == Genre.id).all()
+                join(Genre, Movie.genre_id == Genre.id).filter(UserWatchMovie.user_id == user_id).all()
             return res
         except Exception as e:
             self.db.rollback()
