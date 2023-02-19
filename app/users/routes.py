@@ -26,7 +26,7 @@ def register_user(user: UserSchemaIn):
                   status_code=status.HTTP_200_OK)
 def verify_user(verification_code: int):
     UserController.verify_user(verification_code)
-    return {"message": "Account verified. You can log in now"}
+    return Response(content="Account verified. You can log in now", status_code=200)
 
 
 @user_router.post("/user-login",

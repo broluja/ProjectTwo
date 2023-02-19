@@ -17,17 +17,32 @@ def add_new_movie(movie: MovieSchemaIn):
     return MovieController.create_movie(**vars(movie))
 
 
-@movie_router.get("/get-all-movies", response_model=list[MovieWithActorsSchema], description="Read all Movies from DB")
+@movie_router.get("/get-all-movies",
+                  response_model=list[MovieWithActorsSchema],
+                  description="Read all Movies from DB",
+                  summary="Search all Movies.")
 def get_all_movies(page: int = 1):
     return MovieController.get_all_movies(page)
 
 
-@movie_router.get("/get-movie-actors", response_model=MovieWithActorsSchema)
+@movie_router.get("/get-movie-data",
+                  response_model=MovieFullSchema,
+                  summary="See actors, director and Genre for specific Movie.")
+def get_movie_data(title: str):
+    return MovieController.get_movie_data(title)
+
+
+@movie_router.get("/get-movie-actors",
+                  response_model=MovieWithActorsSchema,
+                  summary="Read Movie by ID. Admin Route.",
+                  dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_movie_with_all_actors(movie_id: str):
     return MovieActorController.get_movie_with_actors(movie_id)
 
 
-@movie_router.get("/get-movie-director-and-genre", response_model=MovieWithDirectorAndGenreSchema)
+@movie_router.get("/get-movie-director-and-genre",
+                  response_model=MovieWithDirectorAndGenreSchema,
+                  summary="Read Movie with Genre and Director. Admin Route.",)
 def get_movie_with_genre_and_director(movie_id: str):
     return MovieActorController.get_movie_with_director_and_genre(movie_id)
 

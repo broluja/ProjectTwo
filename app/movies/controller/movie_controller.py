@@ -36,6 +36,21 @@ class MovieController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_movie_data(title: str):
+        try:
+            movie = MovieServices.get_movie_by_title(title)
+            genre = GenreServices.get_genre_by_id(movie.genre_id)
+            director = DirectorServices.get_director_by_id(movie.director_id)
+            movie.genre = genre
+            movie.director = director
+            return movie
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+
+    @staticmethod
     def get_movie_by_id(movie_id: str):
         try:
             movie = MovieServices.get_movie_by_id(movie_id)
