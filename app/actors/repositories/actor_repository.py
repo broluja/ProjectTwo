@@ -5,9 +5,12 @@ from app.base import BaseCRUDRepository
 class ActorRepository(BaseCRUDRepository):
     """Repository for Actor Model"""
 
-    def read_actors_by_first_name(self, first_name: str):
+    def read_actors_by_first_name(self, first_name: str, search: bool = True):
         try:
-            actors = self.db.query(Actor).filter(Actor.first_name.ilike(f"%{first_name}%").all())
+            if search:
+                actors = self.db.query(Actor).filter(Actor.first_name.ilike(f"%{first_name}%")).all()
+            else:
+                actors = self.db.query(Actor).filter(Actor.first_name == first_name).first()
             return actors
         except Exception as e:
             self.db.rollback()

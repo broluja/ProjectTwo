@@ -28,7 +28,7 @@ class SeriesController:
         try:
             series = SeriesServices.read_all_series(page)
             if not series:
-                return Response(content="We have no Series in our Database.", status_code=200)
+                return Response(content="End of query.", status_code=200)
             return series
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

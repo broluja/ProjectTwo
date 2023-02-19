@@ -22,7 +22,7 @@ class ActorController:
         try:
             actors = ActorServices.get_all_actors(page)
             if not actors:
-                return Response(content="We have no Actors in our Database yet.", status_code=200)
+                return Response(content="End of query.", status_code=200)
             return actors
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
