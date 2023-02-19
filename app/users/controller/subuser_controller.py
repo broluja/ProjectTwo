@@ -43,6 +43,8 @@ class SubuserController:
     def get_subusers_by_user_id(user_id: str):
         try:
             subusers = SubuserServices.get_all_subusers_for_one_user(user_id)
+            if not subusers:
+                return Response(content=f"No subusers made by user with ID: {user_id}.", status_code=200)
             return subusers
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

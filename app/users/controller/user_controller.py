@@ -23,7 +23,7 @@ class UserController:
             code = generate_random_int(5)
             user = UserServices.create_new_user(valid_email, password, username, code)
             EmailServices.send_code_for_verification(user.email, code)
-            return {"message": "Finish your registration. Instructions are sent to your email."}
+            return Response(content="Finish your registration. Instructions are sent to your email.", status_code=200)
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
@@ -107,6 +107,8 @@ class UserController:
     def search_users_by_email(email: str):
         try:
             users = UserServices.search_users_by_email(email)
+            if not users:
+                return Response(content="No users found", status_code=200)
             return users
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -165,17 +167,6 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
-    def delete_user(user_id: str):
-        try:
-            UserServices.delete_user(user_id)
-            return Response(content=f"User with ID: {user_id} deleted.", status_code=200)
-        except AppException as e:
-            print(str(e))
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
-    @staticmethod
     def get_user_with_all_subusers(user_id):
         try:
             subusers = SubuserController.get_subusers_by_user_id(user_id)
@@ -186,4 +177,15 @@ class UserController:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
             print(e)
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def delete_user(user_id: str):
+        try:
+            UserServices.delete_user(user_id)
+            return Response(content=f"User with ID: {user_id} deleted.", status_code=200)
+        except AppException as e:
+            print(str(e))
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
