@@ -18,17 +18,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-# sql_query = """
-#     SELECT * FROM fletnix.actors
-#     WHERE 1 = 1
-#       AND country IN %(categories)s
-# """
-#
-# params = {"categories": ("USA", "Italy")}
-#
-# with engine.connect() as conn:
-#     result = conn.exec_driver_sql(sql_query, params)
-#     for row in result:
-#         print(row)

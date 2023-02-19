@@ -45,3 +45,12 @@ class AdminServices:
                 return admin_repository.read_all()
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_all_admins_by_country(country: str):
+        try:
+            with SessionLocal() as db:
+                admin_repository = AdminRepository(db, Admin)
+                return admin_repository.read_admins_by_country(country)
+        except Exception as e:
+            raise e

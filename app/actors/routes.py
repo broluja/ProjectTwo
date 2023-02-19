@@ -41,6 +41,6 @@ def update_actor(actor_id, actor: ActorSchemaIn):
     return ActorController.update_actor(actor_id, attributes)
 
 
-@actor_router.get("/id/delete-actor", description="Delete Actor by ID")
-def get_actor_by_id(actor_id: str):
+@actor_router.delete("/id/delete-actor", description="Delete Actor by ID")
+def delete_actor_by_id(actor_id: str):
     return ActorController.delete_actor(actor_id)

@@ -249,6 +249,15 @@ def get_all_admins():
     return AdminController.get_all_admins()
 
 
+@admin_router.get("/read-admins-by-country",
+                  summary="Get all Admins by country. Admin Route",
+                  description="Get all Admins from specific country.",
+                  dependencies=[Depends(JWTBearer(["super_user"]))],
+                  response_model=list[AdminSchema])
+def get_all_admins_by_country(country: str):
+    return AdminController.get_all_admins_by_country(country)
+
+
 @admin_router.delete("/delete-admin",
                      response_model=UserSchema,
                      summary="Deactivate Admin status. Admin route",
