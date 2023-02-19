@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     MAIL_PORT: int
     MAIL_SERVER: str
     MAIL_FROM: str
+    PER_PAGE: int
 
     class Config:
         env_file = './.env'

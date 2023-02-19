@@ -115,7 +115,7 @@ class MovieServices:
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
-                movies = repository.read_least_popular_movies()
+                movies = repository.read_unpopular_movies()
                 return movies
         except Exception as e:
             raise e

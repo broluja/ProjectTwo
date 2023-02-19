@@ -55,3 +55,15 @@ class SeriesWithDirectorAndGenreSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class SeriesFullSchema(BaseModel):
+    title: str
+    date_added: date
+    year_published: str
+    actors: list[ActorSchema]
+    director: DirectorSchema
+    genre: GenreSchema
+
+    class Config:
+        orm_mode = True

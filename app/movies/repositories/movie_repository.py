@@ -2,8 +2,9 @@ from app.base import BaseCRUDRepository
 from app.movies.models import Movie
 from app.movies.exceptions import NonExistingMovieTitleException
 from app.users.models.user import UserWatchMovie
+from app.config import settings
 
-PER_PAGE = 5
+PER_PAGE = settings.PER_PAGE
 
 
 class MovieRepository(BaseCRUDRepository):
@@ -39,7 +40,7 @@ class MovieRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_least_popular_movies(self):
+    def read_unpopular_movies(self):
         try:
             sub = self.db.query(UserWatchMovie.movie_id.label('movie')).subquery('sub')
             result = self.db.query(Movie.title.label("Movie"), Movie.id.label('ID')).filter(Movie.id.not_in(sub)).all()

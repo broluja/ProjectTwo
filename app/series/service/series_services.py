@@ -1,3 +1,4 @@
+from app.config import settings
 from app.directors.exceptions.director_exceptions import NonExistingDirectorException
 from app.directors.models import Director
 from app.directors.repositories import DirectorRepository
@@ -12,7 +13,7 @@ from app.db import SessionLocal
 
 from datetime import date
 
-PER_PAGE = 5
+PER_PAGE = settings.PER_PAGE
 
 
 class SeriesServices:
@@ -85,11 +86,11 @@ class SeriesServices:
             raise e
 
     @staticmethod
-    def get_series_by_name(series: str):
+    def get_series_by_name(series: str, search: bool = True):
         try:
             with SessionLocal() as db:
                 repo = SeriesRepository(db, Series)
-                series = repo.read_series_by_title(series, search=True)
+                series = repo.read_series_by_title(series, search=search)
                 return series
         except Exception as e:
             raise e

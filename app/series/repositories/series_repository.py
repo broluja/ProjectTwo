@@ -26,7 +26,7 @@ class SeriesRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_series_by_title(self, title: str, search=False):
+    def read_series_by_title(self, title: str, search: bool = False):
         try:
             if search:
                 series = self.db.query(Series).filter(Series.title.ilike(f"%{title}%")).all()
@@ -64,7 +64,7 @@ class SeriesRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_movies_by_group_of_genres(self, page, genres):
+    def read_series_by_group_of_genres(self, page, genres):
         try:
             skip = (page - 1) * PER_PAGE
             movies = self.db.query(Series).filter(Series.genre_id.in_(genres)).offset(skip).limit(PER_PAGE).all()

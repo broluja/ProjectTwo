@@ -36,6 +36,20 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_series_data(title: str):
+        try:
+            series = SeriesServices.get_series_by_name(title, search=False)
+            director = DirectorServices.get_director_by_id(series.director_id)
+            genre = GenreServices.get_genre_by_id(series.genre_id)
+            series.director = director
+            series.genre = genre
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def get_series_by_director_name(director: str):
         try:
             series = SeriesServices.get_series_by_director_name(director)

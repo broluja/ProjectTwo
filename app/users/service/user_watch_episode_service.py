@@ -65,6 +65,6 @@ class UserWatchEpisodeServices:
                 users_affinities = user_watch_episode_repo.read_users_affinities(user_id)
                 series_repo = SeriesRepository(db, Series)
                 genres = [affinity.Genre_ID for affinity in users_affinities]
-                return series_repo.read_movies_by_group_of_genres(page, genres)
+                return series_repo.read_series_by_group_of_genres(page, genres)
         except Exception as e:
             raise e
