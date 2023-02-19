@@ -49,7 +49,6 @@ class MovieController:
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
-
     @staticmethod
     def get_movie_by_id(movie_id: str):
         try:
