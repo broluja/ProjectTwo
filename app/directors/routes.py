@@ -10,7 +10,7 @@ director_router = APIRouter(tags=["Directors"], prefix="/api/directors")
 @director_router.post("/create-director",
                       response_model=DirectorSchema,
                       dependencies=[Depends(JWTBearer(["super_user"]))],
-                      description="Register new Director in DB")
+                      summary="Register new Director in DB. Admin Route.")
 def create_new_director(director: DirectorSchemaIn):
     return DirectorController.create_director(director.first_name, director.last_name, director.country)
 
@@ -20,7 +20,10 @@ def get_all_directors():
     return DirectorController.get_all_directors()
 
 
-@director_router.get("/id", response_model=DirectorSchema, description="Read Director using ID")
+@director_router.get("/id",
+                     response_model=DirectorSchema,
+                     summary="Read Director using ID. Admin Route",
+                     dependencies=[Depends(JWTBearer(["super_user"]))],)
 def get_director_by_id(director_id: str):
     return DirectorController.get_director_by_id(director_id)
 
@@ -48,7 +51,7 @@ def search_directors_by_country(country: str):
 
 @director_router.put("/id",
                      response_model=DirectorSchema,
-                     description="Update Director`s data",
+                     summary="Update Director`s data. Admin Route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))])
 def update_director(director_id: str, director: DirectorSchemaIn):
     attributes = {key: value for key, value in vars(director).items() if value}
@@ -56,7 +59,7 @@ def update_director(director_id: str, director: DirectorSchemaIn):
 
 
 @director_router.delete("/delete-director",
-                        summary="Delete Director",
+                        summary="Delete Director. Admin Route.",
                         dependencies=[Depends(JWTBearer(["super_user"]))])
 def delete_director(director_id: str):
     return DirectorController.delete_director(director_id)

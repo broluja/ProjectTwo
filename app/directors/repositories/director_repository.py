@@ -24,9 +24,12 @@ class DirectorRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
-    def read_directors_by_first_name(self, first_name: str):
+    def read_directors_by_first_name(self, first_name: str, search: bool = True):
         try:
-            directors = self.db.query(Director).filter(Director.first_name.ilike(f"%{first_name}%")).all()
+            if search:
+                directors = self.db.query(Director).filter(Director.first_name.ilike(f"%{first_name}%")).all()
+            else:
+                directors = self.db.query(Director).filter(Director.first_name == first_name).first()
             return directors
         except Exception as e:
             self.db.rollback()
