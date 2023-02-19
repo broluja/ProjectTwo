@@ -44,7 +44,9 @@ def login_user(username: str, email: str, password: str, response: Response):
                   description="Demand reset of password.")
 def forget_password(email: str):
     UserController.change_password(email)
-    return {"message": "Request granted. Instructions are sent to your email."}
+    response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
+    response.set_cookie(key="code", value="active", max_age=600)
+    return response
 
 
 @user_router.post("/user-reset-password",
@@ -53,18 +55,22 @@ def forget_password(email: str):
                   dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))])
 def reset_password(email: str):
     UserController.change_password(email)
-    return {"message": "Request granted. Instructions are sent to your email."}
+    response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
+    response.set_cookie(key="code", value="active", max_age=600)
+    return response
 
 
 @user_router.post("/reset-password-complete",
                   summary="Save new password. User route.",
                   description="Set new password.")
-def reset_password_complete(code: int, password: str, new_password: str):
+def reset_password_complete(request: Request, code: int, password: str, new_password: str):
+    if request.cookies.get("code") != "active":
+        raise HTTPException(status_code=400, detail="Verification code expired. Ask for another one.")
     if password != new_password:
         raise HTTPException(status_code=400, detail="Passwords must match. Try again")
     password_hashed = hashlib.sha256(password.encode()).hexdigest()
     UserController.reset_password_complete(code, password_hashed)
-    return {"message": "Reset password finished successfully. You can login now."}
+    return Response(content="Reset password finished successfully. You can login now.", status_code=200)
 
 
 @user_router.post("/admin-login",
