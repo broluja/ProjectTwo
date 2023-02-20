@@ -76,6 +76,16 @@ class SeriesServices:
             raise e
 
     @staticmethod
+    def get_series_by_year(year: int):
+        try:
+            with SessionLocal() as db:
+                series_repository = SeriesRepository(db, Series)
+                series = series_repository.read_series_by_year(str(year))
+                return series
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def get_series_by_episode_id(episode_id: str):
         try:
             with SessionLocal() as db:

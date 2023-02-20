@@ -26,11 +26,6 @@ def get_all_series(page: int = 1):
     return SeriesController.read_all_series(page)
 
 
-@series_router.get("/get-series-data", summary="Get Series data.", response_model=SeriesFullSchema)
-def get_series_data(title: str):
-    return SeriesController.get_series_data(title)
-
-
 @series_router.get("/get-series-by-episode-id",
                    summary="Get Series using ID. Admin Route",
                    dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -152,6 +147,11 @@ def search_series_by_name(series: str):
     return SeriesController.get_series_by_name(series.strip())
 
 
+@watch_episode.get("/get-series-data", summary="Get Series data.", response_model=SeriesFullSchema)
+def get_series_data(title: str):
+    return SeriesController.get_series_data(title.strip())
+
+
 @watch_episode.get("/search-series-by-genre",
                    response_model=list[SeriesWithActorsSchema],
                    description="Search for Series")
@@ -164,6 +164,16 @@ def search_series_by_genre(genre: str):
                    summary="Search Series by Director's Last Name.")
 def get_series_by_director_name(director: str):
     return SeriesController.get_series_by_director_name(director.strip())
+
+
+@watch_episode.get("/get-series-by-year",
+                   response_model=list[SeriesSchema],
+                   summary="Get Series by specific year. User Route.",
+                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+def get_series_by_year(year: int):
+    if not 1900 < year < 2100:
+        raise HTTPException(status_code=200, detail="Sorry, we have no series from provided year.")
+    return SeriesController.get_series_by_year(year)
 
 
 @watch_episode.get("/get-popular-series", description="Get most popular Series.")
@@ -206,4 +216,3 @@ def show_least_popular_series():
 def get_users_series_recommendations(request: Request, page: int = 1):
     user_id = request.cookies.get("user_id")
     return UserWatchEpisodeController.get_users_recommendations(user_id, page)
-

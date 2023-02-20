@@ -106,6 +106,18 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_series_by_year(year: int):
+        try:
+            series = SeriesServices.get_series_by_year(year)
+            if not series:
+                return Response(content=f"No Series from year: {year}.", status_code=200)
+            return series
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def get_series_by_genre(genre: str):
         try:
             series = SeriesServices.get_series_by_genre(genre)

@@ -37,6 +37,14 @@ class SeriesRepository(BaseCRUDRepository):
             self.db.rollback()
             raise e
 
+    def read_series_by_year(self, year):
+        try:
+            series = self.db.query(Series).filter(Series.year_published == year).all()
+            return series
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
     def read_series_by_episode_id(self, episode_id):
         try:
             series = self.db.query(Series).join(Episode).filter(Episode.id == episode_id).first()
