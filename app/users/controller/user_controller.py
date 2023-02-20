@@ -5,7 +5,7 @@ from app.users.service import UserServices
 from .subuser_controller import SubuserController
 from app.base.base_exception import AppException
 from app.users.service import sign_jwt
-from app.users.exceptions import UnknownProfileException, AdminLoginException, UserEmailAlreadyRegisteredException
+from app.users.exceptions import UnknownProfileException, AdminLoginException
 from app.users.service import EmailServices
 from app.utils import generate_random_int
 
