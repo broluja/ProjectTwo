@@ -1,9 +1,11 @@
+from app.actors.exceptions.actor_exceptions import ActorDataException
+from app.config import settings
 from app.db import SessionLocal
 from app.actors.repositories import ActorRepository
 from app.actors.models import Actor
 
 
-PER_PAGE = 5
+PER_PAGE = settings.PER_PAGE
 
 
 class ActorServices:
@@ -17,6 +19,8 @@ class ActorServices:
                           "last_name": last_name,
                           "date_of_birth": date_of_birth,
                           "country": country}
+                if not all(fields.values()):
+                    raise ActorDataException(message="Please fill all the fields.")
                 return repository.create(fields)
         except Exception as e:
             raise e
