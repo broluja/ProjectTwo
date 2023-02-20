@@ -1,3 +1,6 @@
+import pytest
+
+from app.base import AppException
 from app.tests import TestClass, TestingSessionLocal
 from app.users.repositories import UserRepository
 from app.users.models import User
@@ -27,6 +30,13 @@ class TestUserRepo(TestClass):
             assert user.username == "dummy1"
             assert user.is_superuser is False
             assert user.is_active is True
+
+    def test_create_user_integration_error(self):
+        self.create_users_for_methods()
+        with pytest.raises(AppException):
+            with TestingSessionLocal() as db:
+                user_repository = UserRepository(db, User)
+                user_repository.create({"email": "dummy1@gmail.com", "password_hashed": "123", "username": "dummy1"})
 
     def test_create_superuser(self):
         superuser = self.create_superuser()
@@ -77,6 +87,13 @@ class TestUserRepo(TestClass):
         assert users[0].username == user.username
         assert users[0].password_hashed == user.password_hashed
 
+    def test_get_user_by_email_error(self):
+        self.create_users_for_methods()
+        with pytest.raises(AppException):
+            with TestingSessionLocal() as db:
+                user_repository = UserRepository(db, User)
+                user_repository.read_user_by_email("unknown_email@gmail.com")
+
     def test_search_users_by_email(self):
         self.create_users_for_methods()
         with TestingSessionLocal() as db:
@@ -125,6 +142,15 @@ class TestUserRepo(TestClass):
         assert user_with_code.email == obj.email
         assert user_with_code.username == obj.username
         assert user_with_code.password_hashed == obj.password_hashed
+
+    def test_get_user_by_code_error(self):
+        self.create_users_for_methods()
+        with pytest.raises(AppException):
+            with TestingSessionLocal() as db:
+                user_repository = UserRepository(db, User)
+                user = user_repository.read_user_by_email("dummy1@gmail.com")
+                user_repository.update(user, {"verification_code": 12345})
+                user_repository.read_user_by_code(54321)
 
     def test_delete_user(self):
         self.create_users_for_methods()
