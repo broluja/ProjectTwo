@@ -13,9 +13,11 @@ class TestUserRepo(TestClass):
             user_repository = UserRepository(db, User)
             superuser = user_repository.create(
                 {"email": "superuser@gmail.com", "password_hashed": "123", "username": "superuser"})
+            self.superuser = superuser  # To make this test reusable
             return user_repository.update(superuser, {"is_superuser": True})
 
-    def create_users_for_methods(self):
+    @staticmethod
+    def create_users_for_methods():
         with TestingSessionLocal() as db:
             user_repository = UserRepository(db, User)
             user_repository.create({"email": "dummy1@gmail.com", "password_hashed": "123", "username": "dummy1"})
@@ -184,7 +186,7 @@ class TestUserRepo(TestClass):
                 user = user_repository.read_user_by_email("dummy1@gmail.com")
                 subuser_repository = SubuserRepository(db, Subuser)
                 attributes = {"name": "Subuser One", "date_subscribed": "2022-02-02", "user_id": user.id}
-                subuser = subuser_repository.create(attributes)
+                subuser_repository.create(attributes)
 
     def test_read_subuser_by_name(self):
         self.test_create_subuser()
@@ -201,5 +203,3 @@ class TestUserRepo(TestClass):
             subusers = subuser_repository.read_subusers_by_user_id(self.subuser.user_id)
         assert any([subuser.name == self.subuser.name for subuser in subusers])
         assert any([subuser.user_id == self.subuser.user_id for subuser in subusers])
-
-
