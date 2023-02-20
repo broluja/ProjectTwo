@@ -147,14 +147,22 @@ def get_my_subusers(request: Request):
     return UserController.get_user_with_all_subusers(user_id)
 
 
-@user_router.put("/update-user",
+@user_router.put("/update-user-username",
                  response_model=UserSchema,
                  summary="Update my username. User route.",
-                 description="Update my username. User's route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))])
 def update_my_name(request: Request, username: str):
     user_id = request.cookies.get("user_id")
     return UserController.update_username(user_id, username)
+
+
+@user_router.put("/update-user-email",
+                 response_model=UserSchema,
+                 summary="Change my email. User Route.",
+                 dependencies=[Depends(JWTBearer(["regular_user"]))])
+def change_my_email(request: Request, email: str):
+    user_id = request.cookies.get("user_id")
+    return UserController.change_email(user_id, email)
 
 
 @user_router.put("/deactivate-user",

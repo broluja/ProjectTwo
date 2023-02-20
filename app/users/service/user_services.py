@@ -102,6 +102,17 @@ class UserServices:
             raise e
 
     @staticmethod
+    def change_email(user_id: str, valid_email: str):
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                user = UserServices.get_user_by_id(user_id)
+                updates = {"email": valid_email}
+                return repository.update(user, updates)
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def change_user_status(user_id: str, activity=False):
         try:
             with SessionLocal() as db:

@@ -157,6 +157,21 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def change_email(user_id: str, email: str):
+        try:
+            valid = validate_email(email)
+            valid_email = valid.email
+        except EmailNotValidError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        try:
+            user = UserServices.change_email(user_id, valid_email)
+            return user
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def deactivate_user(user_id: str, activity: bool = False):
         try:
             user = UserServices.change_user_status(user_id, activity)
