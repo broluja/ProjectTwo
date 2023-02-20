@@ -8,9 +8,9 @@
 
 
 # Introduction
-Search through movies, series, actors and directors with simple JWT 
+Search through movies, series, actors and directors with a simple JWT 
 based User authentication and authorisation. Project is made as final
-project on ITBootCamp, Python for web developers Course.
+project on ITBootcamp, Python for web developers Course.
 
 
 # Technologies
@@ -70,7 +70,8 @@ pip install -r requirements.txt
 
 
 ### Database
-Start MySQL server and execute all commands in **_init_db/init_db.sql_**
+Start MySQL server and execute all commands in **_init_db/init_db.sql_**. 
+You can run **_init_db/data_** file in MySQL if you want to have some initial data to work with.
 
 
 ### Environment variables
