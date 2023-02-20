@@ -10,7 +10,7 @@ class GenreController:
     @staticmethod
     def create_director(name: str):
         try:
-            genre = GenreServices.create_new_director(name)
+            genre = GenreServices.create_new_genre(name)
             return genre
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)

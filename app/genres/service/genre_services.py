@@ -6,12 +6,12 @@ from app.genres.models import Genre
 class GenreServices:
 
     @staticmethod
-    def create_new_director(name: str):
+    def create_new_genre(name: str):
         try:
             with SessionLocal() as db:
                 repository = GenreRepository(db, Genre)
                 fields = {"name": name}
-                return repository.create(fields)
+                return repository.create_new_genre(fields)
         except Exception as e:
             raise e
 
