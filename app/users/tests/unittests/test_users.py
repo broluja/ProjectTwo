@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy.exc import IntegrityError
 
 from app.base import AppException
 from app.tests import TestClass, TestingSessionLocal
@@ -113,6 +114,23 @@ class TestUserRepo(TestClass):
             user_updated = user_repository.update(user, {"username": "dummy1-updated"})
         assert user_updated.email == user.email
         assert user_updated.username == "dummy1-updated"
+
+    def test_update_email(self):
+        self.create_users_for_methods()
+        with TestingSessionLocal() as db:
+            user_repository = UserRepository(db, User)
+            user = user_repository.read_user_by_email("dummy1@gmail.com")
+            user_updated = user_repository.update(user, {"email": "dummy1-updated@gmail.com"})
+        assert user_updated.email == "dummy1-updated@gmail.com"
+        assert user_updated.username == user.username
+
+    def test_update_email_error(self):
+        self.create_users_for_methods()
+        with pytest.raises(IntegrityError):
+            with TestingSessionLocal() as db:
+                user_repository = UserRepository(db, User)
+                user = user_repository.read_user_by_email("dummy1@gmail.com")
+                user_repository.update(user, {"email": "dummy2@gmail.com"})
 
     def test_deactivate_user(self):
         self.create_users_for_methods()

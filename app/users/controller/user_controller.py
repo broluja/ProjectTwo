@@ -5,7 +5,7 @@ from app.users.service import UserServices
 from .subuser_controller import SubuserController
 from app.base.base_exception import AppException
 from app.users.service import sign_jwt
-from app.users.exceptions import UnknownProfileException, AdminLoginException
+from app.users.exceptions import UnknownProfileException, AdminLoginException, UserEmailAlreadyRegisteredException
 from app.users.service import EmailServices
 from app.utils import generate_random_int
 
@@ -163,6 +163,8 @@ class UserController:
             valid_email = valid.email
         except EmailNotValidError as e:
             raise HTTPException(status_code=400, detail=str(e))
+        if UserServices.get_user_by_email(valid_email):
+            raise HTTPException(status_code=400, detail="Email in use. You cannot change your email to this one.")
         try:
             user = UserServices.change_email(user_id, valid_email)
             return user
