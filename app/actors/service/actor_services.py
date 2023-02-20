@@ -57,6 +57,16 @@ class ActorServices:
             raise e
 
     @staticmethod
+    def get_actor_by_first_name(actor: str):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                actors = repository.read_actors_by_first_name(actor)
+                return actors
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def get_actor_movies(last_name: str):
         try:
             with SessionLocal() as db:

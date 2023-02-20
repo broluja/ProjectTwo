@@ -100,13 +100,16 @@ def get_movie_data(title: str):
 
 @watch_movie.get("/get-my-watched-movies",
                  response_model=list[MovieSchema],
+                 summary="Get user's watched Movies list. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
 def get_my_watched_movies_list(request: Request):
     user_id = request.cookies.get("user_id")
     return UserWatchMovieController.get_my_watched_movies_list(user_id)
 
 
-@watch_movie.get("/top-ten-movies", description="Get top ten movies.", summary="Top Ten Movies. User route.")
+@watch_movie.get("/top-ten-movies",
+                 summary="Top Ten Movies. User route.",
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
 def get_top_ten_movies():
     top_ten = UserWatchMovieController.get_popular_movies()
     sorted_movies = {k: f"Views: {v}" for k, v in sorted(top_ten.items(), key=lambda item: item[1], reverse=True)}
@@ -163,7 +166,7 @@ def get_average_rating_for_movie(name: str):
 
 
 @watch_movie.get("/get-average-ratings",
-                 summary="Get average Movie ratings",
+                 summary="Get average Movie ratings. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
 def get_average_ratings():
     return UserWatchMovieController.get_average_ratings()
@@ -177,7 +180,7 @@ def get_movie_with_average_rating_above_requested(rating: float):
 
 
 @watch_movie.get("/get-average-movie-rating-for-year",
-                 summary="Get average movie rating for a specific year.",
+                 summary="Get average movie rating for a specific year. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
 def get_average_movie_rating_for_year(year: int):
     if not 1900 < year < 2100:
@@ -185,12 +188,12 @@ def get_average_movie_rating_for_year(year: int):
     return UserWatchMovieController.get_average_movie_rating_for_year(year)
 
 
-@watch_movie.get("/best-rated-movie", description="Show best rated movie", )
+@watch_movie.get("/best-rated-movie", description="Show best rated movie.")
 def show_best_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=True)
 
 
-@watch_movie.get("/worst-rated-movie", description="Show worst rated movie")
+@watch_movie.get("/worst-rated-movie", description="Show worst rated movie.")
 def show_worst_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=False)
 

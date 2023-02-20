@@ -249,7 +249,8 @@ admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
                    response_model=AdminSchema,
                    summary="Create new Admin. Admin route",
                    description="Register new Admin. Admin route",
-                   status_code=status.HTTP_201_CREATED)
+                   status_code=status.HTTP_201_CREATED,
+                   dependencies=[Depends(JWTBearer(["super_user"]))])
 def create_new_admin(admin: AdminSchemaIn):
     return AdminController.create_new_admin(admin.dict())
 

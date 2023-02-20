@@ -52,6 +52,18 @@ class ActorController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_actor_by_first_name(actor: str):
+        try:
+            actors = ActorServices.get_actor_by_first_name(actor)
+            if not actors:
+                return Response(content=f"No actor with first name: {actor}", status_code=200)
+            return actors
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def get_actor_movies(last_name: str):
         try:
             actor = ActorServices.get_actor_movies(last_name)
