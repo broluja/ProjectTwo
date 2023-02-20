@@ -66,3 +66,25 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def read_average_rating(self, movie_id):
+        try:
+            average = self.db.query(func.round(func.avg(UserWatchMovie.rating), 2).label("Average Rating")).\
+                filter(UserWatchMovie.movie_id == movie_id).\
+                group_by(UserWatchMovie.movie_id).first()
+            return average
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_average_rating_for_all_movies(self):
+        try:
+            average = self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
+                                    label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
+                group_by(UserWatchMovie.movie_id).all()
+            return average
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+

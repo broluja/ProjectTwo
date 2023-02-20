@@ -92,3 +92,38 @@ class UserWatchMovieServices:
                 return movies_repo.read_movies_by_group_of_genres(page, genres)
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_average_rating_for_movie(name: str):
+        try:
+            with SessionLocal() as db:
+                movie_repository = MovieRepository(db, Movie)
+                movie = movie_repository.read_movie_by_title(name, search=False)
+                user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
+                average = user_watch_movie_repository.read_average_rating(movie.id)
+                response = {"Movie": movie.title}
+                response.update(average)
+                return response
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_average_ratings():
+        try:
+            with SessionLocal() as db:
+                user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
+                response = user_watch_movie_repository.read_average_rating_for_all_movies()
+                return response
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_movies_with_higher_average_rating(rating: float):
+        try:
+            with SessionLocal() as db:
+                user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
+                ratings = user_watch_movie_repository.read_average_rating_for_all_movies()
+                response = [movie for movie in ratings if movie["Average Rating"] and movie["Average Rating"] > rating]
+                return response
+        except Exception as e:
+            raise e

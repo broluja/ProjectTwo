@@ -96,12 +96,24 @@ class MovieController:
             raise HTTPException(status_code=500, detail=str(e))
 
     @staticmethod
+    def get_movies_by_year(year: int):
+        try:
+            movies = MovieServices.get_movies_by_year(year)
+            if not movies:
+                return Response(content=f"No Movie from year: {year} in our Database.", status_code=200)
+            return movies
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
     def get_latest_features(date_limit: str):
         try:
-            movie = MovieServices.get_latest_features(date_limit)
-            if not movie:
+            movies = MovieServices.get_latest_features(date_limit)
+            if not movies:
                 return Response(content="No movies in latest list.", status_code=200)
-            return movie
+            return movies
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:

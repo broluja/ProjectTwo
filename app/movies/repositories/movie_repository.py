@@ -57,3 +57,11 @@ class MovieRepository(BaseCRUDRepository):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def read_movies_by_year(self, year: str):
+        try:
+            result = self.db.query(Movie).filter(Movie.year_published == year).all()
+            return result
+        except Exception as e:
+            self.db.rollback()
+            raise e

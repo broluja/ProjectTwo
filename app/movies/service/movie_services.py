@@ -101,6 +101,16 @@ class MovieServices:
             raise e
 
     @staticmethod
+    def get_movies_by_year(year: int):
+        try:
+            with SessionLocal() as db:
+                movie_repository = MovieRepository(db, Movie)
+                movies = movie_repository.read_movies_by_year(str(year))
+                return movies
+        except Exception as e:
+            raise e
+
+    @staticmethod
     def get_latest_features(date_limit: str):
         try:
             with SessionLocal() as db:

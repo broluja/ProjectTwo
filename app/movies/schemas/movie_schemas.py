@@ -38,6 +38,7 @@ class MovieSchemaIn(BaseModel):
 
 
 class MovieWithActorsSchema(BaseModel):
+    id: UUID4
     title: str
     year_published: str
     link: str
