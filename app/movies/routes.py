@@ -176,6 +176,15 @@ def get_movie_with_average_rating_above_requested(rating: float):
     return UserWatchMovieController.get_movies_with_higher_average_rating(rating)
 
 
+@watch_movie.get("/get-average-movie-rating-for-year",
+                 summary="Get average movie rating for a specific year.",
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+def get_average_movie_rating_for_year(year: int):
+    if not 1900 < year < 2100:
+        raise HTTPException(status_code=200, detail="Sorry, we have no movies from provided year.")
+    return UserWatchMovieController.get_average_movie_rating_for_year(year)
+
+
 @watch_movie.get("/best-rated-movie", description="Show best rated movie", )
 def show_best_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=True)

@@ -2,6 +2,7 @@ from sqlalchemy.sql.functions import count, func
 
 from app.base import BaseCRUDRepository
 from app.genres.models import Genre
+from app.movies.exceptions import NoRatingsException
 from app.movies.models import Movie
 from app.users.models.user import UserWatchMovie
 
@@ -72,6 +73,8 @@ class UserWatchMovieRepository(BaseCRUDRepository):
             average = self.db.query(func.round(func.avg(UserWatchMovie.rating), 2).label("Average Rating")).\
                 filter(UserWatchMovie.movie_id == movie_id).\
                 group_by(UserWatchMovie.movie_id).first()
+            if not average:
+                raise NoRatingsException
             return average
         except Exception as e:
             self.db.rollback()
@@ -81,6 +84,17 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         try:
             average = self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
                                     label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
+                group_by(UserWatchMovie.movie_id).all()
+            return average
+        except Exception as e:
+            self.db.rollback()
+            raise e
+
+    def read_average_rating_for_movies(self, movie_ids: list):
+        try:
+            average = self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
+                                    label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
+                filter(Movie.id.in_(movie_ids)).\
                 group_by(UserWatchMovie.movie_id).all()
             return average
         except Exception as e:

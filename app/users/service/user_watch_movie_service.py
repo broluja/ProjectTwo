@@ -1,3 +1,5 @@
+from starlette.responses import Response
+
 from app.db import SessionLocal
 from app.movies.models import Movie
 from app.movies.repositories import MovieRepository
@@ -124,6 +126,23 @@ class UserWatchMovieServices:
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
                 ratings = user_watch_movie_repository.read_average_rating_for_all_movies()
                 response = [movie for movie in ratings if movie["Average Rating"] and movie["Average Rating"] > rating]
+                return response
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_average_movie_rating_for_year(year: int):
+        try:
+            with SessionLocal() as db:
+                movie_repository = MovieRepository(db, Movie)
+                movies = movie_repository.read_movies_by_year(str(year))
+                if not movies:
+                    return Response(content=f"No Movies from this year: {year}", status_code=200)
+                movie_ids = [movie.id for movie in movies]
+                user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
+                ratings = user_watch_movie_repository.read_average_rating_for_movies(movie_ids)
+                all_ratings = [rating["Average Rating"] for rating in ratings]
+                response = {f"Average rating for year: {year}": round(sum(all_ratings) / len(all_ratings), 2)}
                 return response
         except Exception as e:
             raise e

@@ -82,8 +82,6 @@ class UserWatchMovieController:
     def get_average_rating_for_movie(name: str):
         try:
             movie = UserWatchMovieServices.get_average_rating_for_movie(name)
-            if not movie:
-                return Response(content=f"No Movie with title: {name} in our Database.", status_code=200)
             return movie
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
@@ -111,3 +109,16 @@ class UserWatchMovieController:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_average_movie_rating_for_year(year: int):
+        try:
+            average = UserWatchMovieServices.get_average_movie_rating_for_year(year)
+            if not average:
+                return Response(content=f"No Movies from year: {year}.", status_code=200)
+            return average
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
