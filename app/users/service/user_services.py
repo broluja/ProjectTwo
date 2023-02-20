@@ -102,7 +102,7 @@ class UserServices:
             raise e
 
     @staticmethod
-    def deactivate_user(user_id: str, activity=False):
+    def change_user_status(user_id: str, activity=False):
         try:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)

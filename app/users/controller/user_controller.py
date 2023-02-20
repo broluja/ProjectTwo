@@ -159,7 +159,7 @@ class UserController:
     @staticmethod
     def deactivate_user(user_id: str, activity: bool = False):
         try:
-            user = UserServices.deactivate_user(user_id, activity)
+            user = UserServices.change_user_status(user_id, activity)
             return user
         except AppException as e:
             raise HTTPException(status_code=e.code, detail=e.message)
