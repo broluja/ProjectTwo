@@ -2,8 +2,8 @@ import pytest
 
 from app.base import AppException
 from app.tests import TestClass, TestingSessionLocal
-from app.users.repositories import UserRepository
-from app.users.models import User
+from app.users.repositories import UserRepository, SubuserRepository
+from app.users.models import User, Subuser
 
 
 class TestUserRepo(TestClass):
@@ -163,3 +163,43 @@ class TestUserRepo(TestClass):
         for obj in users:
             assert obj.email != user.email
             assert obj.username != user.username
+
+    def test_create_subuser(self):
+        self.create_users_for_methods()
+        with TestingSessionLocal() as db:
+            user_repository = UserRepository(db, User)
+            user = user_repository.read_user_by_email("dummy1@gmail.com")
+            subuser_repository = SubuserRepository(db, Subuser)
+            attributes = {"name": "Subuser One", "date_subscribed": "2022-02-02", "user_id": user.id}
+            subuser = subuser_repository.create(attributes)
+            self.subuser = subuser  # To make this test reusable
+        assert subuser.name == "Subuser One"
+        assert subuser.user_id == user.id
+
+    def test_create_subuser_error(self):
+        self.test_create_subuser()
+        with pytest.raises(AppException):
+            with TestingSessionLocal() as db:
+                user_repository = UserRepository(db, User)
+                user = user_repository.read_user_by_email("dummy1@gmail.com")
+                subuser_repository = SubuserRepository(db, Subuser)
+                attributes = {"name": "Subuser One", "date_subscribed": "2022-02-02", "user_id": user.id}
+                subuser = subuser_repository.create(attributes)
+
+    def test_read_subuser_by_name(self):
+        self.test_create_subuser()
+        with TestingSessionLocal() as db:
+            subuser_repository = SubuserRepository(db, Subuser)
+            subuser = subuser_repository.read_subusers_by_name(self.subuser.name, self.subuser.user_id)
+        assert subuser.name == self.subuser.name
+        assert subuser.user_id == self.subuser.user_id
+
+    def test_read_subuser_by_user_id(self):
+        self.test_create_subuser()
+        with TestingSessionLocal() as db:
+            subuser_repository = SubuserRepository(db, Subuser)
+            subusers = subuser_repository.read_subusers_by_user_id(self.subuser.user_id)
+        assert any([subuser.name == self.subuser.name for subuser in subusers])
+        assert any([subuser.user_id == self.subuser.user_id for subuser in subusers])
+
+

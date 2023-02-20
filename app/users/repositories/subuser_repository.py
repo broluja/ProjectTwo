@@ -14,9 +14,9 @@ class SubuserRepository(BaseCRUDRepository):
             self.db.rollback()
             raise AppException(message="Subuser Name already taken", code=400)
 
-    def read_subusers_by_name(self, name: str):
+    def read_subusers_by_name(self, name: str, user_id: str):
         try:
-            subuser = self.db.query(Subuser).filter(Subuser.name == name).first()
+            subuser = self.db.query(Subuser).filter(Subuser.name == name).filter(Subuser.user_id == user_id).first()
             return subuser
         except Exception as e:
             self.db.rollback()

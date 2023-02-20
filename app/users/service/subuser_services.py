@@ -73,8 +73,8 @@ class SubuserServices:
         try:
             with SessionLocal() as db:
                 repository = SubuserRepository(db, Subuser)
-                subuser = repository.read_subusers_by_name(subuser_name)
-                if not subuser or subuser.user_id != user_id:
+                subuser = repository.read_subusers_by_name(subuser_name, user_id)
+                if not subuser:
                     raise UnknownProfileException
                 response = repository.delete(subuser.id)
                 return response
