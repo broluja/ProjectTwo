@@ -122,3 +122,12 @@ class UserWatchMovieController:
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
 
+    @staticmethod
+    def get_most_successful_movie_year():
+        try:
+            return UserWatchMovieServices.get_most_successful_movie_year()
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+

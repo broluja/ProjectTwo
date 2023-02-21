@@ -65,3 +65,11 @@ class MovieRepository(BaseCRUDRepository):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def read_movie_years(self):
+        try:
+            years = self.db.query(Movie.year_published).distinct().all()
+            return years
+        except Exception as e:
+            self.db.rollback()
+            raise e

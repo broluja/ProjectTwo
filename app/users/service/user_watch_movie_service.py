@@ -146,3 +146,24 @@ class UserWatchMovieServices:
                 return response
         except Exception as e:
             raise e
+
+    @staticmethod
+    def get_most_successful_movie_year():
+        try:
+            with SessionLocal() as db:
+                movie_repository = MovieRepository(db, Movie)
+                query = movie_repository.read_movie_years()
+                years = [obj.year_published for obj in query]
+                user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
+                response = {}
+                for year in years:
+                    movies = movie_repository.read_movies_by_year(year)
+                    ids = [movie.id for movie in movies]
+                    ratings = user_watch_movie_repository.read_average_rating_for_movies(movie_ids=ids)
+                    all_ratings = [rating["Average Rating"] for rating in ratings if rating["Average Rating"]]
+                    avg_rating = round(sum(all_ratings) / len(all_ratings), 2) if all_ratings else None
+                    if avg_rating:
+                        response.update({year: avg_rating})
+                return response
+        except Exception as e:
+            raise e

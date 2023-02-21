@@ -188,6 +188,15 @@ def get_average_movie_rating_for_year(year: int):
     return UserWatchMovieController.get_average_movie_rating_for_year(year)
 
 
+@watch_movie.get("/get-most-successful-movie-year",
+                 summary="Get most successful year in terms of Movie ratings. User Route.",
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+def get_most_successful_movie_year():
+    response = UserWatchMovieController.get_most_successful_movie_year()
+    sorted_movies = [(k, v) for k, v in sorted(response.items(), key=lambda item: item[1], reverse=True)]
+    return {"Most successful year": {"Year": sorted_movies[0][0], "Average Rating": sorted_movies[0][1]}}
+
+
 @watch_movie.get("/best-rated-movie", description="Show best rated movie.")
 def show_best_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=True)
