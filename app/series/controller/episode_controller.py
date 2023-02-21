@@ -45,7 +45,7 @@ class EpisodeController:
         try:
             episodes = EpisodeServices.get_best_rated_episode(best=best)
             if not episodes:
-                return Response(content=f"We have not generated episode popularity list yet.", status_code=200)
+                return Response(content="We have not generated episode popularity list yet.", status_code=200)
             return episodes
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

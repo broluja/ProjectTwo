@@ -35,9 +35,8 @@ class UserWatchMovieServices:
                 if watched_movie:
                     obj = repository.update(watched_movie, {"rating": rating})
                     return obj
-                else:
-                    fields = {"user_id": user_id, "movie_id": movie_id, "rating": rating}
-                    return repository.create(fields)
+                fields = {"user_id": user_id, "movie_id": movie_id, "rating": rating}
+                return repository.create(fields)
         except Exception as exc:
             raise exc
 

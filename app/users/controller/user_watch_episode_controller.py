@@ -36,7 +36,7 @@ class UserWatchEpisodeController:
         try:
             series = UserWatchEpisodeServices.get_most_popular_series()
             if not series:
-                return Response(content=f"We have not generated series popularity list yet.", status_code=200)
+                return Response(content="We have not generated series popularity list yet.", status_code=200)
             return series
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

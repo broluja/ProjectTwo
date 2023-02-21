@@ -3,12 +3,12 @@ from fastapi import HTTPException, Response
 from email_validator import validate_email, EmailNotValidError
 
 from app.users.service import UserServices
-from .subuser_controller import SubuserController
 from app.base.base_exception import AppException
 from app.users.service import sign_jwt
-from app.users.exceptions import UnknownProfileException, AdminLoginException
+from app.users.exceptions import UnknownProfileException, AdminLoginException, UserEmailDoesNotExistsException
 from app.users.service import EmailServices
 from app.utils import generate_random_int
+from .subuser_controller import SubuserController
 
 
 class UserController:
@@ -89,6 +89,7 @@ class UserController:
                 obj = UserServices.generate_verification_code(user.id, code)
                 EmailServices.send_code_for_password_reset(user.email, code)
                 return obj
+            raise UserEmailDoesNotExistsException
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -124,12 +125,11 @@ class UserController:
                 raise AdminLoginException(code=400, message="Use admin login.")
             if user.username == username:
                 return sign_jwt(user.id, "regular_user"), user.id
-            else:
-                user_with_subs = UserController.get_user_with_all_subusers(user.id)
-                for sub in user_with_subs.subusers:
-                    if sub.name == username:
-                        return sign_jwt(user.id, "sub_user"), sub.id
-                raise UnknownProfileException
+            user_with_subs = UserController.get_user_with_all_subusers(user.id)
+            for sub in user_with_subs.subusers:
+                if sub.name == username:
+                    return sign_jwt(user.id, "sub_user"), sub.id
+            raise UnknownProfileException
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

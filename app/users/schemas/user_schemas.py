@@ -1,7 +1,7 @@
 """User Schemas module"""
+from datetime import date
 from typing import Optional
 from pydantic import BaseModel, UUID4, EmailStr
-from datetime import date
 
 from .subuser_schemas import SubuserSchema
 

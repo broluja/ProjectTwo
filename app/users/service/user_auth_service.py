@@ -38,5 +38,5 @@ def decode_jwt(token: str) -> dict:
     try:
         decoded_token = jwt.decode(token, USER_SECRET, algorithms=[JWT_ALGORITHM])
         return decoded_token if decoded_token["expires"] >= time.time() else None
-    except (jwt.PyJWTError, jwt.InvalidTokenError):
-        raise InvalidTokenException
+    except (jwt.PyJWTError, jwt.InvalidTokenError) as exc:
+        raise InvalidTokenException from exc

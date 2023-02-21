@@ -22,7 +22,7 @@ class SubuserServices:
                     raise AdminSubuserException
                 subusers = SubuserServices.get_all_subusers_for_one_user(user_id)
                 if len(subusers) >= MAX_NUMBER_SUBUSERS:
-                    raise MaxLimitSubusersException(message=f"You have reached Subusers Limit.", code=400)
+                    raise MaxLimitSubusersException(message="You have reached Subusers Limit.", code=400)
                 repository = SubuserRepository(db, Subuser)
                 fields = {"user_id": user_id, "name": name}
                 return repository.create(fields)

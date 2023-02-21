@@ -1,6 +1,6 @@
 """Movie Schemas module"""
-from pydantic import BaseModel, UUID4
 from datetime import date
+from pydantic import BaseModel, UUID4
 
 from app.actors.schemas import ActorSchema
 from app.directors.schemas import DirectorSchema

@@ -1,7 +1,8 @@
 """Mail Service module"""
+import asyncio
+
 from fastapi_mail import ConnectionConfig, MessageSchema, MessageType, FastMail
 from pydantic import EmailStr
-import asyncio
 
 from app.config import settings
 

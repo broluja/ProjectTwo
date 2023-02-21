@@ -1,3 +1,6 @@
+"""Series Service module"""
+from datetime import date
+
 from app.config import settings
 from app.directors.exceptions.director_exceptions import NonExistingDirectorException
 from app.directors.models import Director
@@ -11,13 +14,11 @@ from app.users.models.user import UserWatchEpisode
 from app.users.repositories import UserWatchEpisodeRepository
 from app.db import SessionLocal
 
-from datetime import date
-
 PER_PAGE = settings.PER_PAGE
 
 
 class SeriesServices:
-
+    """Service for Series routes"""
     @staticmethod
     def create_new_series(title: str, year_published: str, director_id: str, genre_id: str):
         try:
@@ -29,8 +30,8 @@ class SeriesServices:
                           "director_id": director_id,
                           "genre_id": genre_id}
                 return repository.create(fields)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def read_all_series(page):
@@ -39,8 +40,8 @@ class SeriesServices:
                 repository = SeriesRepository(db, Series)
                 skip = (page - 1) * PER_PAGE
                 return repository.read_many(skip=skip, limit=PER_PAGE)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_series_by_id(series_id: str):
@@ -48,8 +49,8 @@ class SeriesServices:
             with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
                 return repository.read_by_id(series_id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_series_by_director_name(director: str):
@@ -61,8 +62,8 @@ class SeriesServices:
                     raise NonExistingDirectorException(message=f"We do not have Director: {director} in our Database.")
                 series_repo = SeriesRepository(db, Series)
                 return series_repo.read_series_by_director_id(obj.id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_my_series(user_id: str):
@@ -72,8 +73,8 @@ class SeriesServices:
                 watched_episodes = watched_episodes_repository.read_users_episodes_and_series(user_id)
                 my_series = set(obj.title for obj in watched_episodes)
                 return my_series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_series_by_year(year: int):
@@ -82,8 +83,8 @@ class SeriesServices:
                 series_repository = SeriesRepository(db, Series)
                 series = series_repository.read_series_by_year(str(year))
                 return series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_series_by_episode_id(episode_id: str):
@@ -92,8 +93,8 @@ class SeriesServices:
                 repo = SeriesRepository(db, Series)
                 series = repo.read_series_by_episode_id(episode_id)
                 return series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_series_by_name(series: str, search: bool = True):
@@ -102,8 +103,8 @@ class SeriesServices:
                 repo = SeriesRepository(db, Series)
                 series = repo.read_series_by_title(series, search=search)
                 return series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_series_by_genre(genre):
@@ -116,8 +117,8 @@ class SeriesServices:
                 series_repo = SeriesRepository(db, Series)
                 series = series_repo.read_series_by_genre_id(genre_obj.id)
                 return series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_latest_features(date_limit: str):
@@ -126,8 +127,8 @@ class SeriesServices:
                 repository = SeriesRepository(db, Series)
                 series = repository.read_latest_releases(date_limit)
                 return series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def show_series_never_downloaded():
@@ -136,8 +137,8 @@ class SeriesServices:
                 repository = SeriesRepository(db, Series)
                 series = repository.read_least_popular_series()
                 return series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def update_series_data(series_id: str, attributes: dict):
@@ -147,8 +148,8 @@ class SeriesServices:
                 obj = repo.read_by_id(series_id)
                 series = repo.update(obj, attributes)
                 return series
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def delete_series(series_id: str):
@@ -156,5 +157,5 @@ class SeriesServices:
             with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
                 return repository.delete(series_id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc

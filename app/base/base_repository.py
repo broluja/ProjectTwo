@@ -21,25 +21,25 @@ class BaseCRUDRepository(Generic[Model]):
             self.db.add(db_obj)
             self.db.commit()
             self.db.refresh(db_obj)
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
         return db_obj
 
     def read_all(self):
         try:
             models = self.db.query(self.model).all()
             return models
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise AppException(message=str(e), code=500)
+            raise AppException(message=str(e), code=500) from exc
 
     def read_many(self, *, skip: int = 0, limit: int = 100):
         try:
             result = self.db.query(self.model).offset(skip).limit(limit).all()
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise AppException(message=str(e), code=500)
+            raise AppException(message=str(exc), code=500) from exc
         return result
 
     def read_by_id(self, model_id: Union[str, int]):
@@ -49,9 +49,9 @@ class BaseCRUDRepository(Generic[Model]):
                 self.db.rollback()
                 raise AppException(message=f"{self.model.__name__} ID: {model_id} does not exist in DB.", code=400)
             return obj
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def update(self, db_obj, updates: dict):
         try:
@@ -62,9 +62,9 @@ class BaseCRUDRepository(Generic[Model]):
             self.db.add(db_obj)
             self.db.commit()
             self.db.refresh(db_obj)
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
         return db_obj
 
     def delete(self, model_id: Union[str, int]):
@@ -75,7 +75,7 @@ class BaseCRUDRepository(Generic[Model]):
                 raise AppException(message=f"ID: {model_id} does not exist in Database.", code=400)
             self.db.delete(obj)
             self.db.commit()
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
         return True

@@ -1,3 +1,4 @@
+"""Episode Repository module"""
 from app.base import BaseCRUDRepository
 from app.series.models import Episode
 
@@ -9,14 +10,14 @@ class EpisodeRepository(BaseCRUDRepository):
         try:
             episodes = self.db.query(Episode).filter(Episode.series_id == series_id).order_by(Episode.name).all()
             return episodes
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_by_episode_name_and_series_id(self, name: str, series_id):
         try:
             episode = self.db.query(Episode).filter(Episode.name == name).filter(Episode.series_id == series_id).first()
             return episode
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc

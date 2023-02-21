@@ -1,9 +1,11 @@
+"""Test Actor module"""
 from app.tests import TestClass, TestingSessionLocal
 from app.actors.repositories import ActorRepository
 from app.actors.models import Actor
 
 
-class TestUserRepo(TestClass):
+class TestActorRepo(TestClass):
+    """Test Actor functionalities."""
     actor = None
 
     def create_actor(self):

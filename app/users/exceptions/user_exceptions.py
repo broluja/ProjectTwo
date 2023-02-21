@@ -8,6 +8,12 @@ class UserEmailAlreadyRegisteredException(AppException):
     code = 400
 
 
+class UserEmailDoesNotExistsException(AppException):
+    """Exception raised when user searched by unknown Email."""
+    message = "User with this email does not exist."
+    code = 404
+
+
 class InvalidVerificationCode(AppException):
     """Exception raised when user try to verify account with wrong verification code."""
     message = "Verification code unrecognized."

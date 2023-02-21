@@ -23,7 +23,7 @@ class GenreController:
         try:
             genres = GenreServices.get_all_genres()
             if not genres:
-                return Response(content=f"No Genres in our Database yet.", status_code=200)
+                return Response(content="No Genres in our Database yet.", status_code=200)
             return genres
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

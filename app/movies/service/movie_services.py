@@ -1,4 +1,7 @@
 """Movie Service module"""
+from datetime import date
+
+from app.config import settings
 from app.directors.exceptions.director_exceptions import NonExistingDirectorException
 from app.directors.models import Director
 from app.directors.repositories import DirectorRepository
@@ -9,9 +12,8 @@ from app.movies.models import Movie
 from app.movies.repositories import MovieRepository
 from app.db import SessionLocal
 
-from datetime import date
 
-PER_PAGE = 5
+PER_PAGE = settings.PER_PAGE
 
 
 class MovieServices:

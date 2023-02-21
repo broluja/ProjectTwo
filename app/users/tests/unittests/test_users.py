@@ -1,3 +1,4 @@
+"""Test users module"""
 import pytest
 from sqlalchemy.exc import IntegrityError
 
@@ -8,6 +9,9 @@ from app.users.models import User, Subuser
 
 
 class TestUserRepo(TestClass):
+    """Test Users functionalities."""
+    superuser = None
+    subuser = None
 
     def create_superuser(self):
         with TestingSessionLocal() as db:
@@ -140,7 +144,7 @@ class TestUserRepo(TestClass):
             user_inactive = user_repository.update(user, {"is_active": False})
         assert user.email == user_inactive.email
         assert user.password_hashed == user_inactive.password_hashed
-        assert user_inactive.is_active == False
+        assert user_inactive.is_active is False
 
     def test_change_admin_status(self):
         self.create_users_for_methods()
@@ -150,7 +154,7 @@ class TestUserRepo(TestClass):
             user_is_superuser = user_repository.update(user, {"is_superuser": True})
         assert user.email == user_is_superuser.email
         assert user.password_hashed == user_is_superuser.password_hashed
-        assert user_is_superuser.is_active == True
+        assert user_is_superuser.is_active is True
 
     def test_get_user_by_code(self):
         self.create_users_for_methods()

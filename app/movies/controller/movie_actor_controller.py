@@ -49,7 +49,7 @@ class MovieActorController:
     def delete_movie_actor(movie_id, actor_id):
         try:
             MovieActorService.remove_movie_actor(movie_id, actor_id)
-            return Response(content=f"Actor removed from movie.", status_code=200)
+            return Response(content="Actor removed from movie.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

@@ -1,3 +1,4 @@
+"""Episode Service module"""
 from app.series.exceptions.series_exceptions import UnknownSeriesException, UnknownEpisodeException
 from app.series.models import Episode, Series
 from app.series.repositories import EpisodeRepository, SeriesRepository
@@ -9,7 +10,7 @@ PER_PAGE = 5
 
 
 class EpisodeServices:
-
+    """Service for Episode routes"""
     @staticmethod
     def create_new_episode(name: str, series_id: str):
         try:
@@ -17,8 +18,8 @@ class EpisodeServices:
                 repository = EpisodeRepository(db, Episode)
                 fields = {"name": name, "series_id": series_id}
                 return repository.create(fields)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_all_episodes_by_series(series_title: str):
@@ -30,8 +31,8 @@ class EpisodeServices:
                     raise UnknownSeriesException
                 repository = EpisodeRepository(db, Episode)
                 return repository.read_by_series_id(series.id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_episode_by_name_and_series(name: str, title: str):
@@ -46,8 +47,8 @@ class EpisodeServices:
                 if not episode:
                     raise UnknownEpisodeException
                 return episode
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_episode_by_id(episode_id: str):
@@ -55,8 +56,8 @@ class EpisodeServices:
             with SessionLocal() as db:
                 repository = EpisodeRepository(db, Episode)
                 return repository.read_by_id(episode_id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_best_rated_episode(best: bool = True):
@@ -70,8 +71,8 @@ class EpisodeServices:
                     obj = episode_repository.read_by_id(episode_id)
                     response.append({obj.name: {"Rating": round(rating, 2), "Series": obj.series_id}})
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def update_episode(episode_id: str, attributes: dict):
@@ -80,8 +81,8 @@ class EpisodeServices:
                 repository = EpisodeRepository(db, Episode)
                 obj = repository.read_by_id(episode_id)
                 return repository.update(obj, attributes)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def delete_episode(episode_id: str):
@@ -89,5 +90,5 @@ class EpisodeServices:
             with SessionLocal() as db:
                 repository = EpisodeRepository(db, Episode)
                 return repository.delete(episode_id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc

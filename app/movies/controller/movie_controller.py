@@ -29,7 +29,7 @@ class MovieController:
         try:
             movies = MovieServices.get_all_movies(page)
             if not movies:
-                return Response(content=f"End of query.", status_code=200)
+                return Response(content="End of query.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

@@ -1,5 +1,6 @@
-from pydantic import BaseModel, UUID4
+"""Series Schemas module"""
 from datetime import date
+from pydantic import BaseModel, UUID4
 
 from app.actors.schemas import ActorSchema
 from app.directors.schemas import DirectorSchema
@@ -7,6 +8,7 @@ from app.genres.schemas import GenreSchema
 
 
 class SeriesSchema(BaseModel):
+    """Base Series Schema"""
     id: UUID4
     title: str
     date_added: date
@@ -20,6 +22,7 @@ class SeriesSchema(BaseModel):
 
 
 class SeriesSchemaIn(BaseModel):
+    """Base Series Schema for input"""
     title: str
     year_published: str
     director_id: str
@@ -39,6 +42,7 @@ class SeriesSchemaIn(BaseModel):
 
 
 class SeriesWithActorsSchema(BaseModel):
+    """Base Series Schema with Actors"""
     id: UUID4
     title: str
     date_added: date
@@ -51,6 +55,7 @@ class SeriesWithActorsSchema(BaseModel):
 
 
 class SeriesWithDirectorAndGenreSchema(BaseModel):
+    """Base Series Schema with Genres and Directors"""
     id: UUID4
     title: str
     date_added: date
@@ -64,6 +69,7 @@ class SeriesWithDirectorAndGenreSchema(BaseModel):
 
 
 class SeriesFullSchema(BaseModel):
+    """Full Series Schema"""
     id: UUID4
     title: str
     date_added: date

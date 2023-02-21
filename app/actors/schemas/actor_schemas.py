@@ -1,6 +1,6 @@
 """Actor Schemas module"""
-from pydantic import BaseModel, UUID4
 from datetime import date
+from pydantic import BaseModel, UUID4
 
 
 class ActorSchema(BaseModel):

@@ -1,3 +1,4 @@
+"""Test Genre module"""
 import pytest
 
 from sqlalchemy.exc import IntegrityError
@@ -7,7 +8,7 @@ from app.genres.models import Genre
 
 
 class TestGenreRepo(TestClass):
-
+    """Test Genre functionalities"""
     @staticmethod
     def create_genres_for_methods():
         with TestingSessionLocal() as db:

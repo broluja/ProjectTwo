@@ -10,9 +10,9 @@ class DirectorRepository(BaseCRUDRepository):
         try:
             directors = self.db.query(Director).filter(Director.country == country).all()
             return directors
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_directors_by_last_name(self, last_name: str, search: bool = True):
         try:
@@ -21,9 +21,9 @@ class DirectorRepository(BaseCRUDRepository):
             else:
                 result = self.db.query(Director).filter(Director.last_name == last_name).first()
             return result
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_directors_by_first_name(self, first_name: str, search: bool = True):
         try:
@@ -32,6 +32,6 @@ class DirectorRepository(BaseCRUDRepository):
             else:
                 directors = self.db.query(Director).filter(Director.first_name == first_name).first()
             return directors
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
