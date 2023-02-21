@@ -1,5 +1,5 @@
 """Genre routes module"""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from app.genres.schemas import GenreSchema, GenreSchemaIn
 from app.genres.controller import GenreController
@@ -11,12 +11,15 @@ genre_router = APIRouter(tags=["Genres"], prefix="/api/genres")
 @genre_router.post("/create-genre",
                    response_model=GenreSchema,
                    dependencies=[Depends(JWTBearer(["super_user"]))],
-                   summary="Register new Genre in DB. Admin Route.")
+                   summary="Register new Genre in DB. Admin Route.",
+                   status_code=status.HTTP_201_CREATED)
 def create_new_genre(genre: GenreSchemaIn):
     return GenreController.create_director(genre.name)
 
 
-@genre_router.get("/get-all-genres", response_model=list[GenreSchema], description="Read all Genres from DB")
+@genre_router.get("/get-all-genres",
+                  response_model=list[GenreSchema],
+                  description="Read all Genres from DB")
 def get_all_genres():
     return GenreController.get_all_genres()
 
@@ -40,6 +43,7 @@ def search_genres_by_name(name: str):
 @genre_router.put("/id",
                   response_model=GenreSchema,
                   summary="Update Genre`s data. Admin Route.",
-                  dependencies=[Depends(JWTBearer(["super_user"]))])
+                  dependencies=[Depends(JWTBearer(["super_user"]))],
+                  status_code=status.HTTP_201_CREATED)
 def update_genre(genre_id: str, name: str):
     return GenreController.update_genre(genre_id, name)

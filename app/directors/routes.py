@@ -1,5 +1,5 @@
 """Director routes"""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from app.directors.schemas import DirectorSchema, DirectorSchemaIn
 from app.directors.controller import DirectorController
@@ -11,12 +11,15 @@ director_router = APIRouter(tags=["Directors"], prefix="/api/directors")
 @director_router.post("/create-director",
                       response_model=DirectorSchema,
                       dependencies=[Depends(JWTBearer(["super_user"]))],
-                      summary="Register new Director in DB. Admin Route.")
+                      summary="Register new Director in DB. Admin Route.",
+                      status_code=status.HTTP_201_CREATED)
 def create_new_director(director: DirectorSchemaIn):
     return DirectorController.create_director(director.first_name, director.last_name, director.country)
 
 
-@director_router.get("/get-all-directors", response_model=list[DirectorSchema], description="Read all Directors")
+@director_router.get("/get-all-directors",
+                     response_model=list[DirectorSchema],
+                     description="Read all Directors.")
 def get_all_directors():
     return DirectorController.get_all_directors()
 
@@ -24,7 +27,7 @@ def get_all_directors():
 @director_router.get("/id",
                      response_model=DirectorSchema,
                      summary="Read Director using ID. Admin Route",
-                     dependencies=[Depends(JWTBearer(["super_user"]))],)
+                     dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_director_by_id(director_id: str):
     return DirectorController.get_director_by_id(director_id)
 
@@ -53,7 +56,8 @@ def search_directors_by_country(country: str):
 @director_router.put("/id",
                      response_model=DirectorSchema,
                      summary="Update Director`s data. Admin Route.",
-                     dependencies=[Depends(JWTBearer(["super_user"]))])
+                     dependencies=[Depends(JWTBearer(["super_user"]))],
+                     status_code=status.HTTP_201_CREATED)
 def update_director(director_id: str, director: DirectorSchemaIn):
     attributes = {key: value for key, value in vars(director).items() if value}
     return DirectorController.update_director(director_id, attributes)

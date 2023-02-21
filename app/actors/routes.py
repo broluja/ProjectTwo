@@ -1,5 +1,5 @@
 """Actor routes"""
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 
 from app.actors.controller import ActorController
 from app.actors.schemas import ActorSchema, ActorSchemaIn
@@ -11,7 +11,8 @@ actor_router = APIRouter(tags=["Actors"], prefix="/api/actors")
 @actor_router.post("/create-actor",
                    response_model=ActorSchema,
                    summary="Create New Actor. Admin Route.",
-                   dependencies=[Depends(JWTBearer(["super_user"]))])
+                   dependencies=[Depends(JWTBearer(["super_user"]))],
+                   status_code=status.HTTP_201_CREATED)
 def create_new_actor(actor: ActorSchemaIn):
     return ActorController.create_actor(**vars(actor))
 
@@ -53,7 +54,8 @@ def get_actor_movies(actor_last_name: str):
 @actor_router.put("/id/update-actor",
                   response_model=ActorSchema,
                   summary="Update Actor. Admin Route.",
-                  dependencies=[Depends(JWTBearer(["super_user"]))])
+                  dependencies=[Depends(JWTBearer(["super_user"]))],
+                  status_code=status.HTTP_201_CREATED)
 def update_actor(actor_id, actor: ActorSchemaIn):
     attributes = {key: value for key, value in vars(actor).items() if value}
     return ActorController.update_actor(actor_id, attributes)

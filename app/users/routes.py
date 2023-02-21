@@ -63,10 +63,11 @@ def reset_password(email: str):
 
 @user_router.post("/reset-password-complete",
                   summary="Save new password. User route.",
-                  description="Set new password.")
+                  description="Set new password.",
+                  status_code=status.HTTP_201_CREATED)
 def reset_password_complete(request: Request, code: int, password: str, new_password: str):
     if request.cookies.get("code") != "active":
-        raise HTTPException(status_code=400, detail="Verification code expired. Ask for another one.")
+        raise HTTPException(status_code=403, detail="Verification code expired. Ask for another one.")
     if password != new_password:
         raise HTTPException(status_code=400, detail="Passwords must match. Try again")
     password_hashed = hashlib.sha256(password.encode()).hexdigest()
@@ -151,7 +152,8 @@ def get_my_subusers(request: Request):
 @user_router.put("/update-user-username",
                  response_model=UserSchemaOut,
                  summary="Update my username. User route.",
-                 dependencies=[Depends(JWTBearer(["regular_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user"]))],
+                 status_code=status.HTTP_201_CREATED)
 def update_my_name(request: Request, username: str):
     user_id = request.cookies.get("user_id")
     return UserController.update_username(user_id, username)
@@ -160,7 +162,8 @@ def update_my_name(request: Request, username: str):
 @user_router.put("/update-user-email",
                  response_model=UserSchemaOut,
                  summary="Change my email. User Route.",
-                 dependencies=[Depends(JWTBearer(["regular_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user"]))],
+                 status_code=status.HTTP_201_CREATED)
 def change_my_email(request: Request, email: str):
     user_id = request.cookies.get("user_id")
     return UserController.change_email(user_id, email)
@@ -169,8 +172,8 @@ def change_my_email(request: Request, email: str):
 @user_router.put("/deactivate-user",
                  response_model=UserSchema,
                  summary="Deactivate User. Admin route",
-                 description="Deactivate specific User.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))],
+                 status_code=status.HTTP_201_CREATED)
 def deactivate_user(user_id: str):
     return UserController.deactivate_user(user_id)
 
@@ -178,15 +181,14 @@ def deactivate_user(user_id: str):
 @user_router.put("/activate-user",
                  response_model=UserSchemaOut,
                  summary="Activate User. Admin route",
-                 description="Activate specific User.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))],
+                 status_code=status.HTTP_201_CREATED)
 def activate_user(user_id: str):
     return UserController.deactivate_user(user_id, activity=True)
 
 
 @user_router.delete("/delete-user",
                     summary="Delete User. Admin route",
-                    description="Delete specific User by ID. Admin Route",
                     dependencies=[Depends(JWTBearer(["super_user"]))])
 def delete_user(user_id: str):
     return UserController.delete_user(user_id)
@@ -228,7 +230,8 @@ def get_subuser_by_id(subuser_id: str):
                     response_model=SubuserSchema,
                     summary="Update my username. Subuser route",
                     description="Update Subuser`s name",
-                    dependencies=[Depends(JWTBearer(["sub_user"]))])
+                    dependencies=[Depends(JWTBearer(["sub_user"]))],
+                    status_code=status.HTTP_201_CREATED)
 def update_subusers_name(request: Request, name: str):
     subuser_id = request.cookies.get("user_id")
     return SubuserController.update_subusers_name(subuser_id, name)
@@ -249,7 +252,6 @@ admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
 @admin_router.post("/create-admin",
                    response_model=AdminSchema,
                    summary="Create new Admin. Admin route",
-                   description="Register new Admin. Admin route",
                    status_code=status.HTTP_201_CREATED,
                    dependencies=[Depends(JWTBearer(["super_user"]))])
 def create_new_admin(admin: AdminSchemaIn):
@@ -259,7 +261,6 @@ def create_new_admin(admin: AdminSchemaIn):
 @admin_router.get("/read-all-admins",
                   response_model=list[AdminSchema],
                   summary="Get all Admins. Admin route",
-                  description="Read all Admins. Admin route",
                   dependencies=[Depends(JWTBearer(["super_user"]))])
 def get_all_admins():
     return AdminController.get_all_admins()
@@ -267,7 +268,6 @@ def get_all_admins():
 
 @admin_router.get("/read-admins-by-country",
                   summary="Get all Admins by country. Admin Route",
-                  description="Get all Admins from specific country.",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
                   response_model=list[AdminSchema])
 def get_all_admins_by_country(country: str):

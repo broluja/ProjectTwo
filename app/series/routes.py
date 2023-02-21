@@ -16,7 +16,8 @@ series_router = APIRouter(tags=["Series"], prefix="/api/series")
                     description="Add new Series",
                     summary="Create new Series. Admin Route.",
                     dependencies=[Depends(JWTBearer(["super_user"]))],
-                    response_model=SeriesWithDirectorAndGenreSchema)
+                    response_model=SeriesWithDirectorAndGenreSchema,
+                    status_code=status.HTTP_201_CREATED)
 def create_new_series(series: SeriesSchemaIn):
     return SeriesController.create_series(**series.dict())
 
@@ -35,7 +36,8 @@ def get_series_by_episode_id(episode_id: str):
 
 @series_router.put("/update-series",
                    summary="Update Series Data. Admin Route",
-                   dependencies=[Depends(JWTBearer(["super_user"]))])
+                   dependencies=[Depends(JWTBearer(["super_user"]))],
+                   status_code=status.HTTP_201_CREATED)
 def update_series_data(series: SeriesSchemaIn, series_id: str):
     attributes = {key: value for key, value in vars(series).items() if value}
     return SeriesController.update_series_data(series_id, attributes)
@@ -55,7 +57,8 @@ episode_router = APIRouter(tags=["Episodes"], prefix="/api/episodes")
 @episode_router.post("/add-new-episode",
                      response_model=EpisodeSchema,
                      summary="Create new Episode. Admin route.",
-                     dependencies=[Depends(JWTBearer(["super_user"]))])
+                     dependencies=[Depends(JWTBearer(["super_user"]))],
+                     status_code=status.HTTP_201_CREATED)
 def create_new_episode(episode: EpisodeSchemaIn):
     return EpisodeController.create_episode(**episode.dict())
 
@@ -79,7 +82,8 @@ def get_episode_by_id(episode_id: str):
 @episode_router.put("/update-episode",
                     summary="Update Episode. Admin Route.",
                     dependencies=[Depends(JWTBearer(["super_user"]))],
-                    response_model=EpisodeSchema)
+                    response_model=EpisodeSchema,
+                    status_code=status.HTTP_201_CREATED)
 def update_episode(episode_id: str, episode: EpisodeSchemaIn):
     attributes = {key: value for key, value in vars(episode).items() if value}
     return EpisodeController.update_episode(episode_id, attributes)
@@ -97,14 +101,17 @@ series_actor_router = APIRouter(tags=["SeriesActors"], prefix="/api/series_actor
 
 @series_actor_router.post("/add-actor-to-series",
                           dependencies=[Depends(JWTBearer(["super_user"]))],
-                          summary="Add actor to Series. Admin Route.")
+                          summary="Add actor to Series. Admin Route.",
+                          status_code=status.HTTP_201_CREATED
+                          )
 def add_actor_to_series(series_id: str, actor_id: str):
     return SeriesActorController.create_series_actor(series_id, actor_id)
 
 
 @series_actor_router.delete("/remove-actor-from-series",
                             dependencies=[Depends(JWTBearer(["super_user"]))],
-                            summary="Remove actor from Series. Admin Route.")
+                            summary="Remove actor from Series. Admin Route."
+                            )
 def remove_actor_from_series(series_id: str, actor_id: str):
     return SeriesActorController.delete_series_actor(series_id, actor_id)
 
@@ -116,7 +123,8 @@ watch_episode = APIRouter(prefix="/api/watch_episode", tags=["Watch Episode"])
                     description="Select episode to watch",
                     status_code=status.HTTP_201_CREATED,
                     summary="Watch Episode. User Route.",
-                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                    )
 def user_watch_episode(request: Request, episode_name: str, series_title: str):
     user_id = request.cookies.get("user_id")
     return UserWatchEpisodeController.user_watch_episode(user_id, episode_name, series_title)
@@ -125,7 +133,9 @@ def user_watch_episode(request: Request, episode_name: str, series_title: str):
 @watch_episode.put("/rate-episode",
                    response_model=UserWatchEpisodeSchema,
                    summary="Rate Episode. User Route.",
-                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
+                   status_code=status.HTTP_201_CREATED
+                   )
 def user_rate_episode(request: Request, episode_name: str, series_title: str, rating: int):
     if not 0 < rating <= 10:
         raise HTTPException(status_code=400, detail="Rating must be between 1 and 10.")
@@ -192,7 +202,9 @@ def get_average_series_rating_for_year(year: int):
     return UserWatchEpisodeController.get_average_series_rating_for_year(year)
 
 
-@watch_episode.get("/get-popular-series", description="Get most popular Series.")
+@watch_episode.get("/get-popular-series",
+                   description="Get most popular Series."
+                   )
 def get_most_popular_series():
     series = UserWatchEpisodeController.get_most_popular_series()
     sorted_series = {k: {"Views": v} for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}

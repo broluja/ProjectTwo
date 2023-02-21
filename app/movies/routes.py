@@ -13,7 +13,9 @@ movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
 
 @movie_router.post("/add-movie",
                    response_model=MovieWithDirectorAndGenreSchema,
-                   dependencies=[Depends(JWTBearer(["super_user"]))])
+                   dependencies=[Depends(JWTBearer(["super_user"]))],
+                   status_code=status.HTTP_201_CREATED
+                   )
 def add_new_movie(movie: MovieSchemaIn):
     return MovieController.create_movie(**vars(movie))
 
@@ -21,7 +23,8 @@ def add_new_movie(movie: MovieSchemaIn):
 @movie_router.get("/get-all-movies",
                   response_model=list[MovieWithActorsSchema],
                   description="Read all Movies from DB",
-                  summary="Search all Movies.")
+                  summary="Search all Movies."
+                  )
 def get_all_movies(page: int = 1):
     return MovieController.get_all_movies(page)
 
@@ -29,7 +32,8 @@ def get_all_movies(page: int = 1):
 @movie_router.get("/get-movie-director-and-genre",
                   response_model=MovieWithDirectorAndGenreSchema,
                   summary="Read Movie with Genre and Director. Admin Route.",
-                  dependencies=[Depends(JWTBearer(["super_user"]))])
+                  dependencies=[Depends(JWTBearer(["super_user"]))]
+                  )
 def get_movie_with_genre_and_director(movie_id: str):
     return MovieActorController.get_movie_with_director_and_genre(movie_id)
 
@@ -37,7 +41,9 @@ def get_movie_with_genre_and_director(movie_id: str):
 @movie_router.put("/update-movie",
                   response_model=MovieSchema,
                   summary="Update Movie Data",
-                  dependencies=[Depends(JWTBearer(["super_user"]))])
+                  dependencies=[Depends(JWTBearer(["super_user"]))],
+                  status_code=status.HTTP_201_CREATED
+                  )
 def update_movie_data(movie: MovieSchemaIn, movie_id):
     attributes = {key: value for key, value in vars(movie).items() if value}
     return MovieController.update_movie_data(movie_id, attributes)
@@ -46,7 +52,8 @@ def update_movie_data(movie: MovieSchemaIn, movie_id):
 @movie_router.delete("/delete-movie",
                      description='Delete specific movie by ID',
                      summary="Delete movie. Admin route.",
-                     dependencies=[Depends(JWTBearer(["super_user"]))])
+                     dependencies=[Depends(JWTBearer(["super_user"]))]
+                     )
 def delete_movie(movie_id: str):
     return MovieController.delete_movie(movie_id)
 
@@ -56,14 +63,18 @@ movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies_actors
 
 @movie_actor_router.post("/add_actor_to_movie",
                          dependencies=[Depends(JWTBearer(["super_user"]))],
-                         description="Add actor to Movie")
+                         description="Add actor to Movie",
+                         status_code=status.HTTP_201_CREATED
+                         )
 def add_actor_to_movie(movie_id: str, actor_id: str):
     return MovieActorController.create_movie_actor(movie_id, actor_id)
 
 
 @movie_actor_router.delete("/remove_actor_to_movie",
                            dependencies=[Depends(JWTBearer(["super_user"]))],
-                           description="Remove actor from Movie")
+                           description="Remove actor from Movie",
+                           status_code=status.HTTP_201_CREATED
+                           )
 def remove_actor_from_movie(movie_id: str, actor_id: str):
     return MovieActorController.delete_movie_actor(movie_id, actor_id)
 
@@ -74,7 +85,8 @@ watch_movie = APIRouter(prefix="/api/watch-movie", tags=["Watch Movie"])
 @watch_movie.post("/",
                   summary="Select movie to watch. User Route.",
                   status_code=status.HTTP_201_CREATED,
-                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                  )
 def user_watch_movie(request: Request, title: str):
     user_id = request.cookies.get("user_id")
     return UserWatchMovieController.user_watch_movie(user_id, title)
@@ -83,7 +95,9 @@ def user_watch_movie(request: Request, title: str):
 @watch_movie.put("/rate-movie",
                  response_model=UserWatchMovieSchema,
                  summary="Rate movie. User Route.",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
+                 status_code=status.HTTP_201_CREATED
+                 )
 def user_rate_movie(request: Request, title: str, rating: int):
     if not 0 < rating <= 10:
         raise HTTPException(status_code=400, detail="Rating must be between 1 and 10.")
