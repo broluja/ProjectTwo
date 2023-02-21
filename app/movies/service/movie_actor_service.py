@@ -1,10 +1,11 @@
+"""Movie-Actor service module"""
 from app.db import SessionLocal
 from app.movies.models import MovieActor
 from app.movies.repositories import MovieActorRepository
 
 
 class MovieActorService:
-
+    """Service for Movie-Actor routes"""
     @staticmethod
     def create_new_movie_actor(movie_id: str, actor_id: str):
         try:

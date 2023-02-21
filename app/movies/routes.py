@@ -1,3 +1,4 @@
+"""Movie and Movie-Actor routes"""
 from fastapi import APIRouter, Depends, status, HTTPException
 from starlette.requests import Request
 

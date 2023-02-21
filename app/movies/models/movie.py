@@ -1,3 +1,4 @@
+"""Movie, MovieActor Model module"""
 from uuid import uuid4
 from datetime import date
 
@@ -9,6 +10,7 @@ from app.utils import generate_fake_url
 
 
 class MovieActor(Base):
+    """Base Model for Movie-Actor"""
     __tablename__ = "movie_actors"
     id = Column(String(50), primary_key=True, default=uuid4)
     movie_id = Column(String(50), ForeignKey('movies.id'))
@@ -20,6 +22,7 @@ class MovieActor(Base):
 
 
 class Movie(Base):
+    """Base Model for Movie"""
     __tablename__ = "movies"
     __table_args__ = (UniqueConstraint("title", "director_id", name="same_director_different_title"),)
 

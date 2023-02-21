@@ -1,3 +1,4 @@
+"""Custom Movie exceptions"""
 from app.base import AppException
 
 

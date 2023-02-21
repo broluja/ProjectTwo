@@ -1,3 +1,4 @@
+"""Movie Service module"""
 from app.directors.exceptions.director_exceptions import NonExistingDirectorException
 from app.directors.models import Director
 from app.directors.repositories import DirectorRepository
@@ -14,7 +15,7 @@ PER_PAGE = 5
 
 
 class MovieServices:
-
+    """Service for movie routes"""
     @staticmethod
     def create_new_movie(title: str, year_published: str, director_id: str, genre_id: str):
         try:
@@ -26,8 +27,8 @@ class MovieServices:
                           "director_id": director_id,
                           "genre_id": genre_id}
                 return repository.create(fields)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_all_movies(page: int):
@@ -37,8 +38,8 @@ class MovieServices:
                 skip = (page - 1) * PER_PAGE
                 movies = repository.read_many(skip=skip, limit=PER_PAGE)
                 return movies
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_movie_by_id(movie_id: str):
@@ -47,8 +48,8 @@ class MovieServices:
                 repository = MovieRepository(db, Movie)
                 movie = repository.read_by_id(movie_id)
                 return movie
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_movie_by_title(title: str):
@@ -57,8 +58,8 @@ class MovieServices:
                 repository = MovieRepository(db, Movie)
                 movie = repository.read_movie_by_title(title)
                 return movie
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def search_movies_by_name(title: str):
@@ -67,8 +68,8 @@ class MovieServices:
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_movie_by_title(title, search=True)
                 return movies
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def search_movies_by_director(director: str):
@@ -82,8 +83,8 @@ class MovieServices:
                 movies = repository.read_all()
                 response = [movie for movie in movies if movie.director_id == obj.id]
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def search_movies_by_genre(genre: str):
@@ -97,8 +98,8 @@ class MovieServices:
                 movies = repository.read_all()
                 response = [movie for movie in movies if movie.genre_id == obj.id]
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_movies_by_year(year: int):
@@ -107,8 +108,8 @@ class MovieServices:
                 movie_repository = MovieRepository(db, Movie)
                 movies = movie_repository.read_movies_by_year(str(year))
                 return movies
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_latest_features(date_limit: str):
@@ -117,8 +118,8 @@ class MovieServices:
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_latest_releases(date_limit)
                 return movies
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def show_least_popular_movies():
@@ -127,8 +128,8 @@ class MovieServices:
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_unpopular_movies()
                 return movies
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def update_movie_data(movie_id: str, attributes: dict):
@@ -138,8 +139,8 @@ class MovieServices:
                 obj = repository.read_by_id(movie_id)
                 movie = repository.update(obj, attributes)
                 return movie
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def delete_movie(movie_id: str):
@@ -147,5 +148,5 @@ class MovieServices:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
                 return repository.delete(movie_id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
