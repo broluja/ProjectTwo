@@ -39,6 +39,8 @@ class SeriesController:
     def get_series_data(title: str):
         try:
             series = SeriesServices.get_series_by_name(title, search=False)
+            if not series:
+                return Response(content=f"No Series with name: {title}.", status_code=200)
             director = DirectorServices.get_director_by_id(series.director_id)
             genre = GenreServices.get_genre_by_id(series.genre_id)
             series.director = director

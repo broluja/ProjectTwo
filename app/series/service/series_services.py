@@ -58,7 +58,7 @@ class SeriesServices:
                 director_repo = DirectorRepository(db, Director)
                 obj = director_repo.read_directors_by_last_name(director, search=False)
                 if not obj:
-                    raise NonExistingDirectorException(message=f"We do not have {director} in our Database.")
+                    raise NonExistingDirectorException(message=f"We do not have Director: {director} in our Database.")
                 series_repo = SeriesRepository(db, Series)
                 return series_repo.read_series_by_director_id(obj.id)
         except Exception as e:
@@ -112,7 +112,7 @@ class SeriesServices:
                 genre_repo = GenreRepository(db, Genre)
                 genre_obj = genre_repo.read_genres_by_name(genre, search=False)
                 if not genre_obj:
-                    raise NonExistingGenreException
+                    raise NonExistingGenreException(message=f"Genre with name: {genre} does not exist in our Database.")
                 series_repo = SeriesRepository(db, Series)
                 series = series_repo.read_series_by_genre_id(genre_obj.id)
                 return series

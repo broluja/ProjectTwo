@@ -195,7 +195,7 @@ def get_average_series_rating_for_year(year: int):
 @watch_episode.get("/get-popular-series", description="Get most popular Series.")
 def get_most_popular_series():
     series = UserWatchEpisodeController.get_most_popular_series()
-    sorted_series = {k: f"Users watch: {v}" for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}
+    sorted_series = {k: {"Views": v} for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}
     return sorted_series
 
 

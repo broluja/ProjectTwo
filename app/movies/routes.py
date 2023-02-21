@@ -112,7 +112,7 @@ def get_my_watched_movies_list(request: Request):
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
 def get_top_ten_movies():
     top_ten = UserWatchMovieController.get_popular_movies()
-    sorted_movies = {k: f"Views: {v}" for k, v in sorted(top_ten.items(), key=lambda item: item[1], reverse=True)}
+    sorted_movies = {k: {"Views": v} for k, v in sorted(top_ten.items(), key=lambda item: item[1], reverse=True)}
     return sorted_movies
 
 
@@ -172,7 +172,7 @@ def get_average_ratings():
     return UserWatchMovieController.get_average_ratings()
 
 
-@watch_movie.get("/get-movies-with-average-rating",
+@watch_movie.get("/get-movies-higher-rating",
                  summary="Get Movies with average rating higher than requested. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
 def get_movie_with_average_rating_above_requested(rating: float):

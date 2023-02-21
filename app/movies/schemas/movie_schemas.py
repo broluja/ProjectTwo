@@ -50,6 +50,7 @@ class MovieWithActorsSchema(BaseModel):
 
 
 class MovieWithDirectorAndGenreSchema(BaseModel):
+    id: UUID4
     title: str
     year_published: str
     link: str
@@ -62,6 +63,7 @@ class MovieWithDirectorAndGenreSchema(BaseModel):
 
 
 class MovieFullSchema(BaseModel):
+    id: UUID4
     title: str
     year_published: str
     link: str

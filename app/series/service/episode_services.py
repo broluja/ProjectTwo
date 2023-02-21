@@ -68,7 +68,7 @@ class EpisodeServices:
                 response = []
                 for episode_id, rating in episode:
                     obj = episode_repository.read_by_id(episode_id)
-                    response.append({obj.name: round(rating, 2)})
+                    response.append({obj.name: {"Rating": round(rating, 2), "Series": obj.series_id}})
                 return response
         except Exception as e:
             raise e

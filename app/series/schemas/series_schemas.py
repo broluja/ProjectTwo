@@ -21,6 +21,8 @@ class SeriesSchema(BaseModel):
 class SeriesSchemaIn(BaseModel):
     title: str
     year_published: str
+    director_id: str
+    genre_id: str
 
     class Config:
         orm_mode = True
@@ -58,6 +60,7 @@ class SeriesWithDirectorAndGenreSchema(BaseModel):
 
 
 class SeriesFullSchema(BaseModel):
+    id: UUID4
     title: str
     date_added: date
     year_published: str
