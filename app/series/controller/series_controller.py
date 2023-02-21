@@ -1,3 +1,4 @@
+"""Series Controller module"""
 from fastapi import HTTPException
 from starlette.responses import Response
 
@@ -8,7 +9,7 @@ from app.series.service import SeriesServices
 
 
 class SeriesController:
-
+    """Controller for Series routes"""
     @staticmethod
     def create_series(title: str, year_published: str, director_id: str, genre_id: str):
         try:

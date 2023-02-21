@@ -1,3 +1,4 @@
+"""Custom exceptions for Series logic"""
 from app.base import AppException
 
 
