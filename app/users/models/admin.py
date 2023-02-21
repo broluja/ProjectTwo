@@ -1,3 +1,4 @@
+"""Admin Model module"""
 from uuid import uuid4
 
 from sqlalchemy import Column, String, ForeignKey
@@ -7,6 +8,7 @@ from app.db import Base
 
 
 class Admin(Base):
+    """Base Model for Admin"""
     __tablename__ = "admins"
     id = Column(String(50), primary_key=True, default=uuid4)
     first_name = Column(String(50), nullable=False)

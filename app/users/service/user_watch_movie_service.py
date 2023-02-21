@@ -1,3 +1,4 @@
+"""UserWatchMovie Service module"""
 from starlette.responses import Response
 
 from app.db import SessionLocal
@@ -8,7 +9,7 @@ from app.users.repositories import UserWatchMovieRepository
 
 
 class UserWatchMovieServices:
-
+    """Service for UserWatchMovie routes."""
     @staticmethod
     def user_watch_movie(user_id: str, movie_id: str):
         try:
@@ -22,8 +23,8 @@ class UserWatchMovieServices:
                 fields = {"user_id": user_id, "movie_id": movie_id}
                 repository.create(fields)
                 return {"message": "Watch this movie now.", "link": movie.link}
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def rate_movie(user_id: str, movie_id: str, rating: int):
@@ -37,8 +38,8 @@ class UserWatchMovieServices:
                 else:
                     fields = {"user_id": user_id, "movie_id": movie_id, "rating": rating}
                     return repository.create(fields)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_my_watched_movies_list(user_id: str):
@@ -46,12 +47,14 @@ class UserWatchMovieServices:
             with SessionLocal() as db:
                 repository = UserWatchMovieRepository(db, UserWatchMovie)
                 objects = repository.read_movies_from_user(user_id)
+                if not objects:
+                    return Response(content="You have not watched any Movie yet.", status_code=200)
                 movie_ids = [obj.movie_id for obj in objects]
                 movie_repo = MovieRepository(db, Movie)
                 movie_objects = [movie_repo.read_by_id(movie_id) for movie_id in movie_ids]
                 return movie_objects
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_popular_movies():
@@ -65,8 +68,8 @@ class UserWatchMovieServices:
                     movie = movie_repo.read_by_id(movie_id)
                     response.update({movie.title: views})
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_best_rated_movie(best: bool = True):
@@ -80,8 +83,8 @@ class UserWatchMovieServices:
                     movie = movie_repo.read_by_id(movie_id)
                     response.append({movie.title: rating})
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_my_recommendations(user_id, page):
@@ -92,8 +95,8 @@ class UserWatchMovieServices:
                 movies_repo = MovieRepository(db, Movie)
                 genres = [affinity.Genre_ID for affinity in users_affinities]
                 return movies_repo.read_movies_by_group_of_genres(page, genres)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_average_rating_for_movie(name: str):
@@ -106,8 +109,8 @@ class UserWatchMovieServices:
                 response = {"Movie": movie.title}
                 response.update(average)
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_average_ratings():
@@ -116,8 +119,8 @@ class UserWatchMovieServices:
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
                 response = user_watch_movie_repository.read_average_rating_for_all_movies()
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_movies_with_higher_average_rating(rating: float):
@@ -127,8 +130,8 @@ class UserWatchMovieServices:
                 ratings = user_watch_movie_repository.read_average_rating_for_all_movies()
                 response = [movie for movie in ratings if movie["Average Rating"] and movie["Average Rating"] > rating]
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_average_movie_rating_for_year(year: int):
@@ -144,8 +147,8 @@ class UserWatchMovieServices:
                 all_ratings = [rating["Average Rating"] for rating in ratings]
                 response = {f"Average rating for year: {year}": round(sum(all_ratings) / len(all_ratings), 2)}
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_most_successful_movie_year():
@@ -165,5 +168,5 @@ class UserWatchMovieServices:
                     if avg_rating:
                         response.update({year: avg_rating})
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc

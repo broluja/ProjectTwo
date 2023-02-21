@@ -1,3 +1,4 @@
+"""Subuser Service module"""
 from app.users.repositories import SubuserRepository
 from app.users.service import UserServices
 from app.db.database import SessionLocal
@@ -9,7 +10,7 @@ MAX_NUMBER_SUBUSERS = 2
 
 
 class SubuserServices:
-
+    """Service for Subusers routes"""
     @staticmethod
     def create_new_subuser(user_id, name):
         try:
@@ -25,8 +26,8 @@ class SubuserServices:
                 repository = SubuserRepository(db, Subuser)
                 fields = {"user_id": user_id, "name": name}
                 return repository.create(fields)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_all_subusers():
@@ -34,8 +35,8 @@ class SubuserServices:
             with SessionLocal() as db:
                 repository = SubuserRepository(db, Subuser)
                 return repository.read_all()
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_subuser_by_id(subuser_id: str):
@@ -43,8 +44,8 @@ class SubuserServices:
             with SessionLocal() as db:
                 repository = SubuserRepository(db, Subuser)
                 return repository.read_by_id(subuser_id)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_all_subusers_for_one_user(user_id):
@@ -53,8 +54,8 @@ class SubuserServices:
                 repository = SubuserRepository(db, Subuser)
                 subusers = repository.read_subusers_by_user_id(user_id)
                 return subusers
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def update_subusers_name(subuser_id: str, name: str):
@@ -65,8 +66,8 @@ class SubuserServices:
                 updates = {"name": name}
                 obj = repository.update(subuser, updates)
                 return obj
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def delete_subuser(user_id: str, subuser_name: str):
@@ -78,6 +79,6 @@ class SubuserServices:
                     raise UnknownProfileException
                 response = repository.delete(subuser.id)
                 return response
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
         

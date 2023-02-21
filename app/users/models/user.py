@@ -1,13 +1,15 @@
-from sqlalchemy import Column, String, Boolean, Date, ForeignKey, Integer, UniqueConstraint
+"""User Model module"""
 from uuid import uuid4
 from datetime import date
 
 from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, Boolean, Date, ForeignKey, Integer, UniqueConstraint
 
 from app.db import Base
 
 
 class UserWatchMovie(Base):
+    """Base Model for UserWatchMovie"""
     __tablename__ = "user_watch_movies"
     __table_args__ = (UniqueConstraint("user_id", "movie_id", name="one_user_one_rating"),)
 
@@ -25,6 +27,7 @@ class UserWatchMovie(Base):
 
 
 class UserWatchEpisode(Base):
+    """Base Model for UserWatchEpisode"""
     __tablename__ = "user_watch_episodes"
     __table_args__ = (UniqueConstraint("user_id", "episode_id", name="one_user_one_rate"),)
 
@@ -42,6 +45,7 @@ class UserWatchEpisode(Base):
 
 
 class User(Base):
+    """Base Model for User"""
     __tablename__ = "users"
     id = Column(String(50), primary_key=True, default=uuid4)
     email = Column(String(100), unique=True)

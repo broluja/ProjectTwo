@@ -1,3 +1,4 @@
+"""Subuser Controller module"""
 from fastapi import HTTPException
 from starlette.responses import Response
 
@@ -6,16 +7,16 @@ from app.base.base_exception import AppException
 
 
 class SubuserController:
-
+    """Controller for Subuser routes"""
     @staticmethod
     def create_subuser(user_id, name):
         try:
             subuser = SubuserServices.create_new_subuser(user_id, name)
             return subuser
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_all_subusers():
@@ -24,20 +25,20 @@ class SubuserController:
             if not subusers:
                 return Response(content="There are no Subusers created in our Database.", status_code=200)
             return subusers
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_subuser_by_id(subuser_id: str):
         try:
             subuser = SubuserServices.get_subuser_by_id(subuser_id)
             return subuser
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc))from exc
 
     @staticmethod
     def get_subusers_by_user_id(user_id: str):
@@ -46,28 +47,28 @@ class SubuserController:
             if not subusers:
                 return Response(content=f"No subusers made by user with ID: {user_id}.", status_code=200)
             return subusers
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            print(e)
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            print(exc)
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def update_subusers_name(subuser_id: str, name: str):
         try:
             subuser = SubuserServices.update_subusers_name(subuser_id, name)
             return subuser
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def delete_subuser(user_id, subuser_name: str):
         try:
             SubuserServices.delete_subuser(user_id, subuser_name)
             return Response(content=f"Subuser: {subuser_name} deleted.", status_code=200)
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc

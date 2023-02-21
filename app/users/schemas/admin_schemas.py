@@ -1,7 +1,9 @@
+"""Admin Schema module"""
 from pydantic import BaseModel, UUID4
 
 
 class AdminSchema(BaseModel):
+    """Base schema for Admin"""
     id: UUID4
     first_name: str
     last_name: str
@@ -14,6 +16,7 @@ class AdminSchema(BaseModel):
 
 
 class AdminSchemaIn(BaseModel):
+    """Base Admin schema for input"""
     first_name: str
     last_name: str
     address: str

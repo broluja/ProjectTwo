@@ -1,5 +1,5 @@
+"""User Schemas module"""
 from typing import Optional
-
 from pydantic import BaseModel, UUID4, EmailStr
 from datetime import date
 
@@ -7,6 +7,7 @@ from .subuser_schemas import SubuserSchema
 
 
 class UserSchema(BaseModel):
+    """Base schema for User"""
     id: UUID4
     email: str
     password_hashed: str
@@ -21,6 +22,7 @@ class UserSchema(BaseModel):
 
 
 class UserSchemaIn(BaseModel):
+    """Base User schema for input"""
     email: EmailStr
     password: str
     username: str
@@ -37,6 +39,7 @@ class UserSchemaIn(BaseModel):
 
 
 class UserSchemaOut(BaseModel):
+    """Base User schema for output"""
     id: UUID4
     email: str
     username: str
@@ -49,6 +52,7 @@ class UserSchemaOut(BaseModel):
 
 
 class UserWithSubusersSchema(BaseModel):
+    """User schema with subusers"""
     id: UUID4
     email: str
     password_hashed: str

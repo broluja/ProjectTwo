@@ -1,6 +1,6 @@
-from sqlalchemy import select, distinct, func
+"""UserWatchEpisode Repository module"""
+from sqlalchemy import func
 from sqlalchemy.orm import aliased
-from sqlalchemy.sql.functions import count
 
 from app.base import BaseCRUDRepository
 from app.genres.models import Genre
@@ -10,23 +10,22 @@ from app.users.models.user import UserWatchEpisode
 
 class UserWatchEpisodeRepository(BaseCRUDRepository):
     """Repository for UserWatchEpisode Model"""
-
     def read_user_watch_episode_by_user_id_and_episode_id(self, user_id: str, episode_id: str):
         try:
             user_watch_episode = self.db.query(UserWatchEpisode).filter(UserWatchEpisode.user_id == user_id).filter(
                 UserWatchEpisode.episode_id == episode_id).first()
             return user_watch_episode
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_by_user_id(self, user_id: str):
         try:
             episodes = self.db.query(UserWatchEpisode).filter(UserWatchEpisode.user_id == user_id).all()
             return episodes
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_users_episodes_and_series(self, user_id: str):
         try:
@@ -35,9 +34,9 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
                 .join(Series, Episode.series_id == Series.id) \
                 .filter(UserWatchEpisode.user_id == user_id).all()
             return series
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_episode_views(self):
         try:
@@ -49,9 +48,9 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
             sq2 = aliased(subquery2)
             result = self.db.query(sq2.c.series_two, func.count(sq2.c.series_two)).group_by(sq2.c.series_two)
             return result
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_best_rated_episode(self, best: bool = True):
         try:
@@ -70,9 +69,9 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
                 episode = self.db.query(subquery.c.episode.label("episode"), subquery.c.rating.label("rating")).filter(
                     subquery.c.rating.label("rating") == min_rating)
             return episode
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_users_affinities(self, user_id: str):
         try:
@@ -82,9 +81,9 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
                 join(Genre, Series.genre_id == Genre.id).filter(UserWatchEpisode.user_id == user_id).subquery('sq')
             result = self.db.query(sq.c.Genre_ID).distinct().all()
             return result
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_average_rating(self, episode_ids: list):
         try:
@@ -95,6 +94,6 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
             result = self.db.query(func.round(func.avg(averages.c.Rating), 2).label("Average Rating")).first()
             return result
 
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc

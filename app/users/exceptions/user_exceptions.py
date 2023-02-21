@@ -1,3 +1,4 @@
+"""Custom exceptions for User logic"""
 from app.base import AppException
 
 
@@ -39,6 +40,7 @@ class InvalidTokenException(AppException):
 
 class NonExistingUserIdException(AppException):
     """Exception raised when provided User's ID is non-existing."""
+    code = 400
 
 
 class UnknownProfileException(AppException):
@@ -50,10 +52,12 @@ class UnknownProfileException(AppException):
 class MaxLimitSubusersException(AppException):
     """Exception raised when User have reached Max number of subusers."""
     message = "You have reached Subusers Limit."
+    code = 403
 
 
 class AdminAlreadyCreatedException(AppException):
     """Exception is raised if you try to create admin when User is already Administrator."""
+    code = 400
 
 
 class AdminSubuserException(AppException):

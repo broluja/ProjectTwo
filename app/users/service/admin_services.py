@@ -1,3 +1,4 @@
+"""Admin Service module"""
 from app.db import SessionLocal
 from app.users.exceptions import NonExistingUserIdException, AdminAlreadyCreatedException, NonExistingAdminIdException
 from app.users.repositories import AdminRepository
@@ -6,7 +7,7 @@ from app.users.service import UserServices
 
 
 class AdminServices:
-
+    """Service for Admin routes."""
     @staticmethod
     def create_new_admin(admin: dict):
         try:
@@ -20,8 +21,8 @@ class AdminServices:
                 obj = repository.create(admin)
                 UserServices.update_admin_status(admin.get("user_id"))
                 return obj
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def derogate_admin(admin_id: str):
@@ -34,8 +35,8 @@ class AdminServices:
                 obj = UserServices.update_admin_status(admin.user_id, superuser=False)
                 admin_repository.delete(admin_id)
                 return obj
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_all_admins():
@@ -43,8 +44,8 @@ class AdminServices:
             with SessionLocal() as db:
                 admin_repository = AdminRepository(db, Admin)
                 return admin_repository.read_all()
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_all_admins_by_country(country: str):
@@ -52,5 +53,5 @@ class AdminServices:
             with SessionLocal() as db:
                 admin_repository = AdminRepository(db, Admin)
                 return admin_repository.read_admins_by_country(country)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc

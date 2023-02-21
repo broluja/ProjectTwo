@@ -1,3 +1,4 @@
+"""Admin Repository module"""
 from app.base import BaseCRUDRepository, AppException
 from app.users.models import Admin
 
@@ -9,6 +10,6 @@ class AdminRepository(BaseCRUDRepository):
         try:
             admins = self.db.query(Admin).filter(Admin.country == country).all()
             return admins
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise AppException(message=str(e), code=500)
+            raise AppException(message=str(exc), code=500) from exc

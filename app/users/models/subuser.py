@@ -1,3 +1,4 @@
+"""Subuser Model module"""
 from uuid import uuid4
 from datetime import date
 
@@ -8,6 +9,7 @@ from app.db import Base
 
 
 class Subuser(Base):
+    """Base model for Subuser"""
     __tablename__ = "subusers"
     __table_args__ = (UniqueConstraint("user_id", "name", name="unique_subuser_name"),)
     id = Column(String(50), primary_key=True, default=uuid4)

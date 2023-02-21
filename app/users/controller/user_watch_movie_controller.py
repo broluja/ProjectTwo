@@ -1,3 +1,4 @@
+"""UserWatchMovie Controller module"""
 from fastapi import HTTPException
 from starlette.responses import Response
 
@@ -7,17 +8,17 @@ from app.users.service import UserWatchMovieServices
 
 
 class UserWatchMovieController:
-
+    """Controller for User-Watch-Movie routes"""
     @staticmethod
     def user_watch_movie(user_id: str, title: str):
         try:
             movie = MovieServices.get_movie_by_title(title)
             watch_movie = UserWatchMovieServices.user_watch_movie(user_id, movie.id)
             return watch_movie
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def user_rate_movie(user_id: str, title: str, rating: int):
@@ -25,10 +26,10 @@ class UserWatchMovieController:
             movie = MovieServices.get_movie_by_title(title)
             rated_movie = UserWatchMovieServices.rate_movie(user_id, movie.id, rating)
             return rated_movie
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_my_watched_movies_list(user_id: str):
@@ -37,10 +38,10 @@ class UserWatchMovieController:
             if not movies:
                 return Response(content="You have not watched any movie yet.", status_code=200)
             return movies
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_popular_movies():
@@ -49,10 +50,10 @@ class UserWatchMovieController:
             if not movies:
                 return Response(content="We have not yet generated movie popularity list.", status_code=200)
             return movies
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_best_rated_movie(best: bool = True):
@@ -61,10 +62,10 @@ class UserWatchMovieController:
             if not movie:
                 return Response(content="We have not yet generated movie popularity list.", status_code=200)
             return movie
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_my_recommendations(user_id: str, page: int):
@@ -73,30 +74,30 @@ class UserWatchMovieController:
             if not movies:
                 return MovieServices.get_all_movies(page)
             return movies
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_average_rating_for_movie(name: str):
         try:
             movie = UserWatchMovieServices.get_average_rating_for_movie(name)
             return movie
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_average_ratings():
         try:
             response = UserWatchMovieServices.get_average_ratings()
             return response
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_movies_with_higher_average_rating(rating: float):
@@ -105,10 +106,10 @@ class UserWatchMovieController:
             if not movies:
                 return Response(content=f"No Movie with average rating higher than: {rating}.", status_code=200)
             return movies
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_average_movie_rating_for_year(year: int):
@@ -117,17 +118,16 @@ class UserWatchMovieController:
             if not average:
                 return Response(content=f"No Movies from year: {year}.", status_code=200)
             return average
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_most_successful_movie_year():
         try:
             return UserWatchMovieServices.get_most_successful_movie_year()
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
-
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc

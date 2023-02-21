@@ -1,3 +1,4 @@
+"""User routes module"""
 import hashlib
 
 from fastapi import APIRouter, status, Depends, HTTPException

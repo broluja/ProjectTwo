@@ -1,3 +1,4 @@
+"""User Repository module"""
 from sqlalchemy.exc import IntegrityError
 
 from app.base import BaseCRUDRepository, AppException
@@ -7,13 +8,12 @@ from app.users.models import User
 
 class UserRepository(BaseCRUDRepository):
     """Repository for User Model"""
-
     def create(self, attributes: dict):
         try:
             return super().create(attributes)
-        except IntegrityError as _:
+        except IntegrityError as exc:
             self.db.rollback()
-            raise AppException(message="User with this email is already registered.", code=400)
+            raise AppException(message="User with this email is already registered.", code=400) from exc
 
     def read_user_by_email(self, email: str):
         try:
@@ -22,17 +22,17 @@ class UserRepository(BaseCRUDRepository):
                 self.db.rollback()
                 raise InvalidCredentialsException
             return user
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def search_users_by_email(self, email: str):
         try:
             users = self.db.query(User).filter(User.email.ilike(f"%{email}%")).all()
             return users
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_user_by_code(self, verification_code: int):
         try:
@@ -41,14 +41,14 @@ class UserRepository(BaseCRUDRepository):
                 self.db.rollback()
                 raise InvalidVerificationCode
             return user
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
 
     def read_all_active_users(self, active=True):
         try:
             users = self.db.query(User).filter(User.is_active == active).all()
             return users
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc
