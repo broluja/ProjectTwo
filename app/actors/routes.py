@@ -16,7 +16,9 @@ def create_new_actor(actor: ActorSchemaIn):
     return ActorController.create_actor(**vars(actor))
 
 
-@actor_router.get("/get-all-actors", response_model=list[ActorSchema], description="Read all Actors from DB")
+@actor_router.get("/get-all-actors",
+                  response_model=list[ActorSchema],
+                  description="Read all Actors from DB")
 def get_all_actors(page: int = 1):
     return ActorController.get_all_actors(page)
 
@@ -29,12 +31,16 @@ def get_actor_by_id(actor_id: str):
     return ActorController.get_actor_by_id(actor_id)
 
 
-@actor_router.get("/get-actor-by-last-name", response_model=list[ActorSchema], description="Read Actor by Last Name")
+@actor_router.get("/get-actor-by-last-name",
+                  response_model=list[ActorSchema],
+                  description="Read Actor by Last Name")
 def get_actor_by_last_name(actor: str):
     return ActorController.get_actor_by_last_name(actor.strip())
 
 
-@actor_router.get("/get-actor-by-first-name", response_model=list[ActorSchema], description="Read Actor by First Name")
+@actor_router.get("/get-actor-by-first-name",
+                  response_model=list[ActorSchema],
+                  description="Read Actor by First Name")
 def get_actor_by_last_name(actor: str):
     return ActorController.get_actor_by_first_name(actor.strip())
 

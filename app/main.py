@@ -1,3 +1,4 @@
+"""Main module"""
 import uvicorn
 from fastapi import FastAPI
 
@@ -14,6 +15,10 @@ Base.metadata.create_all(bind=engine)
 
 
 def init_app():
+    """
+    Initializing app
+    :return: None.
+    """
     my_app = FastAPI()
     my_app.include_router(user_router)
     my_app.include_router(subuser_router)

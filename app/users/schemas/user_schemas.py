@@ -18,6 +18,7 @@ class UserSchema(BaseModel):
     verification_code: Optional[int]
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -28,6 +29,7 @@ class UserSchemaIn(BaseModel):
     username: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {

@@ -8,6 +8,7 @@ class GenreSchema(BaseModel):
     name: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -16,4 +17,5 @@ class GenreSchemaIn(BaseModel):
     name: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True

@@ -10,6 +10,7 @@ class DirectorSchema(BaseModel):
     country: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -20,6 +21,7 @@ class DirectorSchemaIn(BaseModel):
     country: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {

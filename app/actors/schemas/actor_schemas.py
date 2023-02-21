@@ -12,6 +12,7 @@ class ActorSchema(BaseModel):
     country: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -23,6 +24,7 @@ class ActorSchemaIn(BaseModel):
     country: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {

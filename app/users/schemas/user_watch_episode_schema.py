@@ -13,6 +13,7 @@ class UserWatchEpisodeSchema(BaseModel):
     date_watched: date
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -22,6 +23,7 @@ class UserWatchEpisodeSchemaIn(BaseModel):
     rating: int = Field(gt=0, lt=11, description='Rating must be between 1-10')
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {

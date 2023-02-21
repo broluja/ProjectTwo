@@ -1,7 +1,9 @@
+"""Configuration module"""
 from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
+    """Class for storing settings data."""
     DB_HOST: str
     DB_HOSTNAME: str
     DB_PORT: int
@@ -19,6 +21,7 @@ class Settings(BaseSettings):
     PER_PAGE: int
 
     class Config:
+        """Configuration Class"""
         env_file = './.env'
 
 

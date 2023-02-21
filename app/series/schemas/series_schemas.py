@@ -15,6 +15,7 @@ class SeriesSchema(BaseModel):
     genre_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -25,6 +26,7 @@ class SeriesSchemaIn(BaseModel):
     genre_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {
@@ -44,6 +46,7 @@ class SeriesWithActorsSchema(BaseModel):
     actors: list[ActorSchema]
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -56,6 +59,7 @@ class SeriesWithDirectorAndGenreSchema(BaseModel):
     genre: GenreSchema
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -69,4 +73,5 @@ class SeriesFullSchema(BaseModel):
     genre: GenreSchema
 
     class Config:
+        """Configuration Class"""
         orm_mode = True

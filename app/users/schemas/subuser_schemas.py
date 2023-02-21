@@ -10,6 +10,7 @@ class SubuserSchema(BaseModel):
     date_subscribed: date
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -19,4 +20,5 @@ class SubuserSchemaIn(BaseModel):
     date_subscribed: date
 
     class Config:
+        """Configuration Class"""
         orm_mode = True

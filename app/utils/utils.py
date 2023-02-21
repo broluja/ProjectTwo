@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
-def generate_random_int(n: int):
+def generate_random_int(n: int) -> int:
     """
     Function that generates random code made from n integer numbers
     :param n: number of integers
@@ -15,7 +15,7 @@ def generate_random_int(n: int):
     return int(''.join(nums))
 
 
-def generate_fake_url():
+def generate_fake_url() -> str:
     """
     Function that generates fake url using faker library
     :return: Fake url, string.
@@ -26,7 +26,7 @@ def generate_fake_url():
     return fake_url + fake_file_path
 
 
-def get_day_before_one_month():
+def get_day_before_one_month() -> str:
     """
     Calculate exact day one month ago.
     :return: Date, string.

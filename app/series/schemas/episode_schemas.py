@@ -8,6 +8,7 @@ class EpisodeSchema(BaseModel):
     series_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -16,6 +17,7 @@ class EpisodeSchemaIn(BaseModel):
     series_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {

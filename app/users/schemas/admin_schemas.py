@@ -12,6 +12,7 @@ class AdminSchema(BaseModel):
     user_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -24,6 +25,7 @@ class AdminSchemaIn(BaseModel):
     user_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {

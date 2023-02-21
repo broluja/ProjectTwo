@@ -18,6 +18,7 @@ class MovieSchema(BaseModel):
     genre_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -29,6 +30,7 @@ class MovieSchemaIn(BaseModel):
     genre_id: str
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
         schema_extra = {
             "example": {
@@ -50,6 +52,7 @@ class MovieWithActorsSchema(BaseModel):
     actors: list[ActorSchema]
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -64,6 +67,7 @@ class MovieWithDirectorAndGenreSchema(BaseModel):
     genre: GenreSchema
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -79,4 +83,5 @@ class MovieFullSchema(BaseModel):
     actors: list[ActorSchema]
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
