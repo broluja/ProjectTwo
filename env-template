@@ -23,7 +23,8 @@ MAIL_FROM=olujic.branko@gmail.com
 # Display objects per search
 PER_PAGE=10
 
-# Superuser credentials
-username=superuser
+
+
+# Superuser credentials - use Admin login (this does not go to class Settings(BaseSettings))
 email=superuser@netflix.com
 password=123

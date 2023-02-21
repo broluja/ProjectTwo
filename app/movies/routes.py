@@ -13,6 +13,7 @@ movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
 
 @movie_router.post("/add-movie",
                    response_model=MovieWithDirectorAndGenreSchema,
+                   summary="Add new Movie to Database. Admin Route.",
                    dependencies=[Depends(JWTBearer(["super_user"]))],
                    status_code=status.HTTP_201_CREATED
                    )
@@ -21,7 +22,7 @@ def add_new_movie(movie: MovieSchemaIn):
 
 
 @movie_router.get("/get-all-movies",
-                  response_model=list[MovieWithActorsSchema],
+                  response_model=list[MovieSchema],
                   description="Read all Movies from DB",
                   summary="Search all Movies."
                   )
@@ -40,7 +41,7 @@ def get_movie_with_genre_and_director(movie_id: str):
 
 @movie_router.put("/update-movie",
                   response_model=MovieSchema,
-                  summary="Update Movie Data",
+                  summary="Update Movie Data. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
                   status_code=status.HTTP_201_CREATED
                   )
@@ -63,7 +64,7 @@ movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies_actors
 
 @movie_actor_router.post("/add_actor_to_movie",
                          dependencies=[Depends(JWTBearer(["super_user"]))],
-                         description="Add actor to Movie",
+                         summary="Add actor to Movie. Admin Route",
                          status_code=status.HTTP_201_CREATED
                          )
 def add_actor_to_movie(movie_id: str, actor_id: str):
@@ -72,7 +73,7 @@ def add_actor_to_movie(movie_id: str, actor_id: str):
 
 @movie_actor_router.delete("/remove_actor_to_movie",
                            dependencies=[Depends(JWTBearer(["super_user"]))],
-                           description="Remove actor from Movie",
+                           summary="Remove actor from Movie. Admin Route.",
                            status_code=status.HTTP_201_CREATED
                            )
 def remove_actor_from_movie(movie_id: str, actor_id: str):
@@ -197,7 +198,7 @@ def get_average_ratings():
     return UserWatchMovieController.get_average_ratings()
 
 
-@watch_movie.get("/get-movies-higher-rating",
+@watch_movie.get("/get-movies-with-higher-rating",
                  summary="Get Movies with average rating higher than requested. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )

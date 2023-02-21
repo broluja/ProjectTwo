@@ -81,7 +81,7 @@ def get_all_episodes_for_series(series_title: str):
 
 
 @episode_router.get("/get-episode-by-id",
-                    summary="Get episode by ID",
+                    summary="Get episode by ID. Admin Route",
                     response_model=EpisodeSchema,
                     dependencies=[Depends(JWTBearer(["super_user"]))]
                     )
