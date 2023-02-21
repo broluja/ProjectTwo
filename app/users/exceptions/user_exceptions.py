@@ -40,7 +40,7 @@ class InvalidTokenException(AppException):
 
 class NonExistingUserIdException(AppException):
     """Exception raised when provided User's ID is non-existing."""
-    code = 400
+    code = 404
 
 
 class UnknownProfileException(AppException):
