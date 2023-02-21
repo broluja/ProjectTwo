@@ -1,3 +1,4 @@
+# Database settings
 DB_HOST=mysql
 DB_HOSTNAME=
 DB_PORT=
@@ -6,6 +7,23 @@ DB_USER=
 DB_PASSWORD=
 
 DB_NAME=
+DB_NAME_TEST=
 
+# Token settings
 USER_SECRET=
 ALGORYTHM=HS256
+
+# Mail settings
+MAIL_USERNAME=olujic.branko@gmail.com
+MAIL_PASSWORD=qzccaecyqctwlkgn
+MAIL_PORT=587
+MAIL_SERVER=smtp.gmail.com
+MAIL_FROM=olujic.branko@gmail.com
+
+# Display objects per search
+PER_PAGE=10
+
+# Superuser credentials
+username=superuser
+email=superuser@netflix.com
+password=123
