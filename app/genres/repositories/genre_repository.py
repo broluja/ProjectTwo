@@ -1,3 +1,4 @@
+"""Genre Repository module"""
 from sqlalchemy.exc import IntegrityError
 
 from app.base import BaseCRUDRepository
@@ -10,9 +11,9 @@ class GenreRepository(BaseCRUDRepository):
     def create_new_genre(self, fields: dict):
         try:
             return super().create(fields)
-        except IntegrityError as e:
+        except IntegrityError as exc:
             self.db.rollback()
-            raise GenreAlreadyExistsException(message=f"Genre with name: {fields.get('name')} already created.") from e
+            raise GenreAlreadyExistsException(message=f"Genre with name: {fields['name']} already created.") from exc
 
     def read_genres_by_name(self, name: str, search: bool = True):
         try:
@@ -21,6 +22,6 @@ class GenreRepository(BaseCRUDRepository):
             else:
                 genres = self.db.query(Genre).filter(Genre.name == name).first()
             return genres
-        except Exception as e:
+        except Exception as exc:
             self.db.rollback()
-            raise e
+            raise exc

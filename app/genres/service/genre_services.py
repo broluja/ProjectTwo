@@ -1,10 +1,11 @@
+"""Genre Service module"""
 from app.genres.repositories import GenreRepository
 from app.db.database import SessionLocal
 from app.genres.models import Genre
 
 
 class GenreServices:
-
+    """Service for Genre routes"""
     @staticmethod
     def create_new_genre(name: str):
         try:

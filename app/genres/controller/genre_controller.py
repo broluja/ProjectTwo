@@ -1,3 +1,4 @@
+"""Genre Controller module"""
 from fastapi import HTTPException
 from starlette.responses import Response
 
@@ -6,7 +7,7 @@ from app.base.base_exception import AppException
 
 
 class GenreController:
-
+    """Controller for Genre routes"""
     @staticmethod
     def create_director(name: str):
         try:

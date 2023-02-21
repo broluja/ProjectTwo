@@ -1,3 +1,4 @@
+"""Genre routes module"""
 from fastapi import APIRouter, Depends
 
 from app.genres.schemas import GenreSchema, GenreSchemaIn

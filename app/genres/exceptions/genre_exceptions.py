@@ -1,3 +1,4 @@
+"""Custom exceptions for Genre"""
 from app.base import AppException
 
 
