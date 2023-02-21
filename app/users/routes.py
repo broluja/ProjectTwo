@@ -15,7 +15,8 @@ user_router = APIRouter(prefix="/api/users", tags=["Users"])
 @user_router.post("/register",
                   summary="User Registration",
                   description="Register new User",
-                  status_code=status.HTTP_201_CREATED)
+                  status_code=status.HTTP_201_CREATED
+                  )
 def register_user(user: UserSchemaIn):
     user.password = hashlib.sha256(user.password.encode()).hexdigest()
     return UserController.create_user(**user.dict())
@@ -24,7 +25,8 @@ def register_user(user: UserSchemaIn):
 @user_router.post("/user-verification",
                   summary="User Verification",
                   description="Verify User",
-                  status_code=status.HTTP_200_OK)
+                  status_code=status.HTTP_200_OK
+                  )
 def verify_user(verification_code: int):
     UserController.verify_user(verification_code)
     return Response(content="Account verified. You can log in now", status_code=200)
@@ -32,7 +34,8 @@ def verify_user(verification_code: int):
 
 @user_router.post("/user-login",
                   summary="User Login",
-                  description="Login User using email, password and username.")
+                  description="Login User using email, password and username."
+                  )
 def login_user(username: str, email: str, password: str, response: Response):
     password_hashed = hashlib.sha256(password.encode()).hexdigest()
     token, user_id = UserController.login_user(email, password_hashed, username)
@@ -42,7 +45,8 @@ def login_user(username: str, email: str, password: str, response: Response):
 
 @user_router.post("/user-forget-password",
                   summary="Ask for password change.",
-                  description="Demand reset of password.")
+                  description="Demand reset of password."
+                  )
 def forget_password(email: str):
     UserController.change_password(email)
     response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
@@ -53,7 +57,8 @@ def forget_password(email: str):
 @user_router.post("/user-reset-password",
                   summary="Reset user's password. User route.",
                   description="Demand reset of password.",
-                  dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))])
+                  dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))]
+                  )
 def reset_password(email: str):
     UserController.change_password(email)
     response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
@@ -64,7 +69,8 @@ def reset_password(email: str):
 @user_router.post("/reset-password-complete",
                   summary="Save new password. User route.",
                   description="Set new password.",
-                  status_code=status.HTTP_201_CREATED)
+                  status_code=status.HTTP_201_CREATED
+                  )
 def reset_password_complete(request: Request, code: int, password: str, new_password: str):
     if request.cookies.get("code") != "active":
         raise HTTPException(status_code=403, detail="Verification code expired. Ask for another one.")
@@ -77,7 +83,8 @@ def reset_password_complete(request: Request, code: int, password: str, new_pass
 
 @user_router.post("/admin-login",
                   summary="Admin Login",
-                  description="Login Admin using email and password.")
+                  description="Login Admin using email and password."
+                  )
 def login_admin(email: str, password: str, response: Response):
     password_hashed = hashlib.sha256(password.encode()).hexdigest()
     token, user_id = UserController.login_admin(email, password_hashed)
@@ -89,7 +96,8 @@ def login_admin(email: str, password: str, response: Response):
                  response_model=list[UserSchemaOut],
                  summary="Get all users. Admin route.",
                  description="Read all Users from Database. Admin route",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
 def get_all_users():
     return UserController.get_all_users()
 
@@ -98,7 +106,8 @@ def get_all_users():
                  response_model=list[UserSchemaOut],
                  summary="Get all active users. Admin route.",
                  description="Read all active Users from Database. Admin route",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
 def get_all_active_users():
     return UserController.get_all_active_users()
 
@@ -107,7 +116,8 @@ def get_all_active_users():
                  response_model=list[UserSchemaOut],
                  summary="Get all inactive users. Admin route.",
                  description="Read all inactive Users from Database. Admin route",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
 def get_all_inactive_users():
     return UserController.get_all_active_users(active=False)
 
@@ -116,7 +126,8 @@ def get_all_inactive_users():
                  response_model=UserSchemaOut,
                  summary="Get user by ID. Admin route.",
                  description="Read specific User by ID. Admin route",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
 def get_user_by_id(user_id: str):
     return UserController.get_user_by_id(user_id)
 
@@ -125,7 +136,8 @@ def get_user_by_id(user_id: str):
                  response_model=list[UserSchemaOut],
                  summary="Search for users by email. Admin route.",
                  description="Search Users by email. Admin route",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
 def search_users_by_email(email: str):
     return UserController.search_users_by_email(email)
 
@@ -134,7 +146,8 @@ def search_users_by_email(email: str):
                  response_model=UserWithSubusersSchema,
                  summary="Get user by ID with all his subusers. Admin route.",
                  description="Read User`s Subusers. Admin route.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
 def get_user_with_subusers(user_id: str):
     return UserController.get_user_with_all_subusers(user_id)
 
@@ -143,7 +156,8 @@ def get_user_with_subusers(user_id: str):
                  response_model=UserWithSubusersSchema,
                  summary="Get my Subusers. User route.",
                  description="Read my Subusers. User's route.",
-                 dependencies=[Depends(JWTBearer(["regular_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user"]))]
+                 )
 def get_my_subusers(request: Request):
     user_id = request.cookies.get("user_id")
     return UserController.get_user_with_all_subusers(user_id)
@@ -153,7 +167,8 @@ def get_my_subusers(request: Request):
                  response_model=UserSchemaOut,
                  summary="Update my username. User route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))],
-                 status_code=status.HTTP_201_CREATED)
+                 status_code=status.HTTP_201_CREATED
+                 )
 def update_my_name(request: Request, username: str):
     user_id = request.cookies.get("user_id")
     return UserController.update_username(user_id, username)
@@ -163,7 +178,8 @@ def update_my_name(request: Request, username: str):
                  response_model=UserSchemaOut,
                  summary="Change my email. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))],
-                 status_code=status.HTTP_201_CREATED)
+                 status_code=status.HTTP_201_CREATED
+                 )
 def change_my_email(request: Request, email: str):
     user_id = request.cookies.get("user_id")
     return UserController.change_email(user_id, email)
@@ -173,7 +189,8 @@ def change_my_email(request: Request, email: str):
                  response_model=UserSchema,
                  summary="Deactivate User. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))],
-                 status_code=status.HTTP_201_CREATED)
+                 status_code=status.HTTP_201_CREATED
+                 )
 def deactivate_user(user_id: str):
     return UserController.deactivate_user(user_id)
 
@@ -182,14 +199,16 @@ def deactivate_user(user_id: str):
                  response_model=UserSchemaOut,
                  summary="Activate User. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))],
-                 status_code=status.HTTP_201_CREATED)
+                 status_code=status.HTTP_201_CREATED
+                 )
 def activate_user(user_id: str):
     return UserController.deactivate_user(user_id, activity=True)
 
 
 @user_router.delete("/delete-user",
                     summary="Delete User. Admin route",
-                    dependencies=[Depends(JWTBearer(["super_user"]))])
+                    dependencies=[Depends(JWTBearer(["super_user"]))]
+                    )
 def delete_user(user_id: str):
     return UserController.delete_user(user_id)
 
@@ -202,7 +221,8 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
                      summary="Register new Subuser. User route",
                      description="Register new Subuser",
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
-                     status_code=status.HTTP_201_CREATED)
+                     status_code=status.HTTP_201_CREATED
+                     )
 def register_subuser(request: Request, name: str):
     user_id = request.cookies.get("user_id")
     return SubuserController.create_subuser(user_id, name)
@@ -212,7 +232,8 @@ def register_subuser(request: Request, name: str):
                     response_model=list[SubuserSchema],
                     summary="Get all Subusers. Admin route",
                     description="Read all Subusers from Database. Admin route",
-                    dependencies=[Depends(JWTBearer(["super_user"]))])
+                    dependencies=[Depends(JWTBearer(["super_user"]))]
+                    )
 def get_all_subusers():
     return SubuserController.get_all_subusers()
 
@@ -221,7 +242,8 @@ def get_all_subusers():
                     response_model=SubuserSchema,
                     summary="Get specific Subuser by ID. Admin route",
                     description="Read specific Subuser by ID. Admin route",
-                    dependencies=[Depends(JWTBearer(["super_user"]))])
+                    dependencies=[Depends(JWTBearer(["super_user"]))]
+                    )
 def get_subuser_by_id(subuser_id: str):
     return SubuserController.get_subuser_by_id(subuser_id)
 
@@ -231,7 +253,8 @@ def get_subuser_by_id(subuser_id: str):
                     summary="Update my username. Subuser route",
                     description="Update Subuser`s name",
                     dependencies=[Depends(JWTBearer(["sub_user"]))],
-                    status_code=status.HTTP_201_CREATED)
+                    status_code=status.HTTP_201_CREATED
+                    )
 def update_subusers_name(request: Request, name: str):
     subuser_id = request.cookies.get("user_id")
     return SubuserController.update_subusers_name(subuser_id, name)
@@ -240,7 +263,8 @@ def update_subusers_name(request: Request, name: str):
 @subuser_router.delete("/delete-subuser",
                        summary="Delete my Subuser. User route",
                        description="Delete specific Subuser by subuser name.",
-                       dependencies=[Depends(JWTBearer(["regular_user"]))])
+                       dependencies=[Depends(JWTBearer(["regular_user"]))]
+                       )
 def delete_subuser(request: Request, subuser_name: str):
     user_id = request.cookies.get("user_id")
     return SubuserController.delete_subuser(user_id, subuser_name)
@@ -253,7 +277,8 @@ admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
                    response_model=AdminSchema,
                    summary="Create new Admin. Admin route",
                    status_code=status.HTTP_201_CREATED,
-                   dependencies=[Depends(JWTBearer(["super_user"]))])
+                   dependencies=[Depends(JWTBearer(["super_user"]))]
+                   )
 def create_new_admin(admin: AdminSchemaIn):
     return AdminController.create_new_admin(admin.dict())
 
@@ -261,7 +286,8 @@ def create_new_admin(admin: AdminSchemaIn):
 @admin_router.get("/read-all-admins",
                   response_model=list[AdminSchema],
                   summary="Get all Admins. Admin route",
-                  dependencies=[Depends(JWTBearer(["super_user"]))])
+                  dependencies=[Depends(JWTBearer(["super_user"]))]
+                  )
 def get_all_admins():
     return AdminController.get_all_admins()
 
@@ -269,7 +295,8 @@ def get_all_admins():
 @admin_router.get("/read-admins-by-country",
                   summary="Get all Admins by country. Admin Route",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
-                  response_model=list[AdminSchema])
+                  response_model=list[AdminSchema]
+                  )
 def get_all_admins_by_country(country: str):
     return AdminController.get_all_admins_by_country(country)
 
@@ -278,6 +305,7 @@ def get_all_admins_by_country(country: str):
                      response_model=UserSchema,
                      summary="Deactivate Admin status. Admin route",
                      description="Delete specific Admin by ID. Admin route",
-                     dependencies=[Depends(JWTBearer(["super_user"]))])
+                     dependencies=[Depends(JWTBearer(["super_user"]))]
+                     )
 def remove_admin_credentials(admin_id: str):
     return AdminController.derogate_admin(admin_id)

@@ -108,7 +108,8 @@ def user_rate_movie(request: Request, title: str, rating: int):
 
 @watch_movie.get("/get-movie-data",
                  response_model=MovieFullSchema,
-                 summary="See actors, director and Genre for specific Movie.")
+                 summary="See actors, director and Genre for specific Movie."
+                 )
 def get_movie_data(title: str):
     return MovieController.get_movie_data(title)
 
@@ -116,7 +117,8 @@ def get_movie_data(title: str):
 @watch_movie.get("/get-my-watched-movies",
                  response_model=list[MovieSchema],
                  summary="Get user's watched Movies list. User Route.",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_my_watched_movies_list(request: Request):
     user_id = request.cookies.get("user_id")
     return UserWatchMovieController.get_my_watched_movies_list(user_id)
@@ -124,7 +126,8 @@ def get_my_watched_movies_list(request: Request):
 
 @watch_movie.get("/top-ten-movies",
                  summary="Top Ten Movies. User route.",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_top_ten_movies():
     top_ten = UserWatchMovieController.get_popular_movies()
     sorted_movies = {k: {"Views": v} for k, v in sorted(top_ten.items(), key=lambda item: item[1], reverse=True)}
@@ -134,7 +137,8 @@ def get_top_ten_movies():
 @watch_movie.get("/search-movies-title",
                  description="Search movies by name.",
                  summary="Search Movies by title.",
-                 response_model=list[MovieWithActorsSchema])
+                 response_model=list[MovieWithActorsSchema]
+                 )
 def search_movies_by_title(title: str):
     return MovieController.search_movies_by_name(title)
 
@@ -142,7 +146,8 @@ def search_movies_by_title(title: str):
 @watch_movie.get("/search-movies-director",
                  description="Search movies by name.",
                  summary="Search Movies by director.",
-                 response_model=list[MovieWithActorsSchema])
+                 response_model=list[MovieWithActorsSchema]
+                 )
 def search_movies_by_director(director: str):
     return MovieController.search_movies_by_director(director)
 
@@ -150,7 +155,8 @@ def search_movies_by_director(director: str):
 @watch_movie.get("/search-movies-genre",
                  description="Search movies by genre.",
                  summary="Search Movies by genre.",
-                 response_model=list[MovieWithActorsSchema])
+                 response_model=list[MovieWithActorsSchema]
+                 )
 def search_movies_by_genre(genre: str):
     return MovieController.search_movies_by_genre(genre)
 
@@ -158,15 +164,17 @@ def search_movies_by_genre(genre: str):
 @watch_movie.get("/get-movie-actors",
                  response_model=MovieWithActorsSchema,
                  summary="Read Movie by ID. Admin Route.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
-def get_movie_with_all_actors(movie_id: str):
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
+def get_movie_with_actors(movie_id: str):
     return MovieActorController.get_movie_with_actors(movie_id)
 
 
 @watch_movie.get("/get-movies-by-year",
                  summary="Get Movies from specific year. User Route.",
                  response_model=list[MovieSchema],
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_movies_by_year(year: int):
     if not 1900 < year < 2100:
         raise HTTPException(status_code=200, detail="Sorry, we have no movies from provided year.")
@@ -175,28 +183,32 @@ def get_movies_by_year(year: int):
 
 @watch_movie.get("/get-movie-average-rating",
                  summary="Get average rating for specific Movie. User Route",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_average_rating_for_movie(name: str):
     return UserWatchMovieController.get_average_rating_for_movie(name)
 
 
 @watch_movie.get("/get-average-ratings",
                  summary="Get average Movie ratings. User Route",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_average_ratings():
     return UserWatchMovieController.get_average_ratings()
 
 
 @watch_movie.get("/get-movies-higher-rating",
                  summary="Get Movies with average rating higher than requested. User Route",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_movie_with_average_rating_above_requested(rating: float):
     return UserWatchMovieController.get_movies_with_higher_average_rating(rating)
 
 
 @watch_movie.get("/get-average-movie-rating-for-year",
                  summary="Get average movie rating for a specific year. User Route.",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_average_movie_rating_for_year(year: int):
     if not 1900 < year < 2100:
         raise HTTPException(status_code=200, detail="Sorry, we have no movies from provided year.")
@@ -205,7 +217,8 @@ def get_average_movie_rating_for_year(year: int):
 
 @watch_movie.get("/get-most-successful-movie-year",
                  summary="Get most successful year in terms of Movie ratings. User Route.",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_most_successful_movie_year():
     response = UserWatchMovieController.get_most_successful_movie_year()
     sorted_movies = [(k, v) for k, v in sorted(response.items(), key=lambda item: item[1], reverse=True)]
@@ -225,7 +238,8 @@ def show_worst_rated_movie():
 @watch_movie.get("/show-latest-features",
                  description="Show recent released movies.",
                  summary="Show latest features",
-                 response_model=list[MovieWithActorsSchema])
+                 response_model=list[MovieWithActorsSchema]
+                 )
 def show_latest_features():
     date_limit = get_day_before_one_month()
     return MovieController.get_latest_features(date_limit)
@@ -233,16 +247,17 @@ def show_latest_features():
 
 @watch_movie.get("/show-movies-never-downloaded",
                  summary="Show unpopular movies that never have been watched. Admin route.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))])
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
 def show_least_popular_movies():
     return MovieController.show_least_popular_movies()
 
 
 @watch_movie.get("/get-my-recommendations",
                  summary="Show recommended Movies. User route.",
-                 description="Show User recommended Movies.",
                  response_model=list[MovieSchema],
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
 def get_my_recommendations(request: Request, page: int = 1):
     user_id = request.cookies.get("user_id")
     return UserWatchMovieController.get_my_recommendations(user_id, page)

@@ -50,6 +50,7 @@ class UserSchemaOut(BaseModel):
     is_superuser: bool
 
     class Config:
+        """Configuration Class"""
         orm_mode = True
 
 
@@ -66,4 +67,5 @@ class UserWithSubusersSchema(BaseModel):
     subusers: list[SubuserSchema]
 
     class Config:
+        """Configuration Class"""
         orm_mode = True

@@ -93,7 +93,6 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
                 subquery('averages')
             result = self.db.query(func.round(func.avg(averages.c.Rating), 2).label("Average Rating")).first()
             return result
-
         except Exception as exc:
             self.db.rollback()
             raise exc

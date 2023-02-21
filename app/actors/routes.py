@@ -42,7 +42,7 @@ def get_actor_by_last_name(actor: str):
 @actor_router.get("/get-actor-by-first-name",
                   response_model=list[ActorSchema],
                   description="Read Actor by First Name")
-def get_actor_by_last_name(actor: str):
+def get_actor_by_first_name(actor: str):
     return ActorController.get_actor_by_first_name(actor.strip())
 
 
