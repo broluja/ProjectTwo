@@ -1,3 +1,4 @@
+"""Custom exceptions for Director logic"""
 from app.base import AppException
 
 

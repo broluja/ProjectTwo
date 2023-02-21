@@ -1,3 +1,4 @@
+"""Custom exceptions for Actor logic"""
 from app.base import AppException
 
 

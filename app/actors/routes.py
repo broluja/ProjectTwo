@@ -1,3 +1,4 @@
+"""Actor routes"""
 from fastapi import APIRouter, Depends
 
 from app.actors.controller import ActorController

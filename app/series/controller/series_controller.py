@@ -18,10 +18,10 @@ class SeriesController:
             series.director = director
             series.genre = genre
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def read_all_series(page):
@@ -30,10 +30,10 @@ class SeriesController:
             if not series:
                 return Response(content="End of query.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_series_data(title: str):
@@ -46,10 +46,10 @@ class SeriesController:
             series.director = director
             series.genre = genre
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_series_by_director_name(director: str):
@@ -58,20 +58,20 @@ class SeriesController:
             if not series:
                 return Response(content=f"No Series from Director: {director}.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_series_by_id(series_id: str):
         try:
             series = SeriesServices.get_series_by_id(series_id)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_my_series(user_id: str):
@@ -80,20 +80,20 @@ class SeriesController:
             if not series:
                 return Response(content="You have not watched any series yet.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_series_by_episode_id(episode_id: str):
         try:
             series = SeriesServices.get_series_by_episode_id(episode_id)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_series_by_name(series: str):
@@ -102,10 +102,10 @@ class SeriesController:
             if not series:
                 return Response(content=f"No Series with name: {series}.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_series_by_year(year: int):
@@ -114,10 +114,10 @@ class SeriesController:
             if not series:
                 return Response(content=f"No Series from year: {year}.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_series_by_genre(genre: str):
@@ -126,10 +126,10 @@ class SeriesController:
             if not series:
                 return Response(content=f"No Series with genre: {genre}.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_latest_features(date_limit: str):
@@ -138,10 +138,10 @@ class SeriesController:
             if not series:
                 return Response(content="No series in latest list.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def show_series_never_downloaded():
@@ -150,27 +150,27 @@ class SeriesController:
             if not series:
                 return Response(content="There are no series that never have been downloaded.", status_code=200)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def update_series_data(series_id: str, attributes: dict):
         try:
             series = SeriesServices.update_series_data(series_id, attributes)
             return series
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def delete_series(series_id: str):
         try:
             SeriesServices.delete_series(series_id)
             return Response(content=f"Series with ID: {series_id} deleted.", status_code=200)
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc

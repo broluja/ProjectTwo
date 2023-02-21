@@ -7,7 +7,6 @@ from app.genres.exceptions import GenreAlreadyExistsException
 
 class GenreRepository(BaseCRUDRepository):
     """Repository for Genre Model"""
-
     def create_new_genre(self, fields: dict):
         try:
             return super().create(fields)

@@ -1,3 +1,4 @@
+"""Director routes"""
 from fastapi import APIRouter, Depends
 
 from app.directors.schemas import DirectorSchema, DirectorSchemaIn

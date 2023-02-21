@@ -1,8 +1,10 @@
+"""Actor Schemas module"""
 from pydantic import BaseModel, UUID4
 from datetime import date
 
 
 class ActorSchema(BaseModel):
+    """Base actor schema"""
     id: UUID4
     first_name: str
     last_name: str
@@ -14,6 +16,7 @@ class ActorSchema(BaseModel):
 
 
 class ActorSchemaIn(BaseModel):
+    """Actor schema for input"""
     first_name: str
     last_name: str
     date_of_birth: str

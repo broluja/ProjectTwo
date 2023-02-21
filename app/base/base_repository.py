@@ -1,7 +1,5 @@
 """Base Repository class with CRUD operations, which is inherited by every other repository Model."""
-
 from typing import Union, Type, TypeVar, Generic
-
 from fastapi.encoders import jsonable_encoder
 
 from app.base.base_exception import AppException

@@ -1,3 +1,4 @@
+"""Director Model module"""
 from uuid import uuid4
 
 from sqlalchemy import Column, String
@@ -7,6 +8,7 @@ from app.db import Base
 
 
 class Director(Base):
+    """Base Model for Director"""
     __tablename__ = "directors"
     id = Column(String(50), primary_key=True, default=uuid4)
     first_name = Column(String(50), nullable=False)

@@ -12,10 +12,10 @@ class GenreController:
         try:
             genre = GenreServices.create_new_genre(name)
             return genre
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_all_genres():
@@ -24,20 +24,20 @@ class GenreController:
             if not genres:
                 return Response(content=f"No Genres in our Database yet.", status_code=200)
             return genres
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def get_genre_by_id(genre_id: str):
         try:
             genre = GenreServices.get_genre_by_id(genre_id)
             return genre
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def search_genres_by_name(name: str):
@@ -46,17 +46,17 @@ class GenreController:
             if not genres:
                 return Response(content=f"No Genre: {name} in our Database.", status_code=200)
             return genres
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
     def update_genre(genre_id: str, name: str):
         try:
             director = GenreServices.update_genre_name(genre_id, name)
             return director
-        except AppException as e:
-            raise HTTPException(status_code=e.code, detail=e.message)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc

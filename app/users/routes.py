@@ -84,7 +84,7 @@ def login_admin(email: str, password: str, response: Response):
 
 
 @user_router.get("/get-all-users",
-                 response_model=list[UserSchema],
+                 response_model=list[UserSchemaOut],
                  summary="Get all users. Admin route.",
                  description="Read all Users from Database. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -93,7 +93,7 @@ def get_all_users():
 
 
 @user_router.get("/get-all-active-users",
-                 response_model=list[UserSchema],
+                 response_model=list[UserSchemaOut],
                  summary="Get all active users. Admin route.",
                  description="Read all active Users from Database. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -102,7 +102,7 @@ def get_all_active_users():
 
 
 @user_router.get("/get-all-inactive-users",
-                 response_model=list[UserSchema],
+                 response_model=list[UserSchemaOut],
                  summary="Get all inactive users. Admin route.",
                  description="Read all inactive Users from Database. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -111,7 +111,7 @@ def get_all_inactive_users():
 
 
 @user_router.get("/get-user-by-id",
-                 response_model=UserSchema,
+                 response_model=UserSchemaOut,
                  summary="Get user by ID. Admin route.",
                  description="Read specific User by ID. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -120,7 +120,7 @@ def get_user_by_id(user_id: str):
 
 
 @user_router.get("/search-user-by-email",
-                 response_model=list[UserSchema],
+                 response_model=list[UserSchemaOut],
                  summary="Search for users by email. Admin route.",
                  description="Search Users by email. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -148,7 +148,7 @@ def get_my_subusers(request: Request):
 
 
 @user_router.put("/update-user-username",
-                 response_model=UserSchema,
+                 response_model=UserSchemaOut,
                  summary="Update my username. User route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))])
 def update_my_name(request: Request, username: str):
@@ -157,7 +157,7 @@ def update_my_name(request: Request, username: str):
 
 
 @user_router.put("/update-user-email",
-                 response_model=UserSchema,
+                 response_model=UserSchemaOut,
                  summary="Change my email. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))])
 def change_my_email(request: Request, email: str):
@@ -175,11 +175,11 @@ def deactivate_user(user_id: str):
 
 
 @user_router.put("/activate-user",
-                 response_model=UserSchema,
+                 response_model=UserSchemaOut,
                  summary="Activate User. Admin route",
                  description="Activate specific User.",
                  dependencies=[Depends(JWTBearer(["super_user"]))])
-def deactivate_user(user_id: str):
+def activate_user(user_id: str):
     return UserController.deactivate_user(user_id, activity=True)
 
 

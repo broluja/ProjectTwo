@@ -1,3 +1,4 @@
+"""Actor Service module"""
 from app.actors.exceptions.actor_exceptions import ActorDataException
 from app.config import settings
 from app.db import SessionLocal
@@ -9,7 +10,7 @@ PER_PAGE = settings.PER_PAGE
 
 
 class ActorServices:
-
+    """Service for actor routes"""
     @staticmethod
     def create_new_actor(first_name: str, last_name: str, date_of_birth: str, country: str):
         try:
@@ -22,8 +23,8 @@ class ActorServices:
                 if not all(fields.values()):
                     raise ActorDataException(message="Please fill all the fields.")
                 return repository.create(fields)
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_all_actors(page: int):
@@ -33,8 +34,8 @@ class ActorServices:
                 skip = (page - 1) * PER_PAGE
                 actors = repository.read_many(skip=skip, limit=PER_PAGE)
                 return actors
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_actor_by_id(actor_id: str):
@@ -43,8 +44,8 @@ class ActorServices:
                 repository = ActorRepository(db, Actor)
                 actor = repository.read_by_id(actor_id)
                 return actor
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_actor_by_last_name(actor: str):
@@ -53,8 +54,8 @@ class ActorServices:
                 repository = ActorRepository(db, Actor)
                 actors = repository.read_actors_by_last_name(actor)
                 return actors
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_actor_by_first_name(actor: str):
@@ -63,8 +64,8 @@ class ActorServices:
                 repository = ActorRepository(db, Actor)
                 actors = repository.read_actors_by_first_name(actor)
                 return actors
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def get_actor_movies(last_name: str):
@@ -73,8 +74,8 @@ class ActorServices:
                 repository = ActorRepository(db, Actor)
                 actor = repository.read_actors_by_last_name(last_name, literal=True)
                 return actor
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def update_actor(actor_id, attributes):
@@ -84,8 +85,8 @@ class ActorServices:
                 actor = repository.read_by_id(actor_id)
                 actor = repository.update(actor, attributes)
                 return actor
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc
 
     @staticmethod
     def delete_actor(actor_id: str):
@@ -94,5 +95,5 @@ class ActorServices:
                 repository = ActorRepository(db, Actor)
                 actor = repository.delete(actor_id)
                 return actor
-        except Exception as e:
-            raise e
+        except Exception as exc:
+            raise exc

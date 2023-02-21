@@ -1,3 +1,4 @@
+"""Actor Model module"""
 from uuid import uuid4
 
 from sqlalchemy import String, Column, Date
@@ -7,6 +8,7 @@ from app.db import Base
 
 
 class Actor(Base):
+    """Base Model for Actor"""
     __tablename__ = "actors"
     id = Column(String(50), primary_key=True, default=uuid4)
     first_name = Column(String(50), nullable=False)

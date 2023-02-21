@@ -1,3 +1,4 @@
+"""Director Repository module"""
 from app.base import BaseCRUDRepository
 from app.directors.models import Director
 
