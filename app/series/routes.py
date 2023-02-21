@@ -166,6 +166,13 @@ def get_series_by_director_name(director: str):
     return SeriesController.get_series_by_director_name(director.strip())
 
 
+@watch_episode.get("/get-average-rating-for-series",
+                   summary="Get average rating for specific Series. User Route",
+                   )
+def get_average_rating_for_series(title: str):
+    return UserWatchEpisodeController.get_average_rating_for_series(title)
+
+
 @watch_episode.get("/get-series-by-year",
                    response_model=list[SeriesSchema],
                    summary="Get Series by specific year. User Route.",
@@ -174,6 +181,15 @@ def get_series_by_year(year: int):
     if not 1900 < year < 2100:
         raise HTTPException(status_code=200, detail="Sorry, we have no series from provided year.")
     return SeriesController.get_series_by_year(year)
+
+
+@watch_episode.get("/get-average-rating-series-by-year",
+                   summary="Get average series rating for a specific year. User Route.",
+                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))])
+def get_average_series_rating_for_year(year: int):
+    if not 1900 < year < 2100:
+        raise HTTPException(status_code=200, detail="Sorry, we have no movies from provided year.")
+    return UserWatchEpisodeController.get_average_series_rating_for_year(year)
 
 
 @watch_episode.get("/get-popular-series", description="Get most popular Series.")

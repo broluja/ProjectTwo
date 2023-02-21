@@ -1,3 +1,5 @@
+from starlette.responses import Response
+
 from app.db import SessionLocal
 from app.series.models import Episode, Series
 from app.series.repositories import EpisodeRepository, SeriesRepository
@@ -66,5 +68,37 @@ class UserWatchEpisodeServices:
                 series_repo = SeriesRepository(db, Series)
                 genres = [affinity.Genre_ID for affinity in users_affinities]
                 return series_repo.read_series_by_group_of_genres(page, genres)
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_average_series_rating_for_year(year: int):
+        try:
+            with SessionLocal() as db:
+                series_repository = SeriesRepository(db, Series)
+                series = series_repository.read_series_by_year(str(year))
+                if not series:
+                    return Response(content=f"No Series from this year: {year}", status_code=200)
+                series_ids = [obj.id for obj in series]
+                user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
+                ratings = user_watch_movie_repository.read_average_rating_for_movies(movie_ids)
+                all_ratings = [rating["Average Rating"] for rating in ratings]
+                response = {f"Average rating for year: {year}": round(sum(all_ratings) / len(all_ratings), 2)}
+                return response
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    def get_average_rating_for_series(title: str):
+        try:
+            with SessionLocal() as db:
+                series_repository = SeriesRepository(db, Series)
+                series = series_repository.read_series_by_title(title, search=False)
+                episode_ids = [episode.id for episode in series.episodes]
+                user_watch_episode_repo = UserWatchEpisodeRepository(db, Episode)
+                average = user_watch_episode_repo.read_average_rating(episode_ids)
+                response = {"Series": series.title}
+                response.update(average)
+                return response
         except Exception as e:
             raise e

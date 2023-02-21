@@ -85,3 +85,16 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def read_average_rating(self, episode_ids: list):
+        try:
+            averages = self.db.query(UserWatchEpisode.rating.label("Rating")).\
+                filter(UserWatchEpisode.episode_id.in_(episode_ids)).\
+                group_by(UserWatchEpisode.episode_id).\
+                subquery('averages')
+            result = self.db.query(func.round(func.avg(averages.c.Rating), 2).label("Average Rating")).first()
+            return result
+
+        except Exception as e:
+            self.db.rollback()
+            raise e

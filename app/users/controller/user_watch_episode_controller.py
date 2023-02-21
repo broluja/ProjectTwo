@@ -53,3 +53,25 @@ class UserWatchEpisodeController:
             raise HTTPException(status_code=e.code, detail=e.message)
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_average_series_rating_for_year(year: int):
+        try:
+            average = UserWatchEpisodeServices.get_average_series_rating_for_year(year)
+            if not average:
+                return Response(content=f"No Series from year: {year}.", status_code=200)
+            return average
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    @staticmethod
+    def get_average_rating_for_series(title: str):
+        try:
+            avg_rating = UserWatchEpisodeServices.get_average_rating_for_series(title)
+            return avg_rating
+        except AppException as e:
+            raise HTTPException(status_code=e.code, detail=e.message)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))

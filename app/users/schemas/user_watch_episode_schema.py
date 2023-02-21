@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import BaseModel, UUID4, Field
 
 
@@ -6,7 +8,7 @@ class UserWatchEpisodeSchema(BaseModel):
     user_id: str
     episode_id: str
     rating: int = None
-    date_watched: str
+    date_watched: date
 
     class Config:
         orm_mode = True
