@@ -12,6 +12,17 @@ class UserWatchMovieServices:
     """Service for UserWatchMovie routes."""
     @staticmethod
     def user_watch_movie(user_id: str, movie_id: str):
+        """
+        Function allows a user to watch a movie.
+        It takes in two parameters, the user_id and the movie_id.
+        The function then checks if there is an existing record of
+        this particular combination of user ID and movie ID.
+        If it does not exist, it creates one with the given information.
+
+        Param user_id:str: Identify the user.
+        Param movie_id:str: Get the movie object from the database.
+        Return: A dictionary with two keys.
+        """
         try:
             with SessionLocal() as db:
                 repository = UserWatchMovieRepository(db, UserWatchMovie)
@@ -28,6 +39,17 @@ class UserWatchMovieServices:
 
     @staticmethod
     def rate_movie(user_id: str, movie_id: str, rating: int):
+        """
+        Function allows a user to rate a movie.
+        It takes in the user_id, movie_id and rating as parameters.
+        The function then checks if the user has already rated that particular movie.
+        If they have not, it creates a new entry in the UserWatchMovie table with their rating for that specific film.
+
+        Param user_id:str: Identify the user.
+        Param movie_id:str: Specify the movie that is being rated.
+        Param rating:int: Set the rating of a movie.
+        Return: The user-watch-movie object that was created or updated.
+        """
         try:
             with SessionLocal() as db:
                 repository = UserWatchMovieRepository(db, UserWatchMovie)
@@ -42,6 +64,13 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_my_watched_movies_list(user_id: str):
+        """
+        Function returns a list of movies that the user has watched.
+        It takes in a string representing the user_id and returns a list of movie objects.
+
+        Param user_id:str: Pass the user_id of the logged-in user to the function.
+        Return: A list of movie objects.
+        """
         try:
             with SessionLocal() as db:
                 repository = UserWatchMovieRepository(db, UserWatchMovie)
@@ -57,6 +86,12 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_popular_movies():
+        """
+        The get_popular_movies function returns the top 10 most popular movies in the database.
+        The function takes no arguments and returns a dictionary of movie titles mapped to their number of views.
+
+        Return: The top 10 most popular movies.
+        """
         try:
             with SessionLocal() as db:
                 repository = UserWatchMovieRepository(db, UserWatchMovie)
@@ -72,6 +107,14 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_best_rated_movie(best: bool = True):
+        """
+        Function returns the best rated movie by users.
+        The function takes one parameter, best, which is a boolean value that defaults to True.
+        If the user passes in False for this parameter then it will return the worst rated movie.
+
+        Param best:bool=True: Determine whether the function should return the best or worst rated movie.
+        Return: A list of dictionaries with the movie title and rating.
+        """
         try:
             with SessionLocal() as db:
                 movie_repo = MovieRepository(db, Movie)
@@ -87,6 +130,18 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_my_recommendations(user_id, page):
+        """
+        Function returns a list of movies that are recommended to the user based on their
+        affinities. The function takes in two parameters, user_id and page. The page
+        parameter is used to paginate the results
+        and return only 10 movies at a time. It also takes into account if
+        there are no more pages left by checking if there
+        are any more records in the database for that particular genre.
+
+        Param user_id: Get the user's affinity for each genre.
+        Param page: Paginate the results.
+        Return: A list of movies that are recommended to the user.
+        """
         try:
             with SessionLocal() as db:
                 user_watch_movie_repo = UserWatchMovieRepository(db, UserWatchMovie)
@@ -99,6 +154,14 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_average_rating_for_movie(name: str):
+        """
+        Function returns the average rating for a movie.
+        It takes in a string name of the movie and returns an object with the title,
+        average rating, and number of ratings.
+
+        Param name:str: Pass the name of the movie to be searched.
+        Return: The average rating for a movie.
+        """
         try:
             with SessionLocal() as db:
                 movie_repository = MovieRepository(db, Movie)
@@ -113,6 +176,11 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_average_ratings():
+        """
+        Function returns the average rating for all movies in the database.
+
+        Return: A list of dictionaries containing the movie_id and average rating for all movies.
+        """
         try:
             with SessionLocal() as db:
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
@@ -123,6 +191,13 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_movies_with_higher_average_rating(rating: float):
+        """
+        Function returns a list of movies with an average rating higher than the specified rating.
+        The function takes one argument, which is the minimum average rating that you want returned.
+
+        Param rating:float: Filter the movies based on the average rating.
+        Return: A list of movies that have an average rating higher than the rating passed in as a parameter.
+        """
         try:
             with SessionLocal() as db:
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
@@ -134,6 +209,14 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_average_movie_rating_for_year(year: int):
+        """
+        Function returns the average rating for all movies in a given year.
+        The function takes one argument, year, which is an integer representing the desired year to search for.
+        If no movies are found from that particular year then it will return 'No Movies from this Year'.
+
+        Param year:int: Specify the year of the movies that will be used to calculate the average rating.
+        Return: The average rating for all movies from a given year.
+        """
         try:
             with SessionLocal() as db:
                 movie_repository = MovieRepository(db, Movie)
@@ -151,6 +234,12 @@ class UserWatchMovieServices:
 
     @staticmethod
     def get_most_successful_movie_year():
+        """
+        Function returns the year with the highest average rating.
+        It takes no arguments and returns a dictionary of years mapped to their average ratings.
+
+        Return: A dictionary with the year as key and average rating as value.
+        """
         try:
             with SessionLocal() as db:
                 movie_repository = MovieRepository(db, Movie)

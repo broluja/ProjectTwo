@@ -13,6 +13,19 @@ class UserWatchEpisodeServices:
     """Service for UserWatchEpisode routes."""
     @staticmethod
     def user_watch_episode(user_id: str, episode_id: str):
+        """
+        Function allows a user to watch an episode of the show.
+        It takes in two parameters, user_id and episode_id. It then checks if
+        the user has already watched this particular episode,
+        if they have it will return a message saying that they have already watched
+        it and where to find it again. If not,
+        it will create a new entry in the UserWatchEpisode table with their ID and the ID
+        of the specific episode they are watching.
+
+        Param user_id:str: Identify the user.
+        Param episode_id:str: Get the episode object from the database.
+        Return: A dictionary containing a message and link.
+        """
         try:
             with SessionLocal() as db:
                 repository = UserWatchEpisodeRepository(db, UserWatchEpisode)
@@ -29,6 +42,14 @@ class UserWatchEpisodeServices:
 
     @staticmethod
     def rate_episode(user_id: str, episode_id: str, rating: int):
+        """
+        Function allows a user to rate an episode.
+
+        Param user_id:str: Identify the user.
+        Param episode_id:str: Get the episode object from the database.
+        Param rating:int: Set the rating of an episode.
+        Return: The updated object.
+        """
         try:
             with SessionLocal() as db:
                 repository = UserWatchEpisodeRepository(db, UserWatchEpisode)
@@ -43,6 +64,12 @@ class UserWatchEpisodeServices:
 
     @staticmethod
     def get_most_popular_series():
+        """
+        Function returns a dictionary of the most popular series by number of views.
+        The function takes no arguments and returns a dictionary with the title as key and number of views as value.
+
+        Return: A dictionary of series and views.
+        """
         try:
             with SessionLocal() as db:
                 repo = UserWatchEpisodeRepository(db, UserWatchEpisode)
@@ -58,6 +85,16 @@ class UserWatchEpisodeServices:
 
     @staticmethod
     def get_users_recommendations(user_id: str, page: int):
+        """
+        Function returns a list of series that are recommended for the user based on their
+        affinities. The function takes in a user_id and page number as the parameters, and uses
+        them to query the database for the users affinities. It then uses those affinities to
+        find all series with those genres, and returns them in order of popularity.
+
+        Param user_id:str: Identify the user that we want to recommend series for.
+        Param page:int: Paginate the results.
+        Return: A list of series that are recommended to the user.
+        """
         try:
             with SessionLocal() as db:
                 user_watch_episode_repo = UserWatchEpisodeRepository(db, UserWatchEpisode)
@@ -70,6 +107,14 @@ class UserWatchEpisodeServices:
 
     @staticmethod
     def get_average_series_rating_for_year(year: int):
+        """
+        The get_average_series_rating_for_year function returns the average rating for a given year.
+        The function takes in a year as an argument and queries the database to find all series from that year.
+        It then finds all episodes from those series and gets their average rating.
+
+        Param year:int: Filter the series by a year.
+        Return: The average rating for a given year.
+        """
         try:
             with SessionLocal() as db:
                 series_repository = SeriesRepository(db, Series)
@@ -87,6 +132,14 @@ class UserWatchEpisodeServices:
 
     @staticmethod
     def get_average_rating_for_series(title: str):
+        """
+        The get_average_rating_for_series function returns the average rating for a given series.
+        The function takes one argument, title, which is the name of the series to be queried.
+        The function returns a dictionary containing two keys: Series and Average Rating.
+
+        Param title:str: Search for the series.
+        Return: A dictionary with the series title and average rating.
+        """
         try:
             with SessionLocal() as db:
                 series_repository = SeriesRepository(db, Series)

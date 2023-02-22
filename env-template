@@ -22,6 +22,7 @@ MAIL_FROM=olujic.branko@gmail.com
 
 # Display objects per search
 PER_PAGE=10
+MAX_NUMBER_SUBUSERS=2
 
 
 

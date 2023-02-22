@@ -10,6 +10,13 @@ class AdminServices:
     """Service for Admin routes."""
     @staticmethod
     def create_new_admin(admin: dict):
+        """
+        The create_new_admin function creates a new admin in the database.
+        It takes as input a dictionary containing the user_id of an existing user, and returns an Admin object.
+
+        param admin:dict: Pass the user_id of the admin that will be created.
+        return: A dictionary.
+        """
         try:
             with SessionLocal() as db:
                 user = UserServices.get_user_by_id(admin.get("user_id"))
@@ -26,6 +33,13 @@ class AdminServices:
 
     @staticmethod
     def derogate_admin(admin_id: str):
+        """
+        Function is used to remove the admin status from a user.
+        It takes in an admin_id as a parameter and returns the updated user object.
+
+        Param admin_id:str: Identify the admin to be derogated.
+        Return: The object of the user that has been updated.
+        """
         try:
             with SessionLocal() as db:
                 admin_repository = AdminRepository(db, Admin)
@@ -40,6 +54,11 @@ class AdminServices:
 
     @staticmethod
     def get_all_admins():
+        """
+        Function returns all the admins in the database.
+
+        Return: A list of all the admins.
+        """
         try:
             with SessionLocal() as db:
                 admin_repository = AdminRepository(db, Admin)
@@ -49,6 +68,13 @@ class AdminServices:
 
     @staticmethod
     def get_all_admins_by_country(country: str):
+        """
+        Function retrieves all the admins in a given country.
+        It takes one argument, which is the name of the country to retrieve all admins from.
+
+        Param country:str: Filter the admins by country.
+        Return: A list of admin objects.
+        """
         try:
             with SessionLocal() as db:
                 admin_repository = AdminRepository(db, Admin)

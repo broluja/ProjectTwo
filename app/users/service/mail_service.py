@@ -28,6 +28,15 @@ class EmailServices:
 
     @staticmethod
     def send_code_for_verification(email: EmailStr, code: int):
+        """
+        Function sends a verification code to the user's email address.
+        The function takes in an email and a code as parameters, and uses them to create an HTML message
+        that contains the code. The function then sends this message via FastMail.
+
+        Param email:EmailStr: Store the email address of the user
+        Param code:int: Send the verification code to the user.
+        Return: The message that was sent to the user.
+        """
         html = USER_VERIFICATION_TEMPLATE + f"<strong>{str(code)}</strong>"
         message = MessageSchema(
             subject="Finish your registration on Netflix.",
@@ -41,6 +50,15 @@ class EmailServices:
 
     @staticmethod
     def send_code_for_password_reset(email: EmailStr, code: int):
+        """
+        The send_code_for_password_reset function sends a code to the user's email address.
+        The function takes in an email and a code as parameters, and uses them to send the user
+        an HTML message containing their password reset code.
+
+        Param email:EmailStr: Specify the email address of the user who is requesting a password reset
+        Param code:int: Send the code to the user.
+        Return: A future object.
+        """
         html = RESET_PASSWORD_TEMPLATE + f"<strong>{str(code)}</strong>"
         message = MessageSchema(
             subject="Reset Password.",
