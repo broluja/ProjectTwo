@@ -25,9 +25,7 @@ def create_new_genre(genre: GenreSchemaIn):
     return GenreController.create_director(genre.name)
 
 
-@genre_router.get("/get-all-genres",
-                  response_model=list[GenreSchema],
-                  description="Read all Genres from DB")
+@genre_router.get("/get-all-genres", response_model=list[GenreSchema])
 def get_all_genres():
     """
     Function returns a list of all genres in the database.

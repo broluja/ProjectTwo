@@ -25,9 +25,7 @@ def create_new_director(director: DirectorSchemaIn):
     return DirectorController.create_director(director.first_name, director.last_name, director.country)
 
 
-@director_router.get("/get-all-directors",
-                     response_model=list[DirectorSchema],
-                     description="Read all Directors.")
+@director_router.get("/get-all-directors", response_model=list[DirectorSchema])
 def get_all_directors():
     """
     Function returns a list of all directors in the database.
@@ -51,9 +49,7 @@ def get_director_by_id(director_id: str):
     return DirectorController.get_director_by_id(director_id)
 
 
-@director_router.get("/search-directors-by-last-name",
-                     response_model=list[DirectorSchema],
-                     description="Search Directors by First Name")
+@director_router.get("/search-directors-by-last-name", response_model=list[DirectorSchema])
 def search_directors_by_first_name(first_name: str):
     """
     Function searches for directors by their first name.
@@ -66,9 +62,7 @@ def search_directors_by_first_name(first_name: str):
     return DirectorController.search_directors_by_first_name(first_name.strip())
 
 
-@director_router.get("/search-directors-by-last-name",
-                     response_model=list[DirectorSchema],
-                     description="Search Directors by Last Name")
+@director_router.get("/search-directors-by-last-name", response_model=list[DirectorSchema])
 def search_directors_by_last_name(last_name: str):
     """
     Function searches for directors by last name.
@@ -81,9 +75,7 @@ def search_directors_by_last_name(last_name: str):
     return DirectorController.search_directors_by_last_name(last_name.strip())
 
 
-@director_router.get("/search-directors-by-country",
-                     response_model=list[DirectorSchema],
-                     description="Search Directors by Country")
+@director_router.get("/search-directors-by-country", response_model=list[DirectorSchema])
 def search_directors_by_country(country: str):
     """
     Function searches for directors by country. It takes a string as an argument

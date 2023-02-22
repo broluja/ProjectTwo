@@ -13,7 +13,6 @@ series_router = APIRouter(tags=["Series"], prefix="/api/series")
 
 
 @series_router.post("/create-new-series",
-                    description="Add new Series",
                     summary="Create new Series. Admin Route.",
                     dependencies=[Depends(JWTBearer(["super_user"]))],
                     response_model=SeriesWithDirectorAndGenreSchema,
@@ -32,7 +31,6 @@ def create_new_series(series: SeriesSchemaIn):
 
 
 @series_router.get("/get-all-series",
-                   description="Get all Series from DB",
                    response_model=list[SeriesWithActorsSchema]
                    )
 def get_all_series(page: int = 1):
@@ -79,7 +77,6 @@ def update_series_data(series: SeriesSchemaIn, series_id: str):
 
 
 @series_router.delete("/delete-series",
-                      description="Delete series with all episodes.",
                       summary="Delete Series. Admin Route.",
                       dependencies=[Depends(JWTBearer(["super_user"]))]
                       )
@@ -113,10 +110,7 @@ def create_new_episode(episode: EpisodeSchemaIn):
     return EpisodeController.create_episode(**episode.dict())
 
 
-@episode_router.get("/get-all-episodes-for-series",
-                    response_model=list[EpisodeSchema],
-                    description="Get all episodes from a Series"
-                    )
+@episode_router.get("/get-all-episodes-for-series", response_model=list[EpisodeSchema])
 def get_all_episodes_for_series(series_title: str):
     """
     The get_all_episodes_for_series function returns all episodes for a given series.
@@ -216,7 +210,6 @@ watch_episode = APIRouter(prefix="/api/watch_episode", tags=["Watch Episode"])
 
 
 @watch_episode.post("/",
-                    description="Select episode to watch",
                     status_code=status.HTTP_201_CREATED,
                     summary="Watch Episode. User Route.",
                     dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -263,7 +256,6 @@ def user_rate_episode(request: Request, episode_name: str, series_title: str, ra
 
 @watch_episode.get("/get-my-series",
                    summary="Get my series. User Route.",
-                   description="Get all series User watched",
                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                    )
 def get_my_series(request: Request):
@@ -281,8 +273,7 @@ def get_my_series(request: Request):
 
 
 @watch_episode.get("/search-series",
-                   response_model=list[SeriesWithActorsSchema],
-                   description="Search for Series"
+                   response_model=list[SeriesWithActorsSchema]
                    )
 def search_series_by_name(series: str):
     """
@@ -313,8 +304,7 @@ def get_series_data(title: str):
 
 
 @watch_episode.get("/search-series-by-genre",
-                   response_model=list[SeriesWithActorsSchema],
-                   description="Search for Series"
+                   response_model=list[SeriesWithActorsSchema]
                    )
 def search_series_by_genre(genre: str):
     """
@@ -327,10 +317,7 @@ def search_series_by_genre(genre: str):
     return SeriesController.get_series_by_genre(genre.strip())
 
 
-@watch_episode.get("/search-series-by-director",
-                   description="Search for Series by Director",
-                   summary="Search Series by Director's Last Name."
-                   )
+@watch_episode.get("/search-series-by-director", summary="Search Series by Director's Last Name.")
 def get_series_by_director_name(director: str):
     """
     Function takes a director name as an argument and returns all the series that have
@@ -430,8 +417,7 @@ def get_worst_rated_episodes():
 
 
 @watch_episode.get("/get-latest-features",
-                   summary="Get latest features.",
-                   description="Show recent released series."
+                   summary="Get latest features."
                    )
 def get_latest_features():
     """

@@ -31,7 +31,6 @@ def add_new_movie(movie: MovieSchemaIn):
 
 @movie_router.get("/get-all-movies",
                   response_model=list[MovieSchema],
-                  description="Read all Movies from DB",
                   summary="Search all Movies."
                   )
 def get_all_movies(page: int = 1):
@@ -84,7 +83,6 @@ def update_movie_data(movie: MovieSchemaIn, movie_id):
 
 
 @movie_router.delete("/delete-movie",
-                     description='Delete specific movie by ID',
                      summary="Delete movie. Admin route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))]
                      )
@@ -227,7 +225,6 @@ def get_top_ten_movies():
 
 
 @watch_movie.get("/search-movies-title",
-                 description="Search movies by name.",
                  summary="Search Movies by title.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -243,7 +240,6 @@ def search_movies_by_title(title: str):
 
 
 @watch_movie.get("/search-movies-director",
-                 description="Search movies by name.",
                  summary="Search Movies by director.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -260,7 +256,6 @@ def search_movies_by_director(director: str):
 
 
 @watch_movie.get("/search-movies-genre",
-                 description="Search movies by genre.",
                  summary="Search Movies by genre.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -388,7 +383,7 @@ def get_most_successful_movie_year():
     return {"Most successful year": {"Year": sorted_movies[0][0], "Average Rating": sorted_movies[0][1]}}
 
 
-@watch_movie.get("/best-rated-movie", description="Show best rated movie.")
+@watch_movie.get("/best-rated-movie")
 def show_best_rated_movie():
     """
     Function returns the movie with the highest rating.
@@ -398,7 +393,7 @@ def show_best_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=True)
 
 
-@watch_movie.get("/worst-rated-movie", description="Show worst rated movie.")
+@watch_movie.get("/worst-rated-movie")
 def show_worst_rated_movie():
     """
     Function returns the movie with the lowest rating.
@@ -409,7 +404,6 @@ def show_worst_rated_movie():
 
 
 @watch_movie.get("/show-latest-features",
-                 description="Show recent released movies.",
                  summary="Show latest features",
                  response_model=list[MovieWithActorsSchema]
                  )

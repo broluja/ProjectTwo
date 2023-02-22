@@ -14,7 +14,6 @@ user_router = APIRouter(prefix="/api/users", tags=["Users"])
 
 @user_router.post("/register",
                   summary="User Registration",
-                  description="Register new User",
                   status_code=status.HTTP_201_CREATED
                   )
 def register_user(user: UserSchemaIn):
@@ -32,7 +31,6 @@ def register_user(user: UserSchemaIn):
 
 @user_router.post("/user-verification",
                   summary="User Verification",
-                  description="Verify User",
                   status_code=status.HTTP_200_OK
                   )
 def verify_user(verification_code: int):
@@ -50,7 +48,6 @@ def verify_user(verification_code: int):
 
 @user_router.post("/user-login",
                   summary="User Login",
-                  description="Login User using email, password and username."
                   )
 def login_user(username: str, email: str, password: str, response: Response):
     """
@@ -72,7 +69,6 @@ def login_user(username: str, email: str, password: str, response: Response):
 
 @user_router.post("/user-forget-password",
                   summary="Ask for password change.",
-                  description="Demand reset of password."
                   )
 def forget_password(email: str):
     """
@@ -90,7 +86,6 @@ def forget_password(email: str):
 
 @user_router.post("/user-reset-password",
                   summary="Reset user's password. User route.",
-                  description="Demand reset of password.",
                   dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))]
                   )
 def reset_password(email: str):
@@ -109,7 +104,6 @@ def reset_password(email: str):
 
 @user_router.post("/reset-password-complete",
                   summary="Save new password. User route.",
-                  description="Set new password.",
                   status_code=status.HTTP_201_CREATED
                   )
 def reset_password_complete(request: Request, code: int, password: str, new_password: str):
@@ -136,7 +130,6 @@ def reset_password_complete(request: Request, code: int, password: str, new_pass
 
 @user_router.post("/admin-login",
                   summary="Admin Login",
-                  description="Login Admin using email and password."
                   )
 def login_admin(email: str, password: str, response: Response):
     """
@@ -158,7 +151,6 @@ def login_admin(email: str, password: str, response: Response):
 @user_router.get("/get-all-users",
                  response_model=list[UserSchemaOut],
                  summary="Get all users. Admin route.",
-                 description="Read all Users from Database. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
 def get_all_users():
@@ -173,7 +165,6 @@ def get_all_users():
 @user_router.get("/get-all-active-users",
                  response_model=list[UserSchemaOut],
                  summary="Get all active users. Admin route.",
-                 description="Read all active Users from Database. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
 def get_all_active_users():
@@ -188,7 +179,6 @@ def get_all_active_users():
 @user_router.get("/get-all-inactive-users",
                  response_model=list[UserSchemaOut],
                  summary="Get all inactive users. Admin route.",
-                 description="Read all inactive Users from Database. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
 def get_all_inactive_users():
@@ -203,7 +193,6 @@ def get_all_inactive_users():
 @user_router.get("/get-user-by-id",
                  response_model=UserSchemaOut,
                  summary="Get user by ID. Admin route.",
-                 description="Read specific User by ID. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
 def get_user_by_id(user_id: str):
@@ -219,7 +208,6 @@ def get_user_by_id(user_id: str):
 @user_router.get("/search-user-by-email",
                  response_model=list[UserSchemaOut],
                  summary="Search for users by email. Admin route.",
-                 description="Search Users by email. Admin route",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
 def search_users_by_email(email: str):
@@ -236,7 +224,6 @@ def search_users_by_email(email: str):
 @user_router.get("/get-user-with-subusers",
                  response_model=UserWithSubusersSchema,
                  summary="Get user by ID with all his subusers. Admin route.",
-                 description="Read User`s Subusers. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
 def get_user_with_subusers(user_id: str):
@@ -253,7 +240,6 @@ def get_user_with_subusers(user_id: str):
 @user_router.get("/get-my-subusers",
                  response_model=UserWithSubusersSchema,
                  summary="Get my Subusers. User route.",
-                 description="Read my Subusers. User's route.",
                  dependencies=[Depends(JWTBearer(["regular_user"]))]
                  )
 def get_my_subusers(request: Request):
@@ -363,7 +349,6 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
 @subuser_router.post("/add-new-subuser",
                      response_model=SubuserSchema,
                      summary="Register new Subuser. User route",
-                     description="Register new Subuser",
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
                      status_code=status.HTTP_201_CREATED
                      )
@@ -382,7 +367,6 @@ def register_subuser(request: Request, name: str):
 @subuser_router.get("/get-all-subusers",
                     response_model=list[SubuserSchema],
                     summary="Get all Subusers. Admin route",
-                    description="Read all Subusers from Database. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))]
                     )
 def get_all_subusers():
@@ -397,7 +381,6 @@ def get_all_subusers():
 @subuser_router.get("/get-subuser-by-id",
                     response_model=SubuserSchema,
                     summary="Get specific Subuser by ID. Admin route",
-                    description="Read specific Subuser by ID. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))]
                     )
 def get_subuser_by_id(subuser_id: str):
@@ -413,7 +396,6 @@ def get_subuser_by_id(subuser_id: str):
 @subuser_router.put("/update-subuser-name",
                     response_model=SubuserSchema,
                     summary="Update my username. Subuser route",
-                    description="Update Subuser`s name",
                     dependencies=[Depends(JWTBearer(["sub_user"]))],
                     status_code=status.HTTP_201_CREATED
                     )
@@ -431,7 +413,6 @@ def update_subusers_name(request: Request, name: str):
 
 @subuser_router.delete("/delete-subuser",
                        summary="Delete my Subuser. User route",
-                       description="Delete specific Subuser by subuser name.",
                        dependencies=[Depends(JWTBearer(["regular_user"]))]
                        )
 def delete_subuser(request: Request, subuser_name: str):
@@ -500,7 +481,6 @@ def get_all_admins_by_country(country: str):
 @admin_router.delete("/delete-admin",
                      response_model=UserSchema,
                      summary="Deactivate Admin status. Admin route",
-                     description="Delete specific Admin by ID. Admin route",
                      dependencies=[Depends(JWTBearer(["super_user"]))]
                      )
 def remove_admin_credentials(admin_id: str):
