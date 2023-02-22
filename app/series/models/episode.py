@@ -1,3 +1,4 @@
+"""Episode Model module"""
 from uuid import uuid4
 
 from sqlalchemy import Column, String, ForeignKey
@@ -8,6 +9,7 @@ from app.utils import generate_fake_url
 
 
 class Episode(Base):
+    """Base Episode model"""
     __tablename__ = "episodes"
     id = Column(String(50), primary_key=True, default=uuid4)
     name = Column(String(50), nullable=False)

@@ -1,3 +1,4 @@
+"""Series Model module"""
 from uuid import uuid4
 from datetime import date
 
@@ -8,6 +9,7 @@ from app.db import Base
 
 
 class SeriesActor(Base):
+    """Base Series-Actor model"""
     __tablename__ = "series_actors"
     id = Column(String(50), primary_key=True, default=uuid4)
     series_id = Column(String(50), ForeignKey('series.id'))
@@ -19,6 +21,7 @@ class SeriesActor(Base):
 
 
 class Series(Base):
+    """Base Series model"""
     __tablename__ = "series"
     __table_args__ = (UniqueConstraint("title", "director_id", name="same_director_different_title"),)
 
