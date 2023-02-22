@@ -53,7 +53,7 @@ class DirectorController:
         It takes in the parameter of the director_id and returns a dictionary
         with all of that directors' information.
 
-        Param director_id:str: Pass the id of the director that we want to retrieve.
+        Param director_id:str: Pass the ID of the director that we want to retrieve.
         Return: A director object based on the ID passed in.
         """
         try:

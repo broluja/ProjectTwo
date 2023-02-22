@@ -91,7 +91,7 @@ class UserWatchMovieRepository(BaseCRUDRepository):
 
     def read_users_affinities(self, user_id: str):
         """
-        Function takes a user_id as an argument and returns the movie ids of all movies that
+        Function takes a user_id as an argument and returns the movie IDs of all movies that
         the user has watched along with their genre ID. This function is used to create the affinity matrix.
 
         Param user_id:str: Filter the results by user ID.

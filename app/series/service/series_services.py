@@ -121,7 +121,7 @@ class SeriesServices:
         Function returns a list of series that were published in the given year.
         The function takes one argument, which is an integer representing the year to search for.
 
-        Param year:int: Filter the series by year.
+        Param year:int: Filter the series by a year.
         Return: A list of series that were released in a specific year.
         """
         try:

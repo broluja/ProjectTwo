@@ -122,8 +122,8 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
         """
         Function takes a user_id as an argument and returns the genres that the user has
         watched. The function first queries UserWatchEpisode table to get all episodes that have been
-        watched by a specific user. Then it joins Episode table with Series table on Episode.series_id = Series.id,
-        then joins Genre table with Series table on Genre.id = Series.genre_id, and finally filters out
+        watched by a specific user. Then it joins Episode table with Series table on Episode.series_id = SeriesId,
+        then joins Genre table with Series table on GenreId = Series.genre_id, and finally filters out
         only unique genre IDs from the query results.
 
         Param user_id:str: Filter the query by a specific user.

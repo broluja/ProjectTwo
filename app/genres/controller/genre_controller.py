@@ -47,8 +47,8 @@ class GenreController:
     @staticmethod
     def get_genre_by_id(genre_id: str):
         """
-        Function is used to retrieve a genre by its id.
-        It takes in the genre_id as an argument and returns the Genre object with that id.
+        Function is used to retrieve a genre by its ID.
+        It takes in the genre_id as an argument and returns the Genre object with that ID.
 
         Param genre_id:str: Identify the genre to be retrieved.
         Return: A genre object.

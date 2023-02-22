@@ -94,7 +94,7 @@ class UserController:
     @staticmethod
     def get_user_by_id(user_id: str):
         """
-        The get_user_by_id function is used to retrieve a user by their ID.
+        Function is used to retrieve a user by their ID.
         It takes in the user_id as an argument and returns the User object associated with that ID.
 
         Param user_id:str: Specify the user_id of the user that is being retrieved.

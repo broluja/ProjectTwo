@@ -51,7 +51,7 @@ class ActorRepository(BaseCRUDRepository):
         Function accepts a country name as an argument and returns all actors from that country.
 
         Param country:str: Filter the actors by country
-        Return: A list of actors that are from the specified country
+        Return: A list of actors that are from the specified country.
         """
         try:
             actors = self.db.query(Actor).filter(Actor.country == country).all()

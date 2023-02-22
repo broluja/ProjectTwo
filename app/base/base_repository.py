@@ -45,7 +45,7 @@ class BaseCRUDRepository(Generic[Model]):
             return models
         except Exception as exc:
             self.db.rollback()
-            raise AppException(message=str(e), code=500) from exc
+            raise AppException(message=str(exc), code=500) from exc
 
     def read_many(self, *, skip: int = 0, limit: int = 100):
         """
