@@ -89,3 +89,5 @@ From PyCharm
 ```bash
 uvicorn app.main:app --reload --reload-delay 5 --host localhost --port 8000
 ```
+
+Superuser credentials are in env-template file.
