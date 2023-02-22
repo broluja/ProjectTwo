@@ -7,8 +7,8 @@ from dateutil.relativedelta import relativedelta
 def generate_random_int(n: int) -> int:
     """
     Function that generates random code made from n integer numbers
-    :param n: number of integers
-    :return: Five digit integer.
+    Param n: number of integers
+    Return: Five digit integer.
     """
     from random import randrange
     nums = [str(randrange(1, 10)) for _ in range(n)]
@@ -18,7 +18,7 @@ def generate_random_int(n: int) -> int:
 def generate_fake_url() -> str:
     """
     Function that generates fake url using faker library
-    :return: Fake url, string.
+    Return: Fake url, string.
     """
     fk = faker.Faker()
     fake_url = fk.url()[:-1]
@@ -29,7 +29,7 @@ def generate_fake_url() -> str:
 def get_day_before_one_month() -> str:
     """
     Calculate exact day one month ago.
-    :return: Date, string.
+    Return: Date, string.
     """
     current_date_time = datetime.now() - relativedelta(months=1)
     date = current_date_time.strftime('%Y-%m-%d')
