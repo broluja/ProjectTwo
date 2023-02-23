@@ -79,7 +79,7 @@ class TestUserRepo(TestClass):
         Return: True, superuser@gmail, 'superuser'
         """
         superuser = self.create_superuser()
-        assert superuser.is_superuser == True
+        assert superuser.is_superuser is True
         assert superuser.email == "superuser@gmail.com"
         assert superuser.username == "superuser"
 

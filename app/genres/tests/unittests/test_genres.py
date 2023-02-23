@@ -49,6 +49,10 @@ class TestGenreRepo(TestClass):
                 genre_repository.create({"name": "Action"})
 
     def test_read_genre_by_name(self):
+        """
+        Function tests retrieving genres from Database by name.
+        Return: Genre object.
+        """
         self.create_genres_for_methods()
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)

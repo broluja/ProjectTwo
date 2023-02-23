@@ -27,7 +27,7 @@ class SubuserServices:
                 user = UserServices.get_user_by_id(user_id)
                 if not user:
                     raise NonExistingUserIdException(message=f"Non existing User ID: {user_id}", code=400)
-                elif user.is_superuser:
+                if user.is_superuser:
                     raise AdminSubuserException
                 subusers = SubuserServices.get_all_subusers_for_one_user(user_id)
                 if len(subusers) >= MAX_NUMBER_SUBUSERS:
