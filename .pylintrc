@@ -1,0 +1,7 @@
+[MASTER]
+init-hook=
+    import sys
+    sys.path.append("/usr/local/lib/python3.8/site-packages")
+    try: import pylint_venv
+    except ImportError: pass
+    else: pylint_venv.inithook(force_venv_activation=True)
