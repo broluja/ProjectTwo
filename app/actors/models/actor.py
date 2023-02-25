@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from sqlalchemy import String, Column, Date
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.db import Base
 
@@ -10,7 +11,7 @@ from app.db import Base
 class Actor(Base):
     """Base Model for Actor"""
     __tablename__ = "actors"
-    id = Column(String(50), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=False)
     date_of_birth = Column(Date())

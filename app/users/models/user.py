@@ -3,6 +3,7 @@ from uuid import uuid4
 from datetime import date
 
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Column, String, Boolean, Date, ForeignKey, Integer, UniqueConstraint
 
 from app.db import Base
@@ -13,9 +14,9 @@ class UserWatchMovie(Base):
     __tablename__ = "user_watch_movies"
     __table_args__ = (UniqueConstraint("user_id", "movie_id", name="one_user_one_rating"),)
 
-    id = Column(String(50), primary_key=True, default=uuid4)
-    user_id = Column(String(50), ForeignKey("users.id"))
-    movie_id = Column(String(50), ForeignKey("movies.id"))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    movie_id = Column(UUID(as_uuid=True), ForeignKey("movies.id"))
     rating = Column(Integer(), nullable=True)
     date_watched = Column(Date(), default=date.today())
 
@@ -31,9 +32,9 @@ class UserWatchEpisode(Base):
     __tablename__ = "user_watch_episodes"
     __table_args__ = (UniqueConstraint("user_id", "episode_id", name="one_user_one_rate"),)
 
-    id = Column(String(50), primary_key=True, default=uuid4)
-    user_id = Column(String(50), ForeignKey("users.id"))
-    episode_id = Column(String(50), ForeignKey("episodes.id"))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
+    episode_id = Column(UUID(as_uuid=True), ForeignKey("episodes.id"))
     rating = Column(Integer(), nullable=True)
     date_watched = Column(Date(), default=date.today())
 
@@ -47,7 +48,7 @@ class UserWatchEpisode(Base):
 class User(Base):
     """Base Model for User"""
     __tablename__ = "users"
-    id = Column(String(50), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     email = Column(String(100), unique=True)
     password_hashed = Column(String(100))
     username = Column(String(100))
@@ -68,3 +69,14 @@ class User(Base):
         self.is_active = is_active
         self.is_superuser = is_superuser
         self.verification_code = verification_code
+
+    def to_dict(self):
+        return {
+            "id": self.id.__str__(),
+            "email": self.email,
+            "username": self.username,
+            "date_subscribed": self.date_subscribed,
+            "is_active": self.is_active,
+            "is_superuser": self.is_superuser,
+            "verification_code": self.verification_code
+        }

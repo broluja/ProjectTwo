@@ -51,8 +51,7 @@ class UserRepository(BaseCRUDRepository):
         Return: A list of users that match the search criteria.
         """
         try:
-            users = self.db.query(User).filter(User.email.ilike(f"%{email}%")).all()
-            return users
+            return self.db.query(User).filter(User.email.ilike(f"%{email}%")).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -83,8 +82,7 @@ class UserRepository(BaseCRUDRepository):
         Return: A list of users that are active.
         """
         try:
-            users = self.db.query(User).filter(User.is_active == active).all()
-            return users
+            return self.db.query(User).filter(User.is_active == active).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

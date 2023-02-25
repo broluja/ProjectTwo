@@ -1,14 +1,16 @@
 """User Schemas module"""
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel, UUID4, EmailStr
+from uuid import uuid4
+
+from pydantic import BaseModel, UUID4, EmailStr, Field
 
 from .subuser_schemas import SubuserSchema
 
 
 class UserSchema(BaseModel):
     """Base schema for User"""
-    id: UUID4
+    id: UUID4 = Field(default_factory=uuid4)
     email: str
     password_hashed: str
     username: str

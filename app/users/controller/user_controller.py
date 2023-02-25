@@ -51,8 +51,7 @@ class UserController:
         Return: A user object.
         """
         try:
-            user = UserServices.verify_user(verification_code)
-            return user
+            return UserServices.verify_user(verification_code)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -66,8 +65,7 @@ class UserController:
         Return: A list of users.
         """
         try:
-            users = UserServices.get_all_users()
-            return users
+            return UserServices.get_all_users()
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -84,8 +82,7 @@ class UserController:
         Return: A list of users that are active.
         """
         try:
-            users = UserServices.get_all_active_users(active=active)
-            return users
+            return UserServices.get_all_active_users(active=active)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -206,7 +203,7 @@ class UserController:
             if user.is_superuser:
                 raise AdminLoginException(code=400, message="Use admin login.")
             if user.username == username:
-                return sign_jwt(user.id, "regular_user"), user.id
+                return sign_jwt(user.id.__str__(), "regular_user"), user.id.__str__()
             user_with_subs = UserController.get_user_with_all_subusers(user.id)
             for sub in user_with_subs.subusers:
                 if sub.name == username:
@@ -234,7 +231,7 @@ class UserController:
         try:
             user = UserServices.login_user(email, password)
             if user.is_superuser:
-                return sign_jwt(user.id, "super_user"), user.id
+                return sign_jwt(user.id.__str__(), "super_user"), user.id.__str__()
             raise AdminLoginException
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

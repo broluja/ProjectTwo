@@ -17,7 +17,7 @@ class UserServices:
         Param email:str: Store the email of the user.
         Param password:str: Hash the password.
         Param username:str: Set the username of the new user.
-        Param code:int: Verify the user's email address.
+        Param code:int: Verify the user’s email address.
         Return: The user object that was created.
         """
         try:
@@ -26,6 +26,7 @@ class UserServices:
                 fields = {"email": email, "password_hashed": password, "username": username, "verification_code": code}
                 return repository.create(fields)
         except Exception as exc:
+            print(exc)
             raise exc
 
     @staticmethod
@@ -283,7 +284,7 @@ class UserServices:
         It takes in a user_id as an argument and returns True if the deletion was successful, False otherwise.
 
         Param user_id:str: Identify the user that is to be deleted.
-        Return: The number of rows deleted.
+        Return: The amount rows deleted.
         """
         try:
             with SessionLocal() as db:

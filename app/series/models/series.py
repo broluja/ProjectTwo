@@ -4,6 +4,7 @@ from datetime import date
 
 from sqlalchemy import Column, String, Date, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.db import Base
 
@@ -11,9 +12,9 @@ from app.db import Base
 class SeriesActor(Base):
     """Base Series-Actor model"""
     __tablename__ = "series_actors"
-    id = Column(String(50), primary_key=True, default=uuid4)
-    series_id = Column(String(50), ForeignKey('series.id'))
-    actor_id = Column(String(50), ForeignKey('actors.id'))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    series_id = Column(UUID(as_uuid=True), ForeignKey('series.id'))
+    actor_id = Column(UUID(as_uuid=True), ForeignKey('actors.id'))
 
     def __init__(self, series_id: str, actor_id: str):
         self.series_id = series_id
@@ -23,14 +24,14 @@ class SeriesActor(Base):
 class Series(Base):
     """Base Series model"""
     __tablename__ = "series"
-    __table_args__ = (UniqueConstraint("title", "director_id", name="same_director_different_title"),)
+    __table_args__ = (UniqueConstraint("title", "director_id", name="same_series_director_different_title"),)
 
-    id = Column(String(50), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     title = Column(String(100), nullable=False)
     date_added = Column(Date(), default=date.today())
     year_published = Column(String(5), nullable=False)
-    director_id = Column(String(50), ForeignKey("directors.id"))
-    genre_id = Column(String(50), ForeignKey("genres.id"))
+    director_id = Column(UUID(as_uuid=True), ForeignKey("directors.id"))
+    genre_id = Column(UUID(as_uuid=True), ForeignKey("genres.id"))
 
     actors = relationship("Actor", secondary="series_actors", back_populates='series', lazy='subquery')
     episodes = relationship("Episode", cascade="all,delete", backref="series")

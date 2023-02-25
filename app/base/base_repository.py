@@ -41,8 +41,7 @@ class BaseCRUDRepository(Generic[Model]):
         Return: All the models of a specific model.
         """
         try:
-            models = self.db.query(self.model).all()
-            return models
+            return self.db.query(self.model).all()
         except Exception as exc:
             self.db.rollback()
             raise AppException(message=str(exc), code=500) from exc
@@ -56,7 +55,7 @@ class BaseCRUDRepository(Generic[Model]):
 
         Param *: Indicate that the function can accept any number of keyword arguments
         Param skip:int=0: Skip the first n rows
-        Param limit:int=100: Limit the number of returned results
+        Param limit:int=100: Limit the amount returned results
         Return: A list of all the instances of the model class that are in the database.
         """
         try:
@@ -88,7 +87,7 @@ class BaseCRUDRepository(Generic[Model]):
     def update(self, db_obj, updates: dict):
         """
         Function updates an existing object in the database.
-        It takes two arguments, db_obj and updates. The db_obj is the object to be updated,
+        It takes two arguments, db obj and updates. The db obj is the object to be updated,
         and the updates are a dictionary of attributes to update on that object.
 
         Param db_obj: Pass the database object to be updated

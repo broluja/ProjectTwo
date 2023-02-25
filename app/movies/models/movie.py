@@ -4,6 +4,7 @@ from datetime import date
 
 from sqlalchemy import Column, String, Date, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.db import Base
 from app.utils import generate_fake_url
@@ -12,9 +13,9 @@ from app.utils import generate_fake_url
 class MovieActor(Base):
     """Base Model for Movie-Actor"""
     __tablename__ = "movie_actors"
-    id = Column(String(50), primary_key=True, default=uuid4)
-    movie_id = Column(String(50), ForeignKey('movies.id'))
-    actor_id = Column(String(50), ForeignKey('actors.id'))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    movie_id = Column(UUID(as_uuid=True), ForeignKey('movies.id'))
+    actor_id = Column(UUID(as_uuid=True), ForeignKey('actors.id'))
 
     def __init__(self, movie_id: str, actor_id: str):
         self.movie_id = movie_id
@@ -24,15 +25,15 @@ class MovieActor(Base):
 class Movie(Base):
     """Base Model for Movie"""
     __tablename__ = "movies"
-    __table_args__ = (UniqueConstraint("title", "director_id", name="same_director_different_title"),)
+    __table_args__ = (UniqueConstraint("title", "director_id", name="same_movie_director_different_title"),)
 
-    id = Column(String(50), primary_key=True, default=uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     title = Column(String(100), nullable=False)
     date_added = Column(Date(), default=date.today())
     year_published = Column(String(5), nullable=False)
     link = Column(String(100), nullable=False, default=generate_fake_url)
-    director_id = Column(String(50), ForeignKey("directors.id"))
-    genre_id = Column(String(50), ForeignKey("genres.id"))
+    director_id = Column(UUID(as_uuid=True), ForeignKey("directors.id"))
+    genre_id = Column(UUID(as_uuid=True), ForeignKey("genres.id"))
 
     actors = relationship('Actor', secondary="movie_actors", back_populates='movies', lazy='subquery')
     users = relationship('User', secondary="user_watch_movies", back_populates='watched_movies', lazy='subquery')
