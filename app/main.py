@@ -17,7 +17,7 @@ Base.metadata.create_all(bind=engine)
 def init_app():
     """
     Initializing app
-    Return: None.
+    Return: FastAPI instance.
     """
     my_app = FastAPI()
     my_app.include_router(user_router)
