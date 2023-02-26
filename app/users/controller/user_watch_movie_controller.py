@@ -14,14 +14,13 @@ class UserWatchMovieController:
         """
         Function allows a user to watch a movie.
 
-        param user_id:str: Identify the user.
-        param title:str: Get the movie by its title.
+        Param user_id:str: Identify the user.
+        Param title:str: Get the movie by its title.
         Return: A watch-movie object.
         """
         try:
             movie = MovieServices.get_movie_by_title(title)
-            watch_movie = UserWatchMovieServices.user_watch_movie(user_id, movie.id)
-            return watch_movie
+            return UserWatchMovieServices.user_watch_movie(user_id, movie.id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -39,8 +38,7 @@ class UserWatchMovieController:
         """
         try:
             movie = MovieServices.get_movie_by_title(title)
-            rated_movie = UserWatchMovieServices.rate_movie(user_id, movie.id, rating)
-            return rated_movie
+            return UserWatchMovieServices.rate_movie(user_id, movie.id, rating)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -57,9 +55,7 @@ class UserWatchMovieController:
         """
         try:
             movies = UserWatchMovieServices.get_my_watched_movies_list(user_id)
-            if not movies:
-                return Response(content="You have not watched any movie yet.", status_code=200)
-            return movies
+            return movies if movies else Response(content="You have not watched any movie yet.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -75,9 +71,10 @@ class UserWatchMovieController:
         """
         try:
             movies = UserWatchMovieServices.get_popular_movies()
-            if not movies:
-                return Response(content="We have not yet generated movie popularity list.", status_code=200)
-            return movies
+            return movies if movies else Response(
+                content="We have not yet generated movie popularity list.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -94,9 +91,10 @@ class UserWatchMovieController:
         """
         try:
             movie = UserWatchMovieServices.get_best_rated_movie(best)
-            if not movie:
-                return Response(content="We have not yet generated movie popularity list.", status_code=200)
-            return movie
+            return movie if movie else Response(
+                content="We have not yet generated movie popularity list.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -116,9 +114,7 @@ class UserWatchMovieController:
         """
         try:
             movies = UserWatchMovieServices.get_my_recommendations(user_id, page)
-            if not movies:
-                return MovieServices.get_all_movies(page)
-            return movies
+            return movies if movies else MovieServices.get_all_movies(page)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -134,8 +130,7 @@ class UserWatchMovieController:
         Return: The average rating for a movie.
         """
         try:
-            movie = UserWatchMovieServices.get_average_rating_for_movie(name)
-            return movie
+            return UserWatchMovieServices.get_average_rating_for_movie(name)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -149,8 +144,7 @@ class UserWatchMovieController:
         Return: The average ratings for all movies in the database.
         """
         try:
-            response = UserWatchMovieServices.get_average_ratings()
-            return response
+            return UserWatchMovieServices.get_average_ratings()
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -167,9 +161,10 @@ class UserWatchMovieController:
         """
         try:
             movies = UserWatchMovieServices.get_movies_with_higher_average_rating(rating)
-            if not movies:
-                return Response(content=f"No Movie with average rating higher than: {rating}.", status_code=200)
-            return movies
+            return movies if movies else Response(
+                content=f"No Movie with average rating higher than: {rating}.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -189,9 +184,7 @@ class UserWatchMovieController:
         """
         try:
             average = UserWatchMovieServices.get_average_movie_rating_for_year(year)
-            if not average:
-                return Response(content=f"No Movies from year: {year}.", status_code=200)
-            return average
+            return average if average else Response(content=f"No Movies from year: {year}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

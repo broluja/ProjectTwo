@@ -29,7 +29,7 @@ def register_user(user: UserSchemaIn):
     return UserController.create_user(**user.dict())
 
 
-@user_router.patch("/user-verification",
+@user_router.patch("/verification",
                    summary="User Verification",
                    status_code=status.HTTP_200_OK
                    )
@@ -46,7 +46,7 @@ def verify_user(verification_code: int = Body(embed=True)):
     return Response(content="Account verified. You can log in now", status_code=200)
 
 
-@user_router.post("/user-login",
+@user_router.post("/login",
                   summary="User Login",
                   )
 def login_user(user: LoginUserSchema, response: Response):
@@ -67,7 +67,7 @@ def login_user(user: LoginUserSchema, response: Response):
     return token
 
 
-@user_router.post("/user-forget-password",
+@user_router.post("/forget-password",
                   summary="Ask for password change.",
                   )
 def forget_password(email: str = Body(embed=True)):
@@ -84,7 +84,7 @@ def forget_password(email: str = Body(embed=True)):
     return response
 
 
-@user_router.post("/user-reset-password",
+@user_router.post("/reset-password",
                   summary="Reset user's password. User route.",
                   dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))]
                   )
@@ -128,7 +128,7 @@ def reset_password_complete(request: Request, reset: PasswordResetSchema):
     return Response(content="Reset password finished successfully. You can login now.", status_code=200)
 
 
-@user_router.post("/admin-login",
+@user_router.post("/admin/login",
                   summary="Admin Login",
                   )
 def login_admin(admin: LoginAdminSchema, response: Response):
@@ -148,7 +148,7 @@ def login_admin(admin: LoginAdminSchema, response: Response):
     return token
 
 
-@user_router.get("/get-all-users",
+@user_router.get("/",
                  response_model=list[UserSchemaOut],
                  summary="Get all users. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -162,7 +162,7 @@ def get_all_users():
     return UserController.get_all_users()
 
 
-@user_router.get("/get-all-active-users",
+@user_router.get("/get-active-users",
                  response_model=list[UserSchemaOut],
                  summary="Get all active users. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -176,7 +176,7 @@ def get_all_active_users():
     return UserController.get_all_active_users()
 
 
-@user_router.get("/get-all-inactive-users",
+@user_router.get("/get-inactive-users",
                  response_model=list[UserSchemaOut],
                  summary="Get all inactive users. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -190,7 +190,7 @@ def get_all_inactive_users():
     return UserController.get_all_active_users(active=False)
 
 
-@user_router.get("/get-user-by-id",
+@user_router.get("/get-user/id",
                  response_model=UserSchemaOut,
                  summary="Get user by ID. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -205,7 +205,7 @@ def get_user_by_id(user_id: str):
     return UserController.get_user_by_id(user_id)
 
 
-@user_router.get("/search-user-by-email",
+@user_router.get("/search-user/email",
                  response_model=list[UserSchemaOut],
                  summary="Search for users by email. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -221,7 +221,7 @@ def search_users_by_email(email: str):
     return UserController.search_users_by_email(email)
 
 
-@user_router.get("/get-user-with-subusers",
+@user_router.get("/get-user/subusers",
                  response_model=UserWithSubusersSchema,
                  summary="Get user by ID with all his subusers. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -257,7 +257,7 @@ def get_my_subusers(request: Request):
     return UserController.get_user_with_all_subusers(user_id)
 
 
-@user_router.patch("/update-user-username",
+@user_router.patch("/update-user/username",
                    response_model=UserSchemaOut,
                    summary="Update my username. User route.",
                    dependencies=[Depends(JWTBearer(["regular_user"]))],
@@ -275,7 +275,7 @@ def update_my_name(request: Request, username: str = Body(embed=True)):
     return UserController.update_username(user_id, username)
 
 
-@user_router.patch("/update-user-email",
+@user_router.patch("/update-user/email",
                    response_model=UserSchemaOut,
                    summary="Change my email. User Route.",
                    dependencies=[Depends(JWTBearer(["regular_user"]))],
@@ -329,7 +329,7 @@ def activate_user(user_id: str = Body(embed=True)):
     return UserController.deactivate_user(user_id, activity=True)
 
 
-@user_router.delete("/delete-user",
+@user_router.delete("/",
                     summary="Delete User. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))]
                     )
@@ -346,7 +346,7 @@ def delete_user(user_id: str):
 subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
 
 
-@subuser_router.post("/add-new-subuser",
+@subuser_router.post("/",
                      response_model=SubuserSchema,
                      summary="Register new Subuser. User route",
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
@@ -364,7 +364,7 @@ def register_subuser(request: Request, name: str):
     return SubuserController.create_subuser(user_id, name)
 
 
-@subuser_router.get("/get-all-subusers",
+@subuser_router.get("/",
                     response_model=list[SubuserSchema],
                     summary="Get all Subusers. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -378,7 +378,7 @@ def get_all_subusers():
     return SubuserController.get_all_subusers()
 
 
-@subuser_router.get("/get-subuser-by-id",
+@subuser_router.get("/get-subuser/id",
                     response_model=SubuserSchema,
                     summary="Get specific Subuser by ID. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -393,7 +393,7 @@ def get_subuser_by_id(subuser_id: str):
     return SubuserController.get_subuser_by_id(subuser_id)
 
 
-@subuser_router.put("/update-subuser-name",
+@subuser_router.put("/update-subuser/name",
                     response_model=SubuserSchema,
                     summary="Update my username. Subuser route",
                     dependencies=[Depends(JWTBearer(["sub_user"]))],
@@ -411,7 +411,7 @@ def update_subusers_name(request: Request, name: str):
     return SubuserController.update_subusers_name(subuser_id, name)
 
 
-@subuser_router.delete("/delete-subuser",
+@subuser_router.delete("/",
                        summary="Delete my Subuser. User route",
                        dependencies=[Depends(JWTBearer(["regular_user"]))]
                        )
@@ -430,7 +430,7 @@ def delete_subuser(request: Request, subuser_name: str):
 admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
 
 
-@admin_router.post("/create-admin",
+@admin_router.post("/",
                    response_model=AdminSchema,
                    summary="Create new Admin. Admin route",
                    status_code=status.HTTP_201_CREATED,
@@ -447,7 +447,7 @@ def create_new_admin(admin: AdminSchemaIn):
     return AdminController.create_new_admin(admin.dict())
 
 
-@admin_router.get("/read-all-admins",
+@admin_router.get("/",
                   response_model=list[AdminSchema],
                   summary="Get all Admins. Admin route",
                   dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -461,7 +461,7 @@ def get_all_admins():
     return AdminController.get_all_admins()
 
 
-@admin_router.get("/read-admins-by-country",
+@admin_router.get("/read-admins/country",
                   summary="Get all Admins by country. Admin Route",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
                   response_model=list[AdminSchema]
@@ -478,7 +478,7 @@ def get_all_admins_by_country(country: str):
     return AdminController.get_all_admins_by_country(country)
 
 
-@admin_router.delete("/delete-admin",
+@admin_router.delete("/",
                      response_model=UserSchema,
                      summary="Deactivate Admin status. Admin route",
                      dependencies=[Depends(JWTBearer(["super_user"]))]

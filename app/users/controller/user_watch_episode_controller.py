@@ -25,8 +25,7 @@ class UserWatchEpisodeController:
         """
         try:
             episode = EpisodeServices.get_episode_by_name_and_series(name, series_title)
-            watch_episode = UserWatchEpisodeServices.user_watch_episode(user_id, episode.id)
-            return watch_episode
+            return UserWatchEpisodeServices.user_watch_episode(user_id, episode.id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -69,9 +68,10 @@ class UserWatchEpisodeController:
         """
         try:
             series = UserWatchEpisodeServices.get_most_popular_series()
-            if not series:
-                return Response(content="We have not generated series popularity list yet.", status_code=200)
-            return series
+            return series if series else Response(
+                content="We have not generated series popularity list yet.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -90,9 +90,7 @@ class UserWatchEpisodeController:
         """
         try:
             series = UserWatchEpisodeServices.get_users_recommendations(user_id, page)
-            if not series:
-                return SeriesServices.read_all_series(page)
-            return series
+            return series if series else SeriesServices.read_all_series(page)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -109,9 +107,8 @@ class UserWatchEpisodeController:
         """
         try:
             average = UserWatchEpisodeServices.get_average_series_rating_for_year(year)
-            if not average:
-                return Response(content=f"No Series from year: {year}.", status_code=200)
-            return average
+            return average if average else Response(content=f"No Series from year: {year}.", status_code=200)
+
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -127,8 +124,7 @@ class UserWatchEpisodeController:
         Return: The average rating for a series.
         """
         try:
-            avg_rating = UserWatchEpisodeServices.get_average_rating_for_series(title)
-            return avg_rating
+            return UserWatchEpisodeServices.get_average_rating_for_series(title)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
