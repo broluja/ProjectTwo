@@ -18,8 +18,7 @@ class AdminController:
         Return: The newly created admin object.
         """
         try:
-            obj = AdminServices.create_new_admin(admin)
-            return obj
+            return AdminServices.create_new_admin(admin)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

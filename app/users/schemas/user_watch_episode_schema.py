@@ -6,7 +6,7 @@ from pydantic import BaseModel, UUID4, Field
 class UserWatchEpisodeSchema(BaseModel):
     """Base schema for UserWatchEpisode model."""
     id: UUID4
-    user_id: str
+    user_id: UUID4
     episode_id: str
     rating: int = None
     date_watched: date

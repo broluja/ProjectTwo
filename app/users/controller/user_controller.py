@@ -1,4 +1,6 @@
 """User Controller module"""
+
+import contextlib
 from fastapi import HTTPException, Response
 from email_validator import validate_email, EmailNotValidError
 
@@ -98,8 +100,7 @@ class UserController:
         Return: A user object.
         """
         try:
-            user = UserServices.get_user_by_id(user_id)
-            return user
+            return UserServices.get_user_by_id(user_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -115,8 +116,7 @@ class UserController:
         Return: A dictionary of the user's information.
         """
         try:
-            user = UserServices.get_user_by_email(email)
-            return user
+            return UserServices.get_user_by_email(email)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -159,8 +159,7 @@ class UserController:
         Return: The user object.
         """
         try:
-            user = UserServices.reset_password_complete(code, password_hashed)
-            return user
+            return UserServices.reset_password_complete(code, password_hashed)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -178,9 +177,7 @@ class UserController:
         """
         try:
             users = UserServices.search_users_by_email(email)
-            if not users:
-                return Response(content="No users found", status_code=200)
-            return users
+            return users if users else Response(content="No users found", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -249,8 +246,7 @@ class UserController:
         Return: A user object.
         """
         try:
-            user = UserServices.update_username(user_id, username)
-            return user
+            return UserServices.update_username(user_id, username)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -273,11 +269,11 @@ class UserController:
             valid_email = valid.email
         except EmailNotValidError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
-        if UserServices.get_user_by_email(valid_email):
-            raise HTTPException(status_code=400, detail="Email in use. You cannot change your email to this one.")
+        with contextlib.suppress(AppException):
+            if UserServices.get_user_by_email(valid_email):
+                raise HTTPException(status_code=400, detail="Email in use. You cannot change your email to this one.")
         try:
-            user = UserServices.change_email(user_id, valid_email)
-            return user
+            return UserServices.change_email(user_id, valid_email)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -295,8 +291,7 @@ class UserController:
         Return: The user object that was deactivated.
         """
         try:
-            user = UserServices.change_user_status(user_id, activity)
-            return user
+            return UserServices.change_user_status(user_id, activity)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

@@ -1,15 +1,17 @@
 """Admin Schema module"""
-from pydantic import BaseModel, UUID4
+from uuid import uuid4
+
+from pydantic import BaseModel, UUID4, Field
 
 
 class AdminSchema(BaseModel):
     """Base schema for Admin"""
-    id: UUID4
+    id: UUID4 = Field(default_factory=uuid4)
     first_name: str
     last_name: str
     address: str
     country: str
-    user_id: str
+    user_id: UUID4 = Field(default_factory=uuid4)
 
     class Config:
         """Configuration Class"""

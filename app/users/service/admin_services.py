@@ -14,8 +14,8 @@ class AdminServices:
         The create_new_admin function creates a new admin in the database.
         It takes as input a dictionary containing the user_id of an existing user, and returns an Admin object.
 
-        param admin:dict: Pass the user_id of the admin that will be created.
-        return: A dictionary.
+        Param admin:dict: Pass the user_id of the admin that will be created.
+        Return: A dictionary.
         """
         try:
             with SessionLocal() as db:

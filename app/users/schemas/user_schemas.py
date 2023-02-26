@@ -71,3 +71,49 @@ class UserWithSubusersSchema(BaseModel):
     class Config:
         """Configuration Class"""
         orm_mode = True
+
+
+class LoginUserSchema(BaseModel):
+    username: str
+    email: str
+    password: str
+
+    class Config:
+        """Configuration Class"""
+        schema_extra = {
+            "example": {
+                "username": "username",
+                "email": "dummy@gmail.com",
+                "password": "password"
+            }
+        }
+
+
+class LoginAdminSchema(BaseModel):
+    email: str
+    password: str
+
+    class Config:
+        """Configuration Class"""
+        schema_extra = {
+            "example": {
+                "email": "dummy@gmail.com",
+                "password": "password"
+            }
+        }
+
+
+class PasswordResetSchema(BaseModel):
+    code: int
+    password: str
+    repeat_password: str
+
+    class Config:
+        """Configuration Class"""
+        schema_extra = {
+            "example": {
+                "code": 12345,
+                "password": "password",
+                "repeat_password": "password"
+            }
+        }

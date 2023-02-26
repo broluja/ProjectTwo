@@ -54,8 +54,7 @@ class SubuserController:
         Return: The subuser with the given ID.
         """
         try:
-            subuser = SubuserServices.get_subuser_by_id(subuser_id)
-            return subuser
+            return SubuserServices.get_subuser_by_id(subuser_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -73,10 +72,7 @@ class SubuserController:
         Return: A list of subusers made by a specific user.
         """
         try:
-            subusers = SubuserServices.get_all_subusers_for_one_user(user_id)
-            if not subusers:
-                return Response(content=f"No subusers made by user with ID: {user_id}.", status_code=200)
-            return subusers
+            return SubuserServices.get_all_subusers_for_one_user(user_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -93,8 +89,7 @@ class SubuserController:
         Return: A subuser object.
         """
         try:
-            subuser = SubuserServices.update_subusers_name(subuser_id, name)
-            return subuser
+            return SubuserServices.update_subusers_name(subuser_id, name)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
