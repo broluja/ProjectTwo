@@ -27,6 +27,7 @@ class Series(Base):
 
     id = Column(String(50), primary_key=True, default=uuid4)
     title = Column(String(100), nullable=False)
+    description = Column(String(500), nullable=False)
     date_added = Column(Date(), default=date.today())
     year_published = Column(String(5), nullable=False)
     director_id = Column(String(50), ForeignKey("directors.id"))

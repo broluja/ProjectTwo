@@ -28,6 +28,7 @@ class Movie(Base):
 
     id = Column(String(50), primary_key=True, default=uuid4)
     title = Column(String(100), nullable=False)
+    description = Column(String(500), nullable=False)
     date_added = Column(Date(), default=date.today())
     year_published = Column(String(5), nullable=False)
     link = Column(String(100), nullable=False, default=generate_fake_url)
@@ -37,9 +38,10 @@ class Movie(Base):
     actors = relationship('Actor', secondary="movie_actors", back_populates='movies', lazy='subquery')
     users = relationship('User', secondary="user_watch_movies", back_populates='watched_movies', lazy='subquery')
 
-    def __init__(self, title: str, year_published: str, director_id: str, genre_id: str,
+    def __init__(self, title: str, description: str, year_published: str, director_id: str, genre_id: str,
                  date_added: str = date.today()):
         self.title = title
+        self.description = description
         self.date_added = date_added
         self.year_published = year_published
         self.director_id = director_id

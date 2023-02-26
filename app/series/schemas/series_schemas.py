@@ -11,6 +11,7 @@ class SeriesSchema(BaseModel):
     """Base Series Schema"""
     id: UUID4
     title: str
+    description: str
     date_added: date
     year_published: str
     director_id: str
@@ -24,6 +25,7 @@ class SeriesSchema(BaseModel):
 class SeriesSchemaIn(BaseModel):
     """Base Series Schema for input"""
     title: str
+    description: str
     year_published: str
     director_id: str
     genre_id: str
@@ -34,6 +36,7 @@ class SeriesSchemaIn(BaseModel):
         schema_extra = {
             "example": {
                 "title": "True Detective",
+                "description": "Short description...",
                 "year_published": "1998",
                 "director_id": "",
                 "genre_id": "",
@@ -45,6 +48,7 @@ class SeriesWithActorsSchema(BaseModel):
     """Base Series Schema with Actors"""
     id: UUID4
     title: str
+    description: str
     date_added: date
     year_published: str
     actors: list[ActorSchema]
@@ -58,6 +62,7 @@ class SeriesWithDirectorAndGenreSchema(BaseModel):
     """Base Series Schema with Genres and Directors"""
     id: UUID4
     title: str
+    description: str
     date_added: date
     year_published: str
     director: DirectorSchema
@@ -72,6 +77,7 @@ class SeriesFullSchema(BaseModel):
     """Full Series Schema"""
     id: UUID4
     title: str
+    description: str
     date_added: date
     year_published: str
     actors: list[ActorSchema]

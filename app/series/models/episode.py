@@ -13,6 +13,7 @@ class Episode(Base):
     __tablename__ = "episodes"
     id = Column(String(50), primary_key=True, default=uuid4)
     name = Column(String(50), nullable=False)
+    description = Column(String(500), nullable=False)
     link = Column(String(100), nullable=False, default=generate_fake_url)
     series_id = Column(String(50), ForeignKey("series.id"))
 
