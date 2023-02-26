@@ -1,5 +1,5 @@
 """Genre routes module"""
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Body
 
 from app.genres.schemas import GenreSchema, GenreSchemaIn
 from app.genres.controller import GenreController
@@ -71,7 +71,7 @@ def search_genres_by_name(name: str):
                   summary="Update Genre`s data. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
                   status_code=status.HTTP_201_CREATED)
-def update_genre(genre_id: str, name: str):
+def update_genre(genre_id: str, name: str = Body(embed=True)):
     """
     Function updates a genre's name.
 

@@ -1,5 +1,5 @@
 """Movie and Movie-Actor routes"""
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Body
 from starlette.requests import Request
 
 from app.movies.controller import MovieController, MovieActorController
@@ -104,7 +104,7 @@ movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies_actors
                          summary="Add actor to Movie. Admin Route",
                          status_code=status.HTTP_201_CREATED
                          )
-def add_actor_to_movie(movie_id: str, actor_id: str):
+def add_actor_to_movie(movie_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     The add_actor_to_movie function adds an actor to a movie.
 
@@ -139,7 +139,7 @@ watch_movie = APIRouter(prefix="/api/watch-movie", tags=["Watch Movie"])
                   status_code=status.HTTP_201_CREATED,
                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                   )
-def user_watch_movie(request: Request, title: str):
+def user_watch_movie(request: Request, title: str = Body(embed=True)):
     """
     Function allows a user to watch a movie.
     It takes in the title of the movie and returns an error if it does not exist.
@@ -152,13 +152,13 @@ def user_watch_movie(request: Request, title: str):
     return UserWatchMovieController.user_watch_movie(user_id, title)
 
 
-@watch_movie.put("/rate-movie",
-                 response_model=UserWatchMovieSchema,
-                 summary="Rate movie. User Route.",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
-                 status_code=status.HTTP_201_CREATED
-                 )
-def user_rate_movie(request: Request, title: str, rating: int):
+@watch_movie.patch("/rate-movie",
+                   response_model=UserWatchMovieSchema,
+                   summary="Rate movie. User Route.",
+                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
+                   status_code=status.HTTP_201_CREATED
+                   )
+def user_rate_movie(request: Request, title: str = Body(embed=True), rating: int = Body(embed=True)):
     """
     The user_rate_movie function allows a user to rate a movie.
     It takes in the title of the movie and rating as parameters.

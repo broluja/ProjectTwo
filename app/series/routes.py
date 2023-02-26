@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Body
 from starlette.requests import Request
 
 from app.series.controller import SeriesController, EpisodeController
@@ -180,7 +180,7 @@ series_actor_router = APIRouter(tags=["SeriesActors"], prefix="/api/series_actor
                           summary="Add actor to Series. Admin Route.",
                           status_code=status.HTTP_201_CREATED
                           )
-def add_actor_to_series(series_id: str, actor_id: str):
+def add_actor_to_series(series_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     Function adds an actor to a series.
 
@@ -214,7 +214,7 @@ watch_episode = APIRouter(prefix="/api/watch_episode", tags=["Watch Episode"])
                     summary="Watch Episode. User Route.",
                     dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                     )
-def user_watch_episode(request: Request, episode_name: str, series_title: str):
+def user_watch_episode(request: Request, episode_name: str = Body(embed=True), series_title: str = Body(embed=True)):
     """
     The user_watch_episode function is used to add a user's watch history to the database.
     It takes in a request, episode name and series title as parameters. It then checks if the user_id cookie exists,
@@ -229,15 +229,18 @@ def user_watch_episode(request: Request, episode_name: str, series_title: str):
     return UserWatchEpisodeController.user_watch_episode(user_id, episode_name, series_title)
 
 
-@watch_episode.put("/rate-episode",
-                   response_model=UserWatchEpisodeSchema,
-                   summary="Rate Episode. User Route.",
-                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
-                   status_code=status.HTTP_201_CREATED
-                   )
-def user_rate_episode(request: Request, episode_name: str, series_title: str, rating: int):
+@watch_episode.patch("/rate-episode",
+                     response_model=UserWatchEpisodeSchema,
+                     summary="Rate Episode. User Route.",
+                     dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
+                     status_code=status.HTTP_201_CREATED
+                     )
+def user_rate_episode(request: Request,
+                      episode_name: str = Body(embed=True),
+                      series_title: str = Body(embed=True),
+                      rating: int = Body(embed=True)):
     """
-    The user_rate_episode function allows a user to rate an episode of a series.
+    The user_rate_episode function allows a user to rate an episode of a series. = Body(embed=True
     The function takes in the name of the episode, the title of the series it belongs to,
     and what rating they want to give it.
     It returns whether their rating was successful.
