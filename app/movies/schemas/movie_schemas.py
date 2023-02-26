@@ -11,6 +11,7 @@ class MovieSchema(BaseModel):
     """Base Movie Schema"""
     id: UUID4
     title: str
+    description: str
     date_added: date
     year_published: str
     link: str
@@ -25,6 +26,7 @@ class MovieSchema(BaseModel):
 class MovieSchemaIn(BaseModel):
     """Movie Schema for input"""
     title: str
+    description: str
     year_published: str
     director_id: str
     genre_id: str
@@ -46,6 +48,7 @@ class MovieWithActorsSchema(BaseModel):
     """Movie schema with Actors"""
     id: UUID4
     title: str
+    description: str
     year_published: str
     link: str
 
@@ -60,6 +63,7 @@ class MovieWithDirectorAndGenreSchema(BaseModel):
     """Movie schema with Genre and Director"""
     id: UUID4
     title: str
+    description: str
     year_published: str
     link: str
 
@@ -75,6 +79,7 @@ class MovieFullSchema(BaseModel):
     """Full Movie Schema"""
     id: UUID4
     title: str
+    description: str
     year_published: str
     link: str
 
