@@ -11,7 +11,7 @@ from app.utils import get_day_before_one_month
 movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
 
 
-@movie_router.post("/add-movie",
+@movie_router.post("/",
                    response_model=MovieWithDirectorAndGenreSchema,
                    summary="Add new Movie to Database. Admin Route.",
                    dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -29,7 +29,7 @@ def add_new_movie(movie: MovieSchemaIn):
     return MovieController.create_movie(**vars(movie))
 
 
-@movie_router.get("/get-all-movies",
+@movie_router.get("/",
                   response_model=list[MovieSchema],
                   summary="Search all Movies."
                   )
@@ -45,7 +45,7 @@ def get_all_movies(page: int = 1):
     return MovieController.get_all_movies(page)
 
 
-@movie_router.get("/get-movie-director-and-genre",
+@movie_router.get("/movie/id",
                   response_model=MovieWithDirectorAndGenreSchema,
                   summary="Read Movie with Genre and Director. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -63,7 +63,7 @@ def get_movie_with_genre_and_director(movie_id: str):
     return MovieActorController.get_movie_with_director_and_genre(movie_id)
 
 
-@movie_router.put("/update-movie",
+@movie_router.put("/",
                   response_model=MovieSchema,
                   summary="Update Movie Data. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -82,7 +82,7 @@ def update_movie_data(movie: MovieSchemaIn, movie_id):
     return MovieController.update_movie_data(movie_id, attributes)
 
 
-@movie_router.delete("/delete-movie",
+@movie_router.delete("/",
                      summary="Delete movie. Admin route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))]
                      )
@@ -96,10 +96,10 @@ def delete_movie(movie_id: str):
     return MovieController.delete_movie(movie_id)
 
 
-movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies_actors")
+movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies-actors")
 
 
-@movie_actor_router.post("/add_actor_to_movie",
+@movie_actor_router.post("/",
                          dependencies=[Depends(JWTBearer(["super_user"]))],
                          summary="Add actor to Movie. Admin Route",
                          status_code=status.HTTP_201_CREATED
@@ -115,7 +115,7 @@ def add_actor_to_movie(movie_id: str = Body(embed=True), actor_id: str = Body(em
     return MovieActorController.create_movie_actor(movie_id, actor_id)
 
 
-@movie_actor_router.delete("/remove_actor_to_movie",
+@movie_actor_router.delete("/",
                            dependencies=[Depends(JWTBearer(["super_user"]))],
                            summary="Remove actor from Movie. Admin Route.",
                            status_code=status.HTTP_201_CREATED
@@ -176,7 +176,7 @@ def user_rate_movie(request: Request, title: str = Body(embed=True), rating: int
     return obj
 
 
-@watch_movie.get("/get-movie-data",
+@watch_movie.get("/get-movie/title",
                  response_model=MovieFullSchema,
                  summary="See actors, director and Genre for specific Movie."
                  )
@@ -190,7 +190,43 @@ def get_movie_data(title: str):
     return MovieController.get_movie_data(title)
 
 
-@watch_movie.get("/get-my-watched-movies",
+@watch_movie.get("/get-movie/actors",
+                 response_model=MovieWithActorsSchema,
+                 summary="Read Movie by ID. Admin Route.",
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
+def get_movie_with_actors(movie_id: str):
+    """
+    Function returns a movie with all of its actors.
+    It takes in a movie_id as an argument and returns the movie object if it exists, otherwise it returns None.
+
+    Param movie_id:str: Specify the movie_id of the movie that is being queried
+    Return: A dictionary.
+    """
+    return MovieActorController.get_movie_with_actors(movie_id)
+
+
+@watch_movie.get("/get-movie/best-rated-movie")
+def show_best_rated_movie():
+    """
+    Function returns the movie with the highest rating.
+
+    Return: The best rated movie.
+    """
+    return UserWatchMovieController.get_best_rated_movie(best=True)
+
+
+@watch_movie.get("/get-movie/worst-rated-movie")
+def show_worst_rated_movie():
+    """
+    Function returns the movie with the lowest rating.
+
+    Return: The worst rated movie.
+    """
+    return UserWatchMovieController.get_best_rated_movie(best=False)
+
+
+@watch_movie.get("/my-movies",
                  response_model=list[MovieSchema],
                  summary="Get user's watched Movies list. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -224,7 +260,7 @@ def get_top_ten_movies():
     return sorted_movies
 
 
-@watch_movie.get("/search-movies-title",
+@watch_movie.get("/search-movies/title",
                  summary="Search Movies by title.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -239,7 +275,7 @@ def search_movies_by_title(title: str):
     return MovieController.search_movies_by_name(title)
 
 
-@watch_movie.get("/search-movies-director",
+@watch_movie.get("/search-movies/director",
                  summary="Search Movies by director.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -255,7 +291,7 @@ def search_movies_by_director(director: str):
     return MovieController.search_movies_by_director(director)
 
 
-@watch_movie.get("/search-movies-genre",
+@watch_movie.get("/search-movies/genre",
                  summary="Search Movies by genre.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -270,23 +306,7 @@ def search_movies_by_genre(genre: str):
     return MovieController.search_movies_by_genre(genre)
 
 
-@watch_movie.get("/get-movie-actors",
-                 response_model=MovieWithActorsSchema,
-                 summary="Read Movie by ID. Admin Route.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))]
-                 )
-def get_movie_with_actors(movie_id: str):
-    """
-    Function returns a movie with all of its actors.
-    It takes in a movie_id as an argument and returns the movie object if it exists, otherwise it returns None.
-
-    Param movie_id:str: Specify the movie_id of the movie that is being queried
-    Return: A dictionary.
-    """
-    return MovieActorController.get_movie_with_actors(movie_id)
-
-
-@watch_movie.get("/get-movies-by-year",
+@watch_movie.get("/get-movies/year",
                  summary="Get Movies from specific year. User Route.",
                  response_model=list[MovieSchema],
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -304,22 +324,7 @@ def get_movies_by_year(year: int):
     return MovieController.get_movies_by_year(year)
 
 
-@watch_movie.get("/get-movie-average-rating",
-                 summary="Get average rating for specific Movie. User Route",
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
-                 )
-def get_average_rating_for_movie(name: str):
-    """
-    Function accepts a movie name as an argument and returns the average rating for that
-    movie. If no ratings are available, it returns 0.
-
-    Param name:str: Get the name of the movie that is being rated
-    Return: The average rating for a movie.
-    """
-    return UserWatchMovieController.get_average_rating_for_movie(name)
-
-
-@watch_movie.get("/get-average-ratings",
+@watch_movie.get("/get-movies/ratings",
                  summary="Get average Movie ratings. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -333,7 +338,7 @@ def get_average_ratings():
     return UserWatchMovieController.get_average_ratings()
 
 
-@watch_movie.get("/get-movies-with-higher-rating",
+@watch_movie.get("/get-movies/by-rating",
                  summary="Get Movies with average rating higher than requested. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -348,7 +353,54 @@ def get_movie_with_average_rating_above_requested(rating: float):
     return UserWatchMovieController.get_movies_with_higher_average_rating(rating)
 
 
-@watch_movie.get("/get-average-movie-rating-for-year",
+@watch_movie.get("/get-movies/show-latest-features",
+                 summary="Show latest features",
+                 response_model=list[MovieWithActorsSchema]
+                 )
+def show_latest_features():
+    """
+    Function returns a list of the latest features added to the database.
+    The date limit parameter is used to filter out any features that were created before this date.
+
+    Return: The latest features of movies in the database.
+    """
+    date_limit = get_day_before_one_month()
+    return MovieController.get_latest_features(date_limit)
+
+
+@watch_movie.get("/get-movies/never-downloaded",
+                 summary="Show unpopular movies that never have been watched. Admin route.",
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
+def show_least_popular_movies():
+    """
+    Function returns a list of movies that have the least amount of views.
+
+    Return: A list of movies with the lowest rating.
+    """
+    return MovieController.show_least_popular_movies()
+
+
+@watch_movie.get("/get-movies/my-recommendations",
+                 summary="Show recommended Movies. User route.",
+                 response_model=list[MovieSchema],
+                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
+                 )
+def get_my_recommendations(request: Request, page: int = 1):
+    user_id = request.cookies.get("user_id")
+    """
+    Function returns a list of movies that the user has not watched, but is recommended
+    for them based on their previous movie ratings. The function takes in a page number as an argument and returns
+    a list of movies from that page.
+
+    Param request:Request: Get the user_id from the cookie
+    Param page:int=1: Specify which page of the recommendation list to display
+    Return: A list of movies that are recommended for the user.
+    """
+    return UserWatchMovieController.get_my_recommendations(user_id, page)
+
+
+@watch_movie.get("/get-rating/year",
                  summary="Get average movie rating for a specific year. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -381,70 +433,3 @@ def get_most_successful_movie_year():
     response = UserWatchMovieController.get_most_successful_movie_year()
     sorted_movies = [(k, v) for k, v in sorted(response.items(), key=lambda item: item[1], reverse=True)]
     return {"Most successful year": {"Year": sorted_movies[0][0], "Average Rating": sorted_movies[0][1]}}
-
-
-@watch_movie.get("/best-rated-movie")
-def show_best_rated_movie():
-    """
-    Function returns the movie with the highest rating.
-
-    Return: The best rated movie.
-    """
-    return UserWatchMovieController.get_best_rated_movie(best=True)
-
-
-@watch_movie.get("/worst-rated-movie")
-def show_worst_rated_movie():
-    """
-    Function returns the movie with the lowest rating.
-
-    Return: The worst rated movie.
-    """
-    return UserWatchMovieController.get_best_rated_movie(best=False)
-
-
-@watch_movie.get("/show-latest-features",
-                 summary="Show latest features",
-                 response_model=list[MovieWithActorsSchema]
-                 )
-def show_latest_features():
-    """
-    Function returns a list of the latest features added to the database.
-    The date limit parameter is used to filter out any features that were created before this date.
-
-    Return: The latest features of movies in the database.
-    """
-    date_limit = get_day_before_one_month()
-    return MovieController.get_latest_features(date_limit)
-
-
-@watch_movie.get("/show-movies-never-downloaded",
-                 summary="Show unpopular movies that never have been watched. Admin route.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))]
-                 )
-def show_least_popular_movies():
-    """
-    Function returns a list of movies that have the least amount of views.
-
-    Return: A list of movies with the lowest rating.
-    """
-    return MovieController.show_least_popular_movies()
-
-
-@watch_movie.get("/get-my-recommendations",
-                 summary="Show recommended Movies. User route.",
-                 response_model=list[MovieSchema],
-                 dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
-                 )
-def get_my_recommendations(request: Request, page: int = 1):
-    user_id = request.cookies.get("user_id")
-    """
-    Function returns a list of movies that the user has not watched, but is recommended
-    for them based on their previous movie ratings. The function takes in a page number as an argument and returns
-    a list of movies from that page.
-    
-    Param request:Request: Get the user_id from the cookie
-    Param page:int=1: Specify which page of the recommendation list to display
-    Return: A list of movies that are recommended for the user.
-    """
-    return UserWatchMovieController.get_my_recommendations(user_id, page)
