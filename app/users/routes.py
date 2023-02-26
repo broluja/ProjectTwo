@@ -257,13 +257,13 @@ def get_my_subusers(request: Request):
     return UserController.get_user_with_all_subusers(user_id)
 
 
-@user_router.put("/update-user-username",
-                 response_model=UserSchemaOut,
-                 summary="Update my username. User route.",
-                 dependencies=[Depends(JWTBearer(["regular_user"]))],
-                 status_code=status.HTTP_201_CREATED
-                 )
-def update_my_name(request: Request, username: str):
+@user_router.patch("/update-user-username",
+                   response_model=UserSchemaOut,
+                   summary="Update my username. User route.",
+                   dependencies=[Depends(JWTBearer(["regular_user"]))],
+                   status_code=status.HTTP_201_CREATED
+                   )
+def update_my_name(request: Request, username: str = Body(embed=True)):
     """
     The update_my_name function updates the username of a user.
 
@@ -275,13 +275,13 @@ def update_my_name(request: Request, username: str):
     return UserController.update_username(user_id, username)
 
 
-@user_router.put("/update-user-email",
-                 response_model=UserSchemaOut,
-                 summary="Change my email. User Route.",
-                 dependencies=[Depends(JWTBearer(["regular_user"]))],
-                 status_code=status.HTTP_201_CREATED
-                 )
-def change_my_email(request: Request, email: str):
+@user_router.patch("/update-user-email",
+                   response_model=UserSchemaOut,
+                   summary="Change my email. User Route.",
+                   dependencies=[Depends(JWTBearer(["regular_user"]))],
+                   status_code=status.HTTP_201_CREATED
+                   )
+def change_my_email(request: Request, email: str = Body(embed=True)):
     """
     Function allows a user to change their email.
     It takes in the request and the new email as parameters.
@@ -295,13 +295,13 @@ def change_my_email(request: Request, email: str):
     return UserController.change_email(user_id, email)
 
 
-@user_router.put("/deactivate-user",
-                 response_model=UserSchema,
-                 summary="Deactivate User. Admin route",
-                 dependencies=[Depends(JWTBearer(["super_user"]))],
-                 status_code=status.HTTP_201_CREATED
-                 )
-def deactivate_user(user_id: str):
+@user_router.patch("/deactivate-user",
+                   response_model=UserSchema,
+                   summary="Deactivate User. Admin route",
+                   dependencies=[Depends(JWTBearer(["super_user"]))],
+                   status_code=status.HTTP_201_CREATED
+                   )
+def deactivate_user(user_id: str = Body(embed=True)):
     """
     Function takes a user_id as an argument and deactivates the corresponding user.
     It returns True if the operation was successful, False otherwise.
@@ -312,13 +312,13 @@ def deactivate_user(user_id: str):
     return UserController.deactivate_user(user_id)
 
 
-@user_router.put("/activate-user",
-                 response_model=UserSchemaOut,
-                 summary="Activate User. Admin route",
-                 dependencies=[Depends(JWTBearer(["super_user"]))],
-                 status_code=status.HTTP_201_CREATED
-                 )
-def activate_user(user_id: str):
+@user_router.patch("/activate-user",
+                   response_model=UserSchemaOut,
+                   summary="Activate User. Admin route",
+                   dependencies=[Depends(JWTBearer(["super_user"]))],
+                   status_code=status.HTTP_201_CREATED
+                   )
+def activate_user(user_id: str = Body(embed=True)):
     """
     Function is used to activate a user.
     It takes in the user_id as an argument and returns the updated User object.
@@ -352,7 +352,7 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
                      status_code=status.HTTP_201_CREATED
                      )
-def register_subuser(request: Request, name: str):
+def register_subuser(request: Request, name: str = Body(embed=True)):
     """
     Function creates a new subuser with the given name.
 
@@ -393,13 +393,13 @@ def get_subuser_by_id(subuser_id: str):
     return SubuserController.get_subuser_by_id(subuser_id)
 
 
-@subuser_router.put("/update-subuser-name",
-                    response_model=SubuserSchema,
-                    summary="Update my username. Subuser route",
-                    dependencies=[Depends(JWTBearer(["sub_user"]))],
-                    status_code=status.HTTP_201_CREATED
-                    )
-def update_subusers_name(request: Request, name: str):
+@subuser_router.patch("/update-subuser-name",
+                      response_model=SubuserSchema,
+                      summary="Update my username. Subuser route",
+                      dependencies=[Depends(JWTBearer(["sub_user"]))],
+                      status_code=status.HTTP_201_CREATED
+                      )
+def update_subusers_name(request: Request, name: str = Body(embed=True)):
     """
     The update_subusers_name function updates the name of a subuser.
 
