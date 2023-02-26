@@ -11,7 +11,7 @@ from app.utils import get_day_before_one_month
 movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
 
 
-@movie_router.post("/add-movie",
+@movie_router.post("/",
                    response_model=MovieWithDirectorAndGenreSchema,
                    summary="Add new Movie to Database. Admin Route.",
                    dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -29,7 +29,7 @@ def add_new_movie(movie: MovieSchemaIn):
     return MovieController.create_movie(**vars(movie))
 
 
-@movie_router.get("/get-all-movies",
+@movie_router.get("/",
                   response_model=list[MovieSchema],
                   summary="Search all Movies."
                   )

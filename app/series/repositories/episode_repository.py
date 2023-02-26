@@ -16,8 +16,7 @@ class EpisodeRepository(BaseCRUDRepository):
         return: A list of episodes that are associated with the series_id passed into the function.
         """
         try:
-            episodes = self.db.query(Episode).filter(Episode.series_id == series_id).order_by(Episode.name).all()
-            return episodes
+            return self.db.query(Episode).filter(Episode.series_id == series_id).order_by(Episode.name).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -33,8 +32,7 @@ class EpisodeRepository(BaseCRUDRepository):
         Return: The episode object if a row is found in the database with the given name and series_id.
         """
         try:
-            episode = self.db.query(Episode).filter(Episode.name == name).filter(Episode.series_id == series_id).first()
-            return episode
+            return self.db.query(Episode).filter(Episode.name == name).filter(Episode.series_id == series_id).first()
         except Exception as exc:
             self.db.rollback()
             raise exc

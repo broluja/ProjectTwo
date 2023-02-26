@@ -19,13 +19,14 @@ PER_PAGE = settings.PER_PAGE
 class MovieServices:
     """Service for movie routes"""
     @staticmethod
-    def create_new_movie(title: str, year_published: str, director_id: str, genre_id: str):
+    def create_new_movie(title: str, description: str, year_published: str, director_id: str, genre_id: str):
         """
         Function creates a new movie in the database.
         It takes as input the title, year_published, director_id and genre_id of the movie to be created.
         The function returns a dictionary with information about the newly created movie.
 
         Param title:str: Store the title of the movie
+        Param description:str: Store the description of the movie
         Param year-published:str: Store the year in which the movie was published
         Param director_id:str: Store the ID of the director that created this movie
         Param genre_id:str: Specify, which genre the movie belongs to
@@ -35,6 +36,7 @@ class MovieServices:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
                 fields = {"title": title,
+                          "description": description,
                           "date_added": date.today(),
                           "year_published": year_published,
                           "director_id": director_id,

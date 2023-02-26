@@ -14,8 +14,7 @@ class SeriesActorRepository(BaseCRUDRepository):
         Return: A list of series-actor objects that are associated with the series_id passed in.
         """
         try:
-            series_actors = self.db.query(SeriesActor).filter(SeriesActor.series_id == series_id).all()
-            return series_actors
+            return self.db.query(SeriesActor).filter(SeriesActor.series_id == series_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -28,8 +27,7 @@ class SeriesActorRepository(BaseCRUDRepository):
         Return: A list of series-actor objects.
         """
         try:
-            series = self.db.query(SeriesActor).filter(SeriesActor.actor_id == actor_id).all()
-            return series
+            return self.db.query(SeriesActor).filter(SeriesActor.actor_id == actor_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
