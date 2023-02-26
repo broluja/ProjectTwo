@@ -41,6 +41,8 @@ class ActorController:
         try:
             actors = ActorServices.get_all_actors(page)
             return actors if actors else Response(content="End of query.", status_code=200)
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 

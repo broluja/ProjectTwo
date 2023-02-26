@@ -19,8 +19,7 @@ class GenreController:
         Return: The genre that was created.
         """
         try:
-            genre = GenreServices.create_new_genre(name)
-            return genre
+            return GenreServices.create_new_genre(name)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -36,9 +35,7 @@ class GenreController:
         """
         try:
             genres = GenreServices.get_all_genres()
-            if not genres:
-                return Response(content="No Genres in our Database yet.", status_code=200)
-            return genres
+            return genres if genres else Response(content="No Genres in our Database yet.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -54,8 +51,7 @@ class GenreController:
         Return: A genre object.
         """
         try:
-            genre = GenreServices.get_genre_by_id(genre_id)
-            return genre
+            return GenreServices.get_genre_by_id(genre_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -72,11 +68,7 @@ class GenreController:
         """
         try:
             genres = GenreServices.search_genres_by_name(name)
-            if not genres:
-                return Response(content=f"No Genre: {name} in our Database.", status_code=200)
-            return genres
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return genres if genres else Response(content=f"No Genre: {name} in our Database.", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -90,8 +82,7 @@ class GenreController:
         Return: The updated genre object.
         """
         try:
-            director = GenreServices.update_genre_name(genre_id, name)
-            return director
+            return GenreServices.update_genre_name(genre_id, name)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

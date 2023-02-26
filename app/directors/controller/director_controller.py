@@ -36,6 +36,8 @@ class DirectorController:
         try:
             directors = DirectorServices.get_all_directors()
             return directors if directors else Response("No directors in our Database yet.", status_code=200)
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 

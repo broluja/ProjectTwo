@@ -34,11 +34,8 @@ class GenreRepository(BaseCRUDRepository):
         Return: A list of genre objects that match the name provided.
         """
         try:
-            if search:
-                genres = self.db.query(Genre).filter(Genre.name.ilike(f"%{name}%")).all()
-            else:
-                genres = self.db.query(Genre).filter(Genre.name == name).first()
-            return genres
+            return self.db.query(Genre).filter(Genre.name.ilike(f"%{name}%")).all() if search \
+                else self.db.query(Genre).filter(Genre.name == name).first()
         except Exception as exc:
             self.db.rollback()
             raise exc
