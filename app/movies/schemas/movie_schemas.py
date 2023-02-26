@@ -37,6 +37,7 @@ class MovieSchemaIn(BaseModel):
         schema_extra = {
             "example": {
                 "title": "Blockbuster",
+                "description": "Short description...",
                 "year_published": "2005",
                 "director_id": "",
                 "genre_id": ""

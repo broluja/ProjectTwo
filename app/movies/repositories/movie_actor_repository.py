@@ -17,8 +17,7 @@ class MovieActorRepository(BaseCRUDRepository):
         Return: A list of movie-actor objects.
         """
         try:
-            movie_actors = self.db.query(MovieActor).filter(MovieActor.movie_id == movie_id).all()
-            return movie_actors
+            return self.db.query(MovieActor).filter(MovieActor.movie_id == movie_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -31,8 +30,7 @@ class MovieActorRepository(BaseCRUDRepository):
         Return: A list of movie-actor objects.
         """
         try:
-            movie_actors = self.db.query(MovieActor).filter(MovieActor.actor_id == actor_id).all()
-            return movie_actors
+            return self.db.query(MovieActor).filter(MovieActor.actor_id == actor_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

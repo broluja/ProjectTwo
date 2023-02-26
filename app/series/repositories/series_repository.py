@@ -20,8 +20,7 @@ class SeriesRepository(BaseCRUDRepository):
         Return: A list of series objects that match the genre_id passed to it.
         """
         try:
-            series = self.db.query(Series).filter(Series.genre_id == genre_id).all()
-            return series
+            return self.db.query(Series).filter(Series.genre_id == genre_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -36,8 +35,7 @@ class SeriesRepository(BaseCRUDRepository):
         Return: A list of series objects.
         """
         try:
-            series = self.db.query(Series).filter(Series.director_id == director_id).all()
-            return series
+            return self.db.query(Series).filter(Series.director_id == director_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -69,8 +67,7 @@ class SeriesRepository(BaseCRUDRepository):
         Return: A list of all the series published in a given year.
         """
         try:
-            series = self.db.query(Series).filter(Series.year_published == year).all()
-            return series
+            return self.db.query(Series).filter(Series.year_published == year).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -84,8 +81,7 @@ class SeriesRepository(BaseCRUDRepository):
         Return: The series object that is associated with the episode_id.
         """
         try:
-            series = self.db.query(Series).join(Episode).filter(Episode.id == episode_id).first()
-            return series
+            return self.db.query(Series).join(Episode).filter(Episode.id == episode_id).first()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -100,8 +96,7 @@ class SeriesRepository(BaseCRUDRepository):
         Return: A list of series objects that have been added to the database since date-limit.
         """
         try:
-            series = self.db.query(Series).filter(Series.date_added >= date_limit).all()
-            return series
+            return self.db.query(Series).filter(Series.date_added >= date_limit).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -120,8 +115,7 @@ class SeriesRepository(BaseCRUDRepository):
             sub1 = self.db.query(distinct(UserWatchEpisode.episode_id.label('episode'))).subquery('sub1')
             sub2 = self.db.query(Series.id).join(Episode).filter(
                 Series.id == Episode.series_id).filter(Episode.id.in_(sub1)).distinct().subquery('sub2')
-            result = self.db.query(Series.id, Series.title).filter(Series.id.not_in(sub2))
-            return result
+            return self.db.query(Series.id, Series.title).filter(Series.id.not_in(sub2))
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -139,8 +133,7 @@ class SeriesRepository(BaseCRUDRepository):
         """
         try:
             skip = (page - 1) * PER_PAGE
-            movies = self.db.query(Series).filter(Series.genre_id.in_(genres)).offset(skip).limit(PER_PAGE).all()
-            return movies
+            return self.db.query(Series).filter(Series.genre_id.in_(genres)).offset(skip).limit(PER_PAGE).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

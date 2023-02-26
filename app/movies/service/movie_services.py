@@ -57,8 +57,7 @@ class MovieServices:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
                 skip = (page - 1) * PER_PAGE
-                movies = repository.read_many(skip=skip, limit=PER_PAGE)
-                return movies
+                return repository.read_many(skip=skip, limit=PER_PAGE)
         except Exception as exc:
             raise exc
 
@@ -74,8 +73,7 @@ class MovieServices:
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
-                movie = repository.read_by_id(movie_id)
-                return movie
+                return repository.read_by_id(movie_id)
         except Exception as exc:
             raise exc
 
@@ -90,8 +88,7 @@ class MovieServices:
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
-                movie = repository.read_movie_by_title(title)
-                return movie
+                return repository.read_movie_by_title(title)
         except Exception as exc:
             raise exc
 
@@ -107,8 +104,7 @@ class MovieServices:
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
-                movies = repository.read_movie_by_title(title, search=True)
-                return movies
+                return repository.read_movie_by_title(title, search=True)
         except Exception as exc:
             raise exc
 
@@ -129,8 +125,7 @@ class MovieServices:
                     raise NonExistingDirectorException(message=f"No movies by director: {director}")
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_all()
-                response = [movie for movie in movies if movie.director_id == obj.id]
-                return response
+                return [movie for movie in movies if movie.director_id == obj.id]
         except Exception as exc:
             raise exc
 
@@ -151,8 +146,7 @@ class MovieServices:
                     raise NonExistingGenreException(message=f"No movies with genre: {genre}")
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_all()
-                response = [movie for movie in movies if movie.genre_id == obj.id]
-                return response
+                return [movie for movie in movies if movie.genre_id == obj.id]
         except Exception as exc:
             raise exc
 
@@ -168,8 +162,7 @@ class MovieServices:
         try:
             with SessionLocal() as db:
                 movie_repository = MovieRepository(db, Movie)
-                movies = movie_repository.read_movies_by_year(str(year))
-                return movies
+                return movie_repository.read_movies_by_year(str(year))
         except Exception as exc:
             raise exc
 
@@ -185,8 +178,7 @@ class MovieServices:
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
-                movies = repository.read_latest_releases(date_limit)
-                return movies
+                return repository.read_latest_releases(date_limit)
         except Exception as exc:
             raise exc
 
@@ -200,8 +192,7 @@ class MovieServices:
         try:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
-                movies = repository.read_unpopular_movies()
-                return movies
+                return repository.read_unpopular_movies()
         except Exception as exc:
             raise exc
 
@@ -218,8 +209,7 @@ class MovieServices:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
                 obj = repository.read_by_id(movie_id)
-                movie = repository.update(obj, attributes)
-                return movie
+                return repository.update(obj, attributes)
         except Exception as exc:
             raise exc
 

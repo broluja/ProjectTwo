@@ -40,8 +40,7 @@ class MovieRepository(BaseCRUDRepository):
         Return: A list of movies that were released in the specified year.
         """
         try:
-            movies = self.db.query(Movie).filter(Movie.year == year).all()
-            return movies
+            return self.db.query(Movie).filter(Movie.year == year).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -55,8 +54,7 @@ class MovieRepository(BaseCRUDRepository):
         Return: A list of movie objects.
         """
         try:
-            movies = self.db.query(Movie).filter(Movie.date_added >= date_limit).all()
-            return movies
+            return self.db.query(Movie).filter(Movie.date_added >= date_limit).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -69,8 +67,7 @@ class MovieRepository(BaseCRUDRepository):
         """
         try:
             sub = self.db.query(UserWatchMovie.movie_id.label('movie')).subquery('sub')
-            result = self.db.query(Movie.title.label("Movie"), Movie.id.label('ID')).filter(Movie.id.not_in(sub)).all()
-            return result
+            return self.db.query(Movie.title.label("Movie"), Movie.id.label('ID')).filter(Movie.id.not_in(sub)).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -87,8 +84,7 @@ class MovieRepository(BaseCRUDRepository):
         """
         try:
             skip = (page - 1) * PER_PAGE
-            movies = self.db.query(Movie).filter(Movie.genre_id.in_(genres)).offset(skip).limit(PER_PAGE).all()
-            return movies
+            return self.db.query(Movie).filter(Movie.genre_id.in_(genres)).offset(skip).limit(PER_PAGE).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -101,8 +97,7 @@ class MovieRepository(BaseCRUDRepository):
         Return: A list of movie objects.
         """
         try:
-            result = self.db.query(Movie).filter(Movie.year_published == year).all()
-            return result
+            return self.db.query(Movie).filter(Movie.year_published == year).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -114,8 +109,7 @@ class MovieRepository(BaseCRUDRepository):
         Return: A list of tuples containing the years in which movies were published.
         """
         try:
-            years = self.db.query(Movie.year_published).distinct().all()
-            return years
+            return self.db.query(Movie.year_published).distinct().all()
         except Exception as exc:
             self.db.rollback()
             raise exc

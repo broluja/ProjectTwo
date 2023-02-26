@@ -28,6 +28,7 @@ class Series(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     title = Column(String(100), nullable=False)
+    description = Column(String(500), nullable=False)
     date_added = Column(Date(), default=date.today())
     year_published = Column(String(5), nullable=False)
     director_id = Column(UUID(as_uuid=True), ForeignKey("directors.id"))
@@ -39,12 +40,14 @@ class Series(Base):
     def __init__(
             self,
             title: str,
+            description: str,
             year_published: str,
             director_id: str,
             genre_id: str,
             date_added: str = date.today()
                  ):
         self.title = title
+        self.description = description
         self.date_added = date_added
         self.year_published = year_published
         self.director_id = director_id
