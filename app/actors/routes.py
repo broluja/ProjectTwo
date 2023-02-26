@@ -8,7 +8,7 @@ from app.users.controller import JWTBearer
 actor_router = APIRouter(tags=["Actors"], prefix="/api/actors")
 
 
-@actor_router.post("/create-actor",
+@actor_router.post("/",
                    response_model=ActorSchema,
                    summary="Create New Actor. Admin Route.",
                    dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -24,7 +24,7 @@ def create_new_actor(actor: ActorSchemaIn):
     return ActorController.create_actor(**vars(actor))
 
 
-@actor_router.get("/get-all-actors", response_model=list[ActorSchema])
+@actor_router.get("/", response_model=list[ActorSchema])
 def get_all_actors(page: int = 1):
     """
     Function returns a list of all actors in the database. The get_all_actors function
@@ -37,7 +37,7 @@ def get_all_actors(page: int = 1):
     return ActorController.get_all_actors(page)
 
 
-@actor_router.get("/id/get-actor",
+@actor_router.get("/get-actor/id",
                   response_model=ActorSchema,
                   summary="Read Actor by ID. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -52,7 +52,7 @@ def get_actor_by_id(actor_id: str):
     return ActorController.get_actor_by_id(actor_id)
 
 
-@actor_router.get("/get-actor-by-last-name", response_model=list[ActorSchema])
+@actor_router.get("/get-actor/last-name", response_model=list[ActorSchema])
 def get_actor_by_last_name(actor: str):
     """
     Function takes a string representing the last name of an actor and returns
@@ -64,7 +64,7 @@ def get_actor_by_last_name(actor: str):
     return ActorController.get_actor_by_last_name(actor.strip())
 
 
-@actor_router.get("/get-actor-by-first-name", response_model=list[ActorSchema])
+@actor_router.get("/get-actor/first-name", response_model=list[ActorSchema])
 def get_actor_by_first_name(actor: str):
     """
     Function takes a string as an argument and returns the actor object with that first name.
@@ -76,7 +76,7 @@ def get_actor_by_first_name(actor: str):
     return ActorController.get_actor_by_first_name(actor.strip())
 
 
-@actor_router.get("/get-actor-movies")
+@actor_router.get("/get-actor/movies")
 def get_actor_movies(actor_last_name: str):
     """
     Function returns a list of movies that the actor with the given last name was in.
@@ -90,7 +90,7 @@ def get_actor_movies(actor_last_name: str):
     return ActorController.get_actor_movies(actor_last_name.strip())
 
 
-@actor_router.put("/id/update-actor",
+@actor_router.put("/",
                   response_model=ActorSchema,
                   summary="Update Actor. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -107,7 +107,7 @@ def update_actor(actor_id, actor: ActorSchemaIn):
     return ActorController.update_actor(actor_id, attributes)
 
 
-@actor_router.delete("/id/delete-actor",
+@actor_router.delete("/",
                      summary="Delete Actor by ID. Admin Route",
                      dependencies=[Depends(JWTBearer(["super_user"]))])
 def delete_actor_by_id(actor_id: str):

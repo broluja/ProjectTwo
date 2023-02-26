@@ -8,7 +8,7 @@ from app.users.controller import JWTBearer
 director_router = APIRouter(tags=["Directors"], prefix="/api/directors")
 
 
-@director_router.post("/create-director",
+@director_router.post("/",
                       response_model=DirectorSchema,
                       dependencies=[Depends(JWTBearer(["super_user"]))],
                       summary="Register new Director in DB. Admin Route.",
@@ -25,7 +25,7 @@ def create_new_director(director: DirectorSchemaIn):
     return DirectorController.create_director(director.first_name, director.last_name, director.country)
 
 
-@director_router.get("/get-all-directors", response_model=list[DirectorSchema])
+@director_router.get("/", response_model=list[DirectorSchema])
 def get_all_directors():
     """
     Function returns a list of all directors in the database.
@@ -35,7 +35,7 @@ def get_all_directors():
     return DirectorController.get_all_directors()
 
 
-@director_router.get("/id",
+@director_router.get("/get-director/id",
                      response_model=DirectorSchema,
                      summary="Read Director using ID. Admin Route",
                      dependencies=[Depends(JWTBearer(["super_user"]))])
@@ -49,7 +49,7 @@ def get_director_by_id(director_id: str):
     return DirectorController.get_director_by_id(director_id)
 
 
-@director_router.get("/search-directors-by-last-name", response_model=list[DirectorSchema])
+@director_router.get("/search-directors/first-name", response_model=list[DirectorSchema])
 def search_directors_by_first_name(first_name: str):
     """
     Function searches for directors by their first name.
@@ -62,7 +62,7 @@ def search_directors_by_first_name(first_name: str):
     return DirectorController.search_directors_by_first_name(first_name.strip())
 
 
-@director_router.get("/search-directors-by-last-name", response_model=list[DirectorSchema])
+@director_router.get("/search-directors/last-name", response_model=list[DirectorSchema])
 def search_directors_by_last_name(last_name: str):
     """
     Function searches for directors by last name.
@@ -75,7 +75,7 @@ def search_directors_by_last_name(last_name: str):
     return DirectorController.search_directors_by_last_name(last_name.strip())
 
 
-@director_router.get("/search-directors-by-country", response_model=list[DirectorSchema])
+@director_router.get("/search-directors/country", response_model=list[DirectorSchema])
 def search_directors_by_country(country: str):
     """
     Function searches for directors by country. It takes a string as an argument
@@ -87,7 +87,7 @@ def search_directors_by_country(country: str):
     return DirectorController.search_directors_by_country(country.strip())
 
 
-@director_router.put("/id",
+@director_router.put("/",
                      response_model=DirectorSchema,
                      summary="Update Director`s data. Admin Route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -104,7 +104,7 @@ def update_director(director_id: str, director: DirectorSchemaIn):
     return DirectorController.update_director(director_id, attributes)
 
 
-@director_router.delete("/delete-director",
+@director_router.delete("/",
                         summary="Delete Director. Admin Route.",
                         dependencies=[Depends(JWTBearer(["super_user"]))])
 def delete_director(director_id: str):

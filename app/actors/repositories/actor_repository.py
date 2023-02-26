@@ -54,8 +54,7 @@ class ActorRepository(BaseCRUDRepository):
         Return: A list of actors that are from the specified country.
         """
         try:
-            actors = self.db.query(Actor).filter(Actor.country == country).all()
-            return actors
+            return self.db.query(Actor).filter(Actor.country == country).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

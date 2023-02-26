@@ -21,10 +21,7 @@ class DirectorController:
         Return: The new director object created by the director services.
         """
         try:
-            director = DirectorServices.create_new_director(first_name, last_name, country)
-            return director
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return DirectorServices.create_new_director(first_name, last_name, country)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -38,11 +35,7 @@ class DirectorController:
         """
         try:
             directors = DirectorServices.get_all_directors()
-            if not directors:
-                return Response("No directors in our Database yet.", status_code=200)
-            return directors
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return directors if directors else Response("No directors in our Database yet.", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -57,8 +50,7 @@ class DirectorController:
         Return: A director object based on the ID passed in.
         """
         try:
-            director = DirectorServices.get_director_by_id(director_id)
-            return director
+            return DirectorServices.get_director_by_id(director_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -76,11 +68,10 @@ class DirectorController:
         """
         try:
             director = DirectorServices.search_directors_by_last_name(last_name)
-            if not director:
-                return Response(content=f"No Director with last name: {last_name} in our Database.", status_code=200)
-            return director
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return director if director else Response(
+                content=f"No Director with last name: {last_name} in our Database.",
+                status_code=200
+            )
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -96,11 +87,10 @@ class DirectorController:
         """
         try:
             director = DirectorServices.search_directors_by_first_name(first_name)
-            if not director:
-                return Response(content=f"No Director with first name: {first_name} in our Database.", status_code=200)
-            return director
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return director if director else Response(
+                content=f"No Director with first name: {first_name} in our Database.",
+                status_code=200
+            )
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -116,11 +106,10 @@ class DirectorController:
         """
         try:
             director = DirectorServices.search_directors_by_country(country)
-            if not director:
-                return Response(content=f"No Director with first name: {country} in our Database.", status_code=200)
-            return director
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return director if director else Response(
+                content=f"No Director with first name: {country} in our Database.",
+                status_code=200
+            )
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -134,8 +123,7 @@ class DirectorController:
         Return: A dictionary of the updated director.
         """
         try:
-            director = DirectorServices.update_director(director_id, attributes)
-            return director
+            return DirectorServices.update_director(director_id, attributes)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

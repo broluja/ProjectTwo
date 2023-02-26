@@ -51,8 +51,7 @@ class ActorServices:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
                 skip = (page - 1) * PER_PAGE
-                actors = repository.read_many(skip=skip, limit=PER_PAGE)
-                return actors
+                return repository.read_many(skip=skip, limit=PER_PAGE)
         except Exception as exc:
             raise exc
 
@@ -68,8 +67,7 @@ class ActorServices:
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actor = repository.read_by_id(actor_id)
-                return actor
+                return repository.read_by_id(actor_id)
         except Exception as exc:
             raise exc
 
@@ -85,8 +83,7 @@ class ActorServices:
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actors = repository.read_actors_by_last_name(actor)
-                return actors
+                return repository.read_actors_by_last_name(actor)
         except Exception as exc:
             raise exc
 
@@ -103,8 +100,7 @@ class ActorServices:
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actors = repository.read_actors_by_first_name(actor)
-                return actors
+                return repository.read_actors_by_first_name(actor)
         except Exception as exc:
             raise exc
 
@@ -120,8 +116,7 @@ class ActorServices:
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actor = repository.read_actors_by_last_name(last_name, literal=True)
-                return actor
+                return repository.read_actors_by_last_name(last_name, literal=True)
         except Exception as exc:
             raise exc
 
@@ -154,7 +149,6 @@ class ActorServices:
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actor = repository.delete(actor_id)
-                return actor
+                return repository.delete(actor_id)
         except Exception as exc:
             raise exc

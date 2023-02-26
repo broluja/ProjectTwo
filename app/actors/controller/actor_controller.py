@@ -22,8 +22,7 @@ class ActorController:
         Return: The actor object that was created.
         """
         try:
-            actor = ActorServices.create_new_actor(first_name, last_name, date_of_birth, country)
-            return actor
+            return ActorServices.create_new_actor(first_name, last_name, date_of_birth, country)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -41,11 +40,7 @@ class ActorController:
         """
         try:
             actors = ActorServices.get_all_actors(page)
-            if not actors:
-                return Response(content="End of query.", status_code=200)
-            return actors
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return actors if actors else Response(content="End of query.", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -60,8 +55,7 @@ class ActorController:
         Return: A dictionary with the actor's information.
         """
         try:
-            actor = ActorServices.get_actor_by_id(actor_id)
-            return actor
+            return ActorServices.get_actor_by_id(actor_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -78,11 +72,7 @@ class ActorController:
         """
         try:
             actors = ActorServices.get_actor_by_last_name(actor)
-            if not actors:
-                return Response(content=f"No actor with last name: {actor}", status_code=200)
-            return actors
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return actors if actors else Response(content=f"No actor with last name: {actor}", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -97,11 +87,7 @@ class ActorController:
         """
         try:
             actors = ActorServices.get_actor_by_first_name(actor)
-            if not actors:
-                return Response(content=f"No actor with first name: {actor}", status_code=200)
-            return actors
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return actors if actors else Response(content=f"No actor with first name: {actor}", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -117,11 +103,10 @@ class ActorController:
         """
         try:
             actor = ActorServices.get_actor_movies(last_name)
-            if not actor:
-                return Response(content=f"No actor with last name: {last_name}", status_code=200)
-            return [movie.title for movie in actor.movies]
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return [movie.title for movie in actor.movies] if actor else Response(
+                content=f"No actor with last name: {last_name}",
+                status_code=200
+            )
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -135,8 +120,7 @@ class ActorController:
         Return: The updated actor.
         """
         try:
-            actor = ActorServices.update_actor(actor_id, attributes)
-            return actor
+            return ActorServices.update_actor(actor_id, attributes)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -155,7 +139,5 @@ class ActorController:
         try:
             ActorServices.delete_actor(actor_id)
             return Response(content=f"Actor with ID: {actor_id} deleted.", status_code=200)
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc

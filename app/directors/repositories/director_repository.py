@@ -16,8 +16,7 @@ class DirectorRepository(BaseCRUDRepository):
         Return: A list of director objects that have the same country as the input parameter.
         """
         try:
-            directors = self.db.query(Director).filter(Director.country == country).all()
-            return directors
+            return self.db.query(Director).filter(Director.country == country).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
