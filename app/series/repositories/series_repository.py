@@ -3,6 +3,7 @@ from sqlalchemy import distinct
 
 from app.base import BaseCRUDRepository
 from app.config import settings
+from app.series.exceptions.series_exceptions import UnknownSeriesTitleException
 from app.series.models import Series, Episode
 from app.users.models.user import UserWatchEpisode
 
@@ -51,9 +52,11 @@ class SeriesRepository(BaseCRUDRepository):
         """
         try:
             if search:
-                series = self.db.query(Series).filter(Series.title.ilike(f"%{title}%")).all()
+                series = self.db.query(Series).filter(Series.title.like(f"%{title}%")).all()
             else:
                 series = self.db.query(Series).filter(Series.title == title).first()
+            if not series:
+                raise UnknownSeriesTitleException
             return series
         except Exception as exc:
             self.db.rollback()

@@ -13,7 +13,7 @@ PER_PAGE = settings.PER_PAGE
 class EpisodeServices:
     """Service for Episode routes"""
     @staticmethod
-    def create_new_episode(name: str, series_id: str):
+    def create_new_episode(name: str, description: str, series_id: str):
         """
         Function creates a new episode in the database.
         It takes two parameters, name and series_id. It returns an Episode object.
@@ -25,7 +25,7 @@ class EpisodeServices:
         try:
             with SessionLocal() as db:
                 repository = EpisodeRepository(db, Episode)
-                fields = {"name": name, "series_id": series_id}
+                fields = {"name": name, "description": description, "series_id": series_id}
                 return repository.create(fields)
         except Exception as exc:
             raise exc

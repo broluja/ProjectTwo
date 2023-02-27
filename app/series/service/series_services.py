@@ -21,7 +21,7 @@ PER_PAGE = settings.PER_PAGE
 class SeriesServices:
     """Service for Series routes"""
     @staticmethod
-    def create_new_series(title: str, year_published: str, director_id: str, genre_id: str):
+    def create_new_series(title: str, description: str, year_published: str, director_id: str, genre_id: str):
         """
         Function creates a new series in the database.
         It takes as input a title, year_published, director_id and genre_id.
@@ -37,6 +37,7 @@ class SeriesServices:
             with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
                 fields = {"title": title,
+                          "description": description,
                           "date_added": date.today(),
                           "year_published": year_published,
                           "director_id": director_id,
@@ -152,7 +153,7 @@ class SeriesServices:
             raise exc
 
     @staticmethod
-    def get_series_by_name(series: str, search: bool = True):
+    def get_series_by_name(series: str, search: bool = False):
         """
         Function takes a series name as an argument and returns the Series object associated with that
         name. If search is set to True, it will return all results for that series name.
@@ -166,9 +167,10 @@ class SeriesServices:
         try:
             with SessionLocal() as db:
                 repo = SeriesRepository(db, Series)
-                series = repo.read_series_by_title(series, search=search)
+                series = repo.read_series_by_title(series, search)
                 if not series:
                     raise UnknownSeriesTitleException
+                return series
         except Exception as exc:
             raise exc
 

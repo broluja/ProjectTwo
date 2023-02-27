@@ -9,7 +9,7 @@ from app.series.service import EpisodeServices
 class EpisodeController:
     """Controller for Episode routes"""
     @staticmethod
-    def create_episode(name: str, series_id: str):
+    def create_episode(name: str, description: str, series_id: str):
         """
         Function creates a new episode in the database.
         It takes two parameters: name and series_id. It returns an Episode object.
@@ -19,7 +19,7 @@ class EpisodeController:
         Return: A episode object.
         """
         try:
-            return EpisodeServices.create_new_episode(name, series_id)
+            return EpisodeServices.create_new_episode(name, description, series_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

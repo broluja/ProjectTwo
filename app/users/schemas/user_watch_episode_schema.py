@@ -7,7 +7,7 @@ class UserWatchEpisodeSchema(BaseModel):
     """Base schema for UserWatchEpisode model."""
     id: UUID4
     user_id: UUID4
-    episode_id: str
+    episode_id: UUID4
     rating: int = None
     date_watched: date
 

@@ -1,5 +1,5 @@
 """UserWatchEpisode Repository module"""
-from sqlalchemy import func
+from sqlalchemy import func, select
 from sqlalchemy.orm import aliased
 
 from app.base import BaseCRUDRepository
@@ -134,8 +134,7 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
                 join(Episode, UserWatchEpisode.episode_id == Episode.id). \
                 join(Series, Series.id == Episode.series_id).\
                 join(Genre, Series.genre_id == Genre.id).filter(UserWatchEpisode.user_id == user_id).subquery('sq')
-            result = self.db.query(sq.c.Genre_ID).distinct().all()
-            return result
+            return self.db.query(sq.c.Genre_ID).distinct().all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -150,12 +149,10 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
         Return: The average rating of the episodes in episode_ids.
         """
         try:
-            averages = self.db.query(UserWatchEpisode.rating.label("Rating")).\
+            return self.db.query(UserWatchEpisode.episode_id, func.round(func.avg(UserWatchEpisode.rating), 2).
+                                 label("avg")).\
                 filter(UserWatchEpisode.episode_id.in_(episode_ids)).\
-                group_by(UserWatchEpisode.episode_id).\
-                subquery('averages')
-            result = self.db.query(func.round(func.avg(averages.c.Rating), 2).label("Average Rating")).first()
-            return result
+                group_by(UserWatchEpisode.episode_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

@@ -123,10 +123,9 @@ class UserWatchEpisodeServices:
                     return Response(content=f"No Series from this year: {year}", status_code=200)
                 episode_ids = [episode.id for obj in series for episode in obj.episodes]
                 user_watch_episode_repo = UserWatchEpisodeRepository(db, Episode)
-                average = user_watch_episode_repo.read_average_rating(episode_ids)
-                response = {"Year": year}
-                response.update(average)
-                return response
+                episodes_avg = user_watch_episode_repo.read_average_rating(episode_ids)
+                average = round(sum(obj.avg for obj in episodes_avg) / len(episodes_avg), 2)
+                return {"Year": year, "Average Rating": average}
         except Exception as exc:
             raise exc
 
@@ -148,9 +147,8 @@ class UserWatchEpisodeServices:
                     raise UnknownSeriesException
                 episode_ids = [episode.id for episode in series.episodes]
                 user_watch_episode_repo = UserWatchEpisodeRepository(db, Episode)
-                average = user_watch_episode_repo.read_average_rating(episode_ids)
-                response = {"Series": series.title}
-                response.update(average)
-                return response
+                episodes_avg = user_watch_episode_repo.read_average_rating(episode_ids)
+                average = round(sum(obj.avg for obj in episodes_avg) / len(episodes_avg), 2)
+                return {"Series": series.title, "Average Rating": average}
         except Exception as exc:
             raise exc

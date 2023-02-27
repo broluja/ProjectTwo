@@ -11,7 +11,7 @@ from app.series.service import SeriesServices
 class SeriesController:
     """Controller for Series routes"""
     @staticmethod
-    def create_series(title: str, year_published: str, director_id: str, genre_id: str):
+    def create_series(title: str, description: str, year_published: str, director_id: str, genre_id: str):
         """
         Function creates a new series object and returns it.
         It takes in the title, year_published, director_id, and genre_id as parameters.
@@ -27,7 +27,7 @@ class SeriesController:
         try:
             director = DirectorServices.get_director_by_id(director_id)
             genre = GenreServices.get_genre_by_id(genre_id)
-            series = SeriesServices.create_new_series(title, year_published, director_id, genre_id)
+            series = SeriesServices.create_new_series(title, description, year_published, director_id, genre_id)
             series.director = director
             series.genre = genre
             return series
@@ -148,7 +148,7 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def get_series_by_name(series: str):
+    def get_series_by_name(series: str, search: bool = False):
         """
         Function takes a series name as an argument and returns the Series object associated with that name.
         If no such series exists, it returns a 404 error.
@@ -157,7 +157,7 @@ class SeriesController:
         Return: A series object with the given name.
         """
         try:
-            series = SeriesServices.get_series_by_name(series)
+            series = SeriesServices.get_series_by_name(series, search)
             return series if series else JSONResponse(content=f"No Series with name: {series}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

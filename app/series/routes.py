@@ -287,7 +287,7 @@ def search_series_by_name(series: str):
     Param series:str: Specify the name of the series that is being searched for.
     Return: A list of series objects that match the search criteria.
     """
-    return SeriesController.get_series_by_name(series.strip())
+    return SeriesController.get_series_by_name(series, search=True)
 
 
 @watch_episode.get("/get-series/data",
