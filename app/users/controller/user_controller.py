@@ -1,8 +1,9 @@
 """User Controller module"""
 
 import contextlib
-from fastapi import HTTPException, Response
+from fastapi import HTTPException
 from email_validator import validate_email, EmailNotValidError
+from starlette.responses import JSONResponse
 
 from app.users.service import UserServices
 from app.base.base_exception import AppException
@@ -36,7 +37,10 @@ class UserController:
             code = generate_random_int(5)
             user = UserServices.create_new_user(valid_email, password, username, code)
             EmailServices.send_code_for_verification(user.email, code)
-            return Response(content="Finish your registration. Instructions are sent to your email.", status_code=200)
+            return JSONResponse(
+                content="Finish your registration. Instructions are sent to your email.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -85,8 +89,6 @@ class UserController:
         """
         try:
             return UserServices.get_all_active_users(active=active)
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -177,9 +179,7 @@ class UserController:
         """
         try:
             users = UserServices.search_users_by_email(email)
-            return users if users else Response(content="No users found", status_code=200)
-        except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            return users if users else JSONResponse(content="No users found", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -329,7 +329,7 @@ class UserController:
         """
         try:
             UserServices.delete_user(user_id)
-            return Response(content=f"User with ID: {user_id} deleted.", status_code=200)
+            return JSONResponse(content=f"User with ID: {user_id} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

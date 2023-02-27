@@ -1,6 +1,6 @@
 """UserWatchMovie Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.movies.service import MovieServices
@@ -55,7 +55,7 @@ class UserWatchMovieController:
         """
         try:
             movies = UserWatchMovieServices.get_my_watched_movies_list(user_id)
-            return movies if movies else Response(content="You have not watched any movie yet.", status_code=200)
+            return movies if movies else JSONResponse(content="You have not watched any movie yet.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -71,7 +71,7 @@ class UserWatchMovieController:
         """
         try:
             movies = UserWatchMovieServices.get_popular_movies()
-            return movies if movies else Response(
+            return movies if movies else JSONResponse(
                 content="We have not yet generated movie popularity list.",
                 status_code=200
             )
@@ -91,7 +91,7 @@ class UserWatchMovieController:
         """
         try:
             movie = UserWatchMovieServices.get_best_rated_movie(best)
-            return movie if movie else Response(
+            return movie if movie else JSONResponse(
                 content="We have not yet generated movie popularity list.",
                 status_code=200
             )
@@ -161,7 +161,7 @@ class UserWatchMovieController:
         """
         try:
             movies = UserWatchMovieServices.get_movies_with_higher_average_rating(rating)
-            return movies if movies else Response(
+            return movies if movies else JSONResponse(
                 content=f"No Movie with average rating higher than: {rating}.",
                 status_code=200
             )
@@ -184,7 +184,7 @@ class UserWatchMovieController:
         """
         try:
             average = UserWatchMovieServices.get_average_movie_rating_for_year(year)
-            return average if average else Response(content=f"No Movies from year: {year}.", status_code=200)
+            return average if average else JSONResponse(content=f"No Movies from year: {year}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

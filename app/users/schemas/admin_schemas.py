@@ -24,7 +24,7 @@ class AdminSchemaIn(BaseModel):
     last_name: str
     address: str
     country: str
-    user_id: str
+    user_id: UUID4
 
     class Config:
         """Configuration Class"""

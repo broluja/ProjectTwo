@@ -98,8 +98,7 @@ class SubuserServices:
                 repository = SubuserRepository(db, Subuser)
                 subuser = repository.read_by_id(subuser_id)
                 updates = {"name": name}
-                obj = repository.update(subuser, updates)
-                return obj
+                return repository.update(subuser, updates)
         except Exception as exc:
             raise exc
 
@@ -118,8 +117,7 @@ class SubuserServices:
                 subuser = repository.read_subusers_by_name(subuser_name, user_id)
                 if not subuser:
                     raise UnknownProfileException
-                response = repository.delete(subuser.id)
-                return response
+                return repository.delete(subuser.id)
         except Exception as exc:
             raise exc
         

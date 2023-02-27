@@ -17,7 +17,7 @@ class UserServices:
         Param email:str: Store the email of the user.
         Param password:str: Hash the password.
         Param username:str: Set the username of the new user.
-        Param code:int: Verify the user’s email address.
+        Param code:int: Verify the user's email address.
         Return: The user object that was created.
         """
         try:

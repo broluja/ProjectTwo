@@ -1,6 +1,6 @@
 """Subuser Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.users.service import SubuserServices
 from app.base.base_exception import AppException
@@ -19,8 +19,7 @@ class SubuserController:
         Return: A subuser object.
         """
         try:
-            subuser = SubuserServices.create_new_subuser(user_id, name)
-            return subuser
+            return SubuserServices.create_new_subuser(user_id, name)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -36,9 +35,10 @@ class SubuserController:
         """
         try:
             subusers = SubuserServices.get_all_subusers()
-            if not subusers:
-                return Response(content="There are no Subusers created in our Database.", status_code=200)
-            return subusers
+            return subusers if subusers else JSONResponse(
+                content="There are no Subusers created in our Database.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -76,7 +76,6 @@ class SubuserController:
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
-            print(exc)
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
@@ -106,7 +105,7 @@ class SubuserController:
         """
         try:
             SubuserServices.delete_subuser(user_id, subuser_name)
-            return Response(content=f"Subuser: {subuser_name} deleted.", status_code=200)
+            return JSONResponse(content=f"Subuser: {subuser_name} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

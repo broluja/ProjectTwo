@@ -1,6 +1,6 @@
 """UserWatchEpisode Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.series.service import EpisodeServices, SeriesServices
@@ -50,8 +50,7 @@ class UserWatchEpisodeController:
         """
         try:
             episode = EpisodeServices.get_episode_by_name_and_series(name, series_title)
-            rate_episode = UserWatchEpisodeServices.rate_episode(user_id, episode.id, rating)
-            return rate_episode
+            return UserWatchEpisodeServices.rate_episode(user_id, episode.id, rating)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -68,7 +67,7 @@ class UserWatchEpisodeController:
         """
         try:
             series = UserWatchEpisodeServices.get_most_popular_series()
-            return series if series else Response(
+            return series if series else JSONResponse(
                 content="We have not generated series popularity list yet.",
                 status_code=200
             )
@@ -107,8 +106,7 @@ class UserWatchEpisodeController:
         """
         try:
             average = UserWatchEpisodeServices.get_average_series_rating_for_year(year)
-            return average if average else Response(content=f"No Series from year: {year}.", status_code=200)
-
+            return average if average else JSONResponse(content=f"No Series from year: {year}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

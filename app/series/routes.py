@@ -1,3 +1,4 @@
+"""Series and episodes routes"""
 from fastapi import APIRouter, Depends, status, HTTPException, Body
 from starlette.requests import Request
 

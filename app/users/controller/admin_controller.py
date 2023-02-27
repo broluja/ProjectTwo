@@ -1,6 +1,6 @@
 """Admin Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.users.service import AdminServices
@@ -34,8 +34,9 @@ class AdminController:
         Return: The object that is created when the admin is derogated.
         """
         try:
-            obj = AdminServices.derogate_admin(admin_id)
-            return obj
+            return AdminServices.derogate_admin(admin_id)
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500) from exc
 
@@ -47,8 +48,9 @@ class AdminController:
         Return: A list of all the admins in the database.
         """
         try:
-            admins = AdminServices.get_all_admins()
-            return admins
+            return AdminServices.get_all_admins()
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500) from exc
 
@@ -64,8 +66,8 @@ class AdminController:
         """
         try:
             admins = AdminServices.get_all_admins_by_country(country)
-            if not admins:
-                return Response(content=f"No admins from country: {country}.", status_code=200)
-            return admins
+            return admins if admins else JSONResponse(content=f"No admins from country: {country}.", status_code=200)
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500) from exc

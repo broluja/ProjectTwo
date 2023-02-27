@@ -1,5 +1,5 @@
 """UserWatchEpisode Repository module"""
-from sqlalchemy import func, select
+from sqlalchemy import func
 from sqlalchemy.orm import aliased
 
 from app.base import BaseCRUDRepository
@@ -22,9 +22,9 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
         Return: The user_watch_episode object.
         """
         try:
-            user_watch_episode = self.db.query(UserWatchEpisode).filter(UserWatchEpisode.user_id == user_id).filter(
-                UserWatchEpisode.episode_id == episode_id).first()
-            return user_watch_episode
+            return self.db.query(UserWatchEpisode).filter(UserWatchEpisode.user_id == user_id).\
+                filter(UserWatchEpisode.episode_id == episode_id).\
+                first()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -39,8 +39,7 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
         Return: A list of user-watch-episode objects.
         """
         try:
-            episodes = self.db.query(UserWatchEpisode).filter(UserWatchEpisode.user_id == user_id).all()
-            return episodes
+            return self.db.query(UserWatchEpisode).filter(UserWatchEpisode.user_id == user_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -54,11 +53,10 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
         Return: A list of tuples.
         """
         try:
-            series = self.db.query(UserWatchEpisode, Episode.series_id, Series.title) \
+            return self.db.query(UserWatchEpisode, Episode.series_id, Series.title) \
                 .join(Episode, Episode.id == UserWatchEpisode.episode_id) \
                 .join(Series, Episode.series_id == Series.id) \
                 .filter(UserWatchEpisode.user_id == user_id).all()
-            return series
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -83,8 +81,7 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
             sq = aliased(subquery)
             subquery2 = self.db.query(sq.c.user, sq.c.series.label('series_two')).distinct().subquery('sq2')
             sq2 = aliased(subquery2)
-            result = self.db.query(sq2.c.series_two, func.count(sq2.c.series_two)).group_by(sq2.c.series_two)
-            return result
+            return self.db.query(sq2.c.series_two, func.count(sq2.c.series_two)).group_by(sq2.c.series_two)
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -99,17 +96,13 @@ class UserWatchEpisodeRepository(BaseCRUDRepository):
         Return: The episode with the highest rating.
         """
         try:
+            subquery = self.db.query(UserWatchEpisode.episode_id.label("episode"), func.avg(UserWatchEpisode.rating).
+                                     label("rating")).group_by(UserWatchEpisode.episode_id.label("episode")).subquery()
             if best:
-                subquery = self.db.query(UserWatchEpisode.episode_id.label("episode"),
-                                         func.avg(UserWatchEpisode.rating).label("rating")).group_by(
-                    UserWatchEpisode.episode_id.label("episode")).subquery()
                 max_rating = self.db.query(func.max(subquery.c.rating.label("rating")))
                 episode = self.db.query(subquery.c.episode.label("episode"), subquery.c.rating.label("rating")).filter(
                     subquery.c.rating.label("rating") == max_rating)
             else:
-                subquery = self.db.query(UserWatchEpisode.episode_id.label("episode"),
-                                         func.avg(UserWatchEpisode.rating).label("rating")).group_by(
-                    UserWatchEpisode.episode_id.label("episode")).subquery()
                 min_rating = self.db.query(func.min(subquery.c.rating.label("rating")))
                 episode = self.db.query(subquery.c.episode.label("episode"), subquery.c.rating.label("rating")).filter(
                     subquery.c.rating.label("rating") == min_rating)

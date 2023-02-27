@@ -17,8 +17,7 @@ class AdminRepository(BaseCRUDRepository):
         Return: A list of admin objects.
         """
         try:
-            admins = self.db.query(Admin).filter(Admin.country == country).all()
-            return admins
+            return self.db.query(Admin).filter(Admin.country == country).all()
         except Exception as exc:
             self.db.rollback()
             raise AppException(message=str(exc), code=500) from exc

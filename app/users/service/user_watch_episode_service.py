@@ -1,5 +1,5 @@
 """UserWatchEpisode Service module"""
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.db import SessionLocal
 from app.series.exceptions.series_exceptions import UnknownSeriesException
@@ -55,8 +55,7 @@ class UserWatchEpisodeServices:
                 repository = UserWatchEpisodeRepository(db, UserWatchEpisode)
                 watched_episode = repository.read_user_watch_episode_by_user_id_and_episode_id(user_id, episode_id)
                 if watched_episode:
-                    obj = repository.update(watched_episode, {"rating": rating})
-                    return obj
+                    return repository.update(watched_episode, {"rating": rating})
                 fields = {"user_id": user_id, "episode_id": episode_id, "rating": rating}
                 return repository.create(fields)
         except Exception as exc:
@@ -78,7 +77,7 @@ class UserWatchEpisodeServices:
                 response = {}
                 for series_id, views in episodes:
                     series = series_repo.read_by_id(series_id)
-                    response.update({series.title: views})
+                    response[series.title] = views
                 return response
         except Exception as exc:
             raise exc
@@ -120,7 +119,7 @@ class UserWatchEpisodeServices:
                 series_repository = SeriesRepository(db, Series)
                 series = series_repository.read_series_by_year(str(year))
                 if not series:
-                    return Response(content=f"No Series from this year: {year}", status_code=200)
+                    return JSONResponse(content=f"No Series from this year: {year}", status_code=200)
                 episode_ids = [episode.id for obj in series for episode in obj.episodes]
                 user_watch_episode_repo = UserWatchEpisodeRepository(db, Episode)
                 episodes_avg = user_watch_episode_repo.read_average_rating(episode_ids)

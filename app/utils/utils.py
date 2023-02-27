@@ -32,5 +32,4 @@ def get_day_before_one_month() -> str:
     Return: Date, string.
     """
     current_date_time = datetime.now() - relativedelta(months=1)
-    date = current_date_time.strftime('%Y-%m-%d')
-    return date
+    return current_date_time.strftime('%Y-%m-%d')

@@ -26,9 +26,8 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         Return: A user-watch-movie object.
         """
         try:
-            user_watch_movie = self.db.query(UserWatchMovie).filter(UserWatchMovie.user_id == user_id).filter(
-                UserWatchMovie.movie_id == movie_id).first()
-            return user_watch_movie
+            return self.db.query(UserWatchMovie).filter(UserWatchMovie.user_id == user_id).\
+                filter(UserWatchMovie.movie_id == movie_id).first()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -41,8 +40,7 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         Return: A list of user-watch-movie objects.
         """
         try:
-            user_watch_movies = self.db.query(UserWatchMovie).filter(UserWatchMovie.user_id == user_id).all()
-            return user_watch_movies
+            return self.db.query(UserWatchMovie).filter(UserWatchMovie.user_id == user_id).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -54,8 +52,7 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         Return: A list of tuples.
         """
         try:
-            movie_downloads = self.db.query(UserWatchMovie.movie_id, count()).group_by(UserWatchMovie.movie_id)
-            return movie_downloads
+            return self.db.query(UserWatchMovie.movie_id, count()).group_by(UserWatchMovie.movie_id)
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -98,10 +95,9 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         Return: A list of tuples.
         """
         try:
-            result = self.db.query(UserWatchMovie.movie_id, Genre.id.label("Genre_ID")).\
+            return self.db.query(UserWatchMovie.movie_id, Genre.id.label("Genre_ID")).\
                 join(Movie, UserWatchMovie.movie_id == Movie.id).\
                 join(Genre, Movie.genre_id == Genre.id).filter(UserWatchMovie.user_id == user_id).all()
-            return result
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -115,8 +111,8 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         Return: The average rating of a movie.
         """
         try:
-            average = self.db.query(func.round(func.avg(UserWatchMovie.rating), 2).label("Average Rating")).\
-                filter(UserWatchMovie.movie_id == movie_id).\
+            average = self.db.query(func.round(func.avg(UserWatchMovie.rating), 2).label("Average Rating")). \
+                filter(UserWatchMovie.movie_id == movie_id). \
                 group_by(UserWatchMovie.movie_id).first()
             if not average:
                 raise NoRatingsException
@@ -133,10 +129,9 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         Return: The average rating for each movie in the database.
         """
         try:
-            average = self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
-                                    label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
+            return self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
+                                 label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
                 group_by(Movie.title).all()
-            return average
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -152,11 +147,9 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         Return: The average rating for each movie in the list of movie IDs.
         """
         try:
-            average = self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
-                                    label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
-                filter(Movie.id.in_(movie_ids)).\
-                group_by(Movie.title).all()
-            return average
+            return self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
+                                 label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
+                filter(Movie.id.in_(movie_ids)).group_by(Movie.title).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

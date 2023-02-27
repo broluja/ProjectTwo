@@ -36,7 +36,7 @@ class SubuserRepository(BaseCRUDRepository):
         Return: The subuser object that has the name passed in as a parameter.
         """
         try:
-            return  self.db.query(Subuser).filter(Subuser.name == name).filter(Subuser.user_id == user_id).first()
+            return self.db.query(Subuser).filter(Subuser.name == name).filter(Subuser.user_id == user_id).first()
         except Exception as exc:
             self.db.rollback()
             raise AppException(message=str(exc), code=500) from exc

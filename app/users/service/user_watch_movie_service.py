@@ -79,8 +79,7 @@ class UserWatchMovieServices:
                     return Response(content="You have not watched any Movie yet.", status_code=200)
                 movie_ids = [obj.movie_id for obj in objects]
                 movie_repo = MovieRepository(db, Movie)
-                movie_objects = [movie_repo.read_by_id(movie_id) for movie_id in movie_ids]
-                return movie_objects
+                return [movie_repo.read_by_id(movie_id) for movie_id in movie_ids]
         except Exception as exc:
             raise exc
 
@@ -100,7 +99,7 @@ class UserWatchMovieServices:
                 response = {}
                 for movie_id, views in movies[:10]:
                     movie = movie_repo.read_by_id(movie_id)
-                    response.update({movie.title: views})
+                    response[movie.title] = views
                 return response
         except Exception as exc:
             raise exc
@@ -184,8 +183,7 @@ class UserWatchMovieServices:
         try:
             with SessionLocal() as db:
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
-                response = user_watch_movie_repository.read_average_rating_for_all_movies()
-                return response
+                return user_watch_movie_repository.read_average_rating_for_all_movies()
         except Exception as exc:
             raise exc
 
@@ -202,8 +200,7 @@ class UserWatchMovieServices:
             with SessionLocal() as db:
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
                 ratings = user_watch_movie_repository.read_average_rating_for_all_movies()
-                response = [movie for movie in ratings if movie["Average Rating"] and movie["Average Rating"] > rating]
-                return response
+                return [movie for movie in ratings if movie["Average Rating"] and movie["Average Rating"] > rating]
         except Exception as exc:
             raise exc
 
@@ -227,8 +224,7 @@ class UserWatchMovieServices:
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
                 ratings = user_watch_movie_repository.read_average_rating_for_movies(movie_ids)
                 all_ratings = [rating["Average Rating"] for rating in ratings]
-                response = {f"Average rating for year: {year}": round(sum(all_ratings) / len(all_ratings), 2)}
-                return response
+                return {f"Average rating for year: {year}": round(sum(all_ratings) / len(all_ratings), 2)}
         except Exception as exc:
             raise exc
 
@@ -254,7 +250,7 @@ class UserWatchMovieServices:
                     all_ratings = [rating["Average Rating"] for rating in ratings if rating["Average Rating"]]
                     avg_rating = round(sum(all_ratings) / len(all_ratings), 2) if all_ratings else None
                     if avg_rating:
-                        response.update({year: avg_rating})
+                        response[year] = avg_rating
                 return response
         except Exception as exc:
             raise exc

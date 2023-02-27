@@ -190,7 +190,7 @@ class TestUserRepo(TestClass):
             user_repository = UserRepository(db, User)
             users = user_repository.search_users_by_email("dummy")
         emails = [user.email for user in users]
-        assert all(["dummy" in email for email in emails])
+        assert all("dummy" in email for email in emails)
         assert len(users) == 3
 
     def test_update_username(self):
@@ -393,5 +393,5 @@ class TestUserRepo(TestClass):
         with TestingSessionLocal() as db:
             subuser_repository = SubuserRepository(db, Subuser)
             subusers = subuser_repository.read_subusers_by_user_id(self.subuser.user_id)
-        assert any([subuser.name == self.subuser.name for subuser in subusers])
-        assert any([subuser.user_id == self.subuser.user_id for subuser in subusers])
+        assert any(subuser.name == self.subuser.name for subuser in subusers)
+        assert any(subuser.user_id == self.subuser.user_id for subuser in subusers)
