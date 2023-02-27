@@ -135,7 +135,7 @@ class UserWatchMovieRepository(BaseCRUDRepository):
         try:
             average = self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
                                     label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
-                group_by(UserWatchMovie.movie_id).all()
+                group_by(Movie.title).all()
             return average
         except Exception as exc:
             self.db.rollback()
@@ -155,7 +155,7 @@ class UserWatchMovieRepository(BaseCRUDRepository):
             average = self.db.query(Movie.title.label("Movie Title"), func.round(func.avg(UserWatchMovie.rating), 2).
                                     label("Average Rating")).join(Movie, UserWatchMovie.movie_id == Movie.id).\
                 filter(Movie.id.in_(movie_ids)).\
-                group_by(UserWatchMovie.movie_id).all()
+                group_by(Movie.title).all()
             return average
         except Exception as exc:
             self.db.rollback()

@@ -12,3 +12,16 @@ class NoRatingsException(AppException):
     """Exception raised when movie has no ratings yet."""
     message = "Movie with this title does not have rating yet."
     code = 200
+
+
+class NoMovieFromYearException(AppException):
+    """Exception raised when user search for Movie from a specific year
+     for which there is no data in our Database."""
+    message = "There is no movies from this year in our Database."
+    code = 200
+
+
+class NoLatestReleasesException(AppException):
+    """Exception raised when user search for latest releases but in our Database there is no."""
+    message = "No latest releases."
+    code = 200

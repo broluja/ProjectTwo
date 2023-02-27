@@ -23,8 +23,7 @@ class MovieActorController:
         Return: A movie-actor object.
         """
         try:
-            movie_actor = MovieActorService.create_new_movie_actor(movie_id, actor_id)
-            return movie_actor
+            return MovieActorService.create_new_movie_actor(movie_id, actor_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -41,8 +40,7 @@ class MovieActorController:
         Return: A movie with actors.
         """
         try:
-            movie = MovieController.get_movie_by_id(movie_id)
-            return movie
+            return MovieController.get_movie_by_id(movie_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

@@ -1,7 +1,7 @@
 """Movie Repository module"""
 from app.base import BaseCRUDRepository
 from app.movies.models import Movie
-from app.movies.exceptions import NonExistingMovieTitleException
+from app.movies.exceptions import NonExistingMovieTitleException, NoMovieFromYearException, NoLatestReleasesException
 from app.users.models.user import UserWatchMovie
 from app.config import settings
 
@@ -32,19 +32,6 @@ class MovieRepository(BaseCRUDRepository):
             self.db.rollback()
             raise exc
 
-    def read_movies_from_specific_year(self, year: str):
-        """
-        Function takes a year as an argument and returns all movies from that year.
-
-        Param year:str: Filter the movies by a year.
-        Return: A list of movies that were released in the specified year.
-        """
-        try:
-            return self.db.query(Movie).filter(Movie.year == year).all()
-        except Exception as exc:
-            self.db.rollback()
-            raise exc
-
     def read_latest_releases(self, date_limit: str):
         """
         Function returns a list of all movies added to the database after the date-limit.
@@ -54,7 +41,10 @@ class MovieRepository(BaseCRUDRepository):
         Return: A list of movie objects.
         """
         try:
-            return self.db.query(Movie).filter(Movie.date_added >= date_limit).all()
+            movies = self.db.query(Movie).filter(Movie.date_added >= date_limit).all()
+            if not movies:
+                raise NoLatestReleasesException
+            return movies
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -97,7 +87,10 @@ class MovieRepository(BaseCRUDRepository):
         Return: A list of movie objects.
         """
         try:
-            return self.db.query(Movie).filter(Movie.year_published == year).all()
+            movies = self.db.query(Movie).filter(Movie.year_published == year).all()
+            if not movies:
+                raise NoMovieFromYearException
+            return movies
         except Exception as exc:
             self.db.rollback()
             raise exc

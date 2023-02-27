@@ -6,8 +6,8 @@ from pydantic import BaseModel, UUID4, Field
 class UserWatchMovieSchema(BaseModel):
     """Base schema for UserWatchMovie model."""
     id: UUID4
-    user_id: str
-    movie_id: str
+    user_id: UUID4
+    movie_id: UUID4
     rating: int = None
     date_watched: date
 
