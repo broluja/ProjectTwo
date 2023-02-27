@@ -1,6 +1,6 @@
 """Series-Actor Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.series.controller import SeriesController
@@ -23,8 +23,7 @@ class SeriesActorController:
         Return: A series-actor object.
         """
         try:
-            series_actor = SeriesActorService.create_new_series_actor(series_id, actor_id)
-            return series_actor
+            return SeriesActorService.create_new_series_actor(series_id, actor_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -41,8 +40,7 @@ class SeriesActorController:
         Return: A series with actors.
         """
         try:
-            series = SeriesController.get_series_by_id(series_id)
-            return series
+            return SeriesController.get_series_by_id(series_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -84,7 +82,7 @@ class SeriesActorController:
         """
         try:
             SeriesActorService.remove_series_actor(series_id, actor_id)
-            return Response(content=f"Actor removed from series.", status_code=200)
+            return JSONResponse(content="Actor removed from series.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

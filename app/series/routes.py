@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Body
 from starlette.requests import Request
 
 from app.series.controller import SeriesController, EpisodeController
@@ -12,7 +12,7 @@ from app.utils import get_day_before_one_month
 series_router = APIRouter(tags=["Series"], prefix="/api/series")
 
 
-@series_router.post("/create-new-series",
+@series_router.post("/",
                     summary="Create new Series. Admin Route.",
                     dependencies=[Depends(JWTBearer(["super_user"]))],
                     response_model=SeriesWithDirectorAndGenreSchema,
@@ -30,7 +30,7 @@ def create_new_series(series: SeriesSchemaIn):
     return SeriesController.create_series(**series.dict())
 
 
-@series_router.get("/get-all-series",
+@series_router.get("/",
                    response_model=list[SeriesWithActorsSchema]
                    )
 def get_all_series(page: int = 1):
@@ -45,7 +45,7 @@ def get_all_series(page: int = 1):
     return SeriesController.read_all_series(page)
 
 
-@series_router.get("/get-series-by-episode-id",
+@series_router.get("/get-series/episode-id",
                    summary="Get Series using ID. Admin Route",
                    dependencies=[Depends(JWTBearer(["super_user"]))]
                    )
@@ -59,7 +59,7 @@ def get_series_by_episode_id(episode_id: str):
     return SeriesController.get_series_by_episode_id(episode_id)
 
 
-@series_router.put("/update-series",
+@series_router.put("/",
                    summary="Update Series Data. Admin Route",
                    dependencies=[Depends(JWTBearer(["super_user"]))],
                    status_code=status.HTTP_201_CREATED
@@ -76,7 +76,7 @@ def update_series_data(series: SeriesSchemaIn, series_id: str):
     return SeriesController.update_series_data(series_id, attributes)
 
 
-@series_router.delete("/delete-series",
+@series_router.delete("/",
                       summary="Delete Series. Admin Route.",
                       dependencies=[Depends(JWTBearer(["super_user"]))]
                       )
@@ -93,7 +93,7 @@ def delete_series(series_id: str):
 episode_router = APIRouter(tags=["Episodes"], prefix="/api/episodes")
 
 
-@episode_router.post("/add-new-episode",
+@episode_router.post("/",
                      response_model=EpisodeSchema,
                      summary="Create new Episode. Admin route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -120,11 +120,10 @@ def get_all_episodes_for_series(series_title: str):
     Param series_title:str: Search for a series by its title.
     Return: A list of all the episodes for a given series.
     """
-    episodes = EpisodeController.get_all_episodes_by_series(series_title)
-    return episodes
+    return EpisodeController.get_all_episodes_by_series(series_title)
 
 
-@episode_router.get("/get-episode-by-id",
+@episode_router.get("/get-episode/id",
                     summary="Get episode by ID. Admin Route",
                     response_model=EpisodeSchema,
                     dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -140,7 +139,7 @@ def get_episode_by_id(episode_id: str):
     return EpisodeController.get_episode_by_id(episode_id)
 
 
-@episode_router.put("/update-episode",
+@episode_router.put("/",
                     summary="Update Episode. Admin Route.",
                     dependencies=[Depends(JWTBearer(["super_user"]))],
                     response_model=EpisodeSchema,
@@ -158,7 +157,7 @@ def update_episode(episode_id: str, episode: EpisodeSchemaIn):
     return EpisodeController.update_episode(episode_id, attributes)
 
 
-@episode_router.delete("/delete-episode-by-id",
+@episode_router.delete("/",
                        summary="Delete episode by ID. Admin Route.",
                        dependencies=[Depends(JWTBearer(["super_user"]))]
                        )
@@ -172,15 +171,15 @@ def delete_episode(episode_id: str):
     return EpisodeController.delete_episode(episode_id)
 
 
-series_actor_router = APIRouter(tags=["SeriesActors"], prefix="/api/series_actors")
+series_actor_router = APIRouter(tags=["SeriesActors"], prefix="/api/series-actors")
 
 
-@series_actor_router.post("/add-actor-to-series",
+@series_actor_router.post("/",
                           dependencies=[Depends(JWTBearer(["super_user"]))],
                           summary="Add actor to Series. Admin Route.",
                           status_code=status.HTTP_201_CREATED
                           )
-def add_actor_to_series(series_id: str, actor_id: str):
+def add_actor_to_series(series_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     Function adds an actor to a series.
 
@@ -191,7 +190,7 @@ def add_actor_to_series(series_id: str, actor_id: str):
     return SeriesActorController.create_series_actor(series_id, actor_id)
 
 
-@series_actor_router.delete("/remove-actor-from-series",
+@series_actor_router.delete("/",
                             dependencies=[Depends(JWTBearer(["super_user"]))],
                             summary="Remove actor from Series. Admin Route."
                             )
@@ -206,7 +205,7 @@ def remove_actor_from_series(series_id: str, actor_id: str):
     return SeriesActorController.delete_series_actor(series_id, actor_id)
 
 
-watch_episode = APIRouter(prefix="/api/watch_episode", tags=["Watch Episode"])
+watch_episode = APIRouter(prefix="/api/watch-episode", tags=["Watch Episode"])
 
 
 @watch_episode.post("/",
@@ -214,7 +213,7 @@ watch_episode = APIRouter(prefix="/api/watch_episode", tags=["Watch Episode"])
                     summary="Watch Episode. User Route.",
                     dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                     )
-def user_watch_episode(request: Request, episode_name: str, series_title: str):
+def user_watch_episode(request: Request, episode_name: str = Body(embed=True), series_title: str = Body(embed=True)):
     """
     The user_watch_episode function is used to add a user's watch history to the database.
     It takes in a request, episode name and series title as parameters. It then checks if the user_id cookie exists,
@@ -229,13 +228,16 @@ def user_watch_episode(request: Request, episode_name: str, series_title: str):
     return UserWatchEpisodeController.user_watch_episode(user_id, episode_name, series_title)
 
 
-@watch_episode.put("/rate-episode",
-                   response_model=UserWatchEpisodeSchema,
-                   summary="Rate Episode. User Route.",
-                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
-                   status_code=status.HTTP_201_CREATED
-                   )
-def user_rate_episode(request: Request, episode_name: str, series_title: str, rating: int):
+@watch_episode.patch("/rate-episode",
+                     response_model=UserWatchEpisodeSchema,
+                     summary="Rate Episode. User Route.",
+                     dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
+                     status_code=status.HTTP_201_CREATED
+                     )
+def user_rate_episode(request: Request,
+                      episode_name: str = Body(embed=True),
+                      series_title: str = Body(embed=True),
+                      rating: int = Body(embed=True)):
     """
     The user_rate_episode function allows a user to rate an episode of a series.
     The function takes in the name of the episode, the title of the series it belongs to,
@@ -288,7 +290,7 @@ def search_series_by_name(series: str):
     return SeriesController.get_series_by_name(series.strip())
 
 
-@watch_episode.get("/get-series-data",
+@watch_episode.get("/get-series/data",
                    summary="Get Series data.",
                    response_model=SeriesFullSchema
                    )
@@ -303,7 +305,7 @@ def get_series_data(title: str):
     return SeriesController.get_series_data(title.strip())
 
 
-@watch_episode.get("/search-series-by-genre",
+@watch_episode.get("/search-series/genre",
                    response_model=list[SeriesWithActorsSchema]
                    )
 def search_series_by_genre(genre: str):
@@ -317,7 +319,7 @@ def search_series_by_genre(genre: str):
     return SeriesController.get_series_by_genre(genre.strip())
 
 
-@watch_episode.get("/search-series-by-director", summary="Search Series by Director's Last Name.")
+@watch_episode.get("/search-series/director", summary="Search Series by Director's Last Name.")
 def get_series_by_director_name(director: str):
     """
     Function takes a director name as an argument and returns all the series that have
@@ -344,7 +346,7 @@ def get_average_rating_for_series(title: str):
     return UserWatchEpisodeController.get_average_rating_for_series(title)
 
 
-@watch_episode.get("/get-series-by-year",
+@watch_episode.get("/get-series/year",
                    response_model=list[SeriesSchema],
                    summary="Get Series by specific year. User Route.",
                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -389,8 +391,7 @@ def get_most_popular_series():
     Return: A sorted dictionary of series, and their number of views.
     """
     series = UserWatchEpisodeController.get_most_popular_series()
-    sorted_series = {k: {"Views": v} for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}
-    return sorted_series
+    return {k: {"Views": v} for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}
 
 
 @watch_episode.get("/get-best-rated-episodes", description="Get best rated episodes.")

@@ -8,6 +8,7 @@ from app.directors.repositories import DirectorRepository
 from app.genres.exceptions.genre_exceptions import NonExistingGenreException
 from app.genres.models import Genre
 from app.genres.repositories import GenreRepository
+from app.series.exceptions.series_exceptions import *
 from app.series.models import Series
 from app.series.repositories import SeriesRepository
 from app.users.models.user import UserWatchEpisode
@@ -110,8 +111,7 @@ class SeriesServices:
             with SessionLocal() as db:
                 watched_episodes_repository = UserWatchEpisodeRepository(db, UserWatchEpisode)
                 watched_episodes = watched_episodes_repository.read_users_episodes_and_series(user_id)
-                my_series = set(obj.title for obj in watched_episodes)
-                return my_series
+                return {obj.title for obj in watched_episodes}
         except Exception as exc:
             raise exc
 
@@ -128,6 +128,8 @@ class SeriesServices:
             with SessionLocal() as db:
                 series_repository = SeriesRepository(db, Series)
                 series = series_repository.read_series_by_year(str(year))
+                if not series:
+                    raise NoSeriesFromYearException
                 return series
         except Exception as exc:
             raise exc
@@ -144,7 +146,8 @@ class SeriesServices:
             with SessionLocal() as db:
                 repo = SeriesRepository(db, Series)
                 series = repo.read_series_by_episode_id(episode_id)
-                return series
+                if not series:
+                    raise NoPublishedEpisodesException
         except Exception as exc:
             raise exc
 
@@ -164,7 +167,8 @@ class SeriesServices:
             with SessionLocal() as db:
                 repo = SeriesRepository(db, Series)
                 series = repo.read_series_by_title(series, search=search)
-                return series
+                if not series:
+                    raise UnknownSeriesTitleException
         except Exception as exc:
             raise exc
 
@@ -184,8 +188,7 @@ class SeriesServices:
                 if not genre_obj:
                     raise NonExistingGenreException(message=f"Genre with name: {genre} does not exist in our Database.")
                 series_repo = SeriesRepository(db, Series)
-                series = series_repo.read_series_by_genre_id(genre_obj.id)
-                return series
+                return series_repo.read_series_by_genre_id(genre_obj.id)
         except Exception as exc:
             raise exc
 
@@ -203,6 +206,8 @@ class SeriesServices:
             with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
                 series = repository.read_latest_releases(date_limit)
+                if not series:
+                    raise NoLatestReleasesException
                 return series
         except Exception as exc:
             raise exc
@@ -219,8 +224,7 @@ class SeriesServices:
         try:
             with SessionLocal() as db:
                 repository = SeriesRepository(db, Series)
-                series = repository.read_least_popular_series()
-                return series
+                return repository.read_least_popular_series()
         except Exception as exc:
             raise exc
 
@@ -237,8 +241,7 @@ class SeriesServices:
             with SessionLocal() as db:
                 repo = SeriesRepository(db, Series)
                 obj = repo.read_by_id(series_id)
-                series = repo.update(obj, attributes)
-                return series
+                return repo.update(obj, attributes)
         except Exception as exc:
             raise exc
 

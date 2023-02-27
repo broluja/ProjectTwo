@@ -15,8 +15,8 @@ class MovieSchema(BaseModel):
     date_added: date
     year_published: str
     link: str
-    director_id: str
-    genre_id: str
+    director_id: UUID4
+    genre_id: UUID4
 
     class Config:
         """Configuration Class"""

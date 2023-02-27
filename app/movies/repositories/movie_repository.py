@@ -23,7 +23,7 @@ class MovieRepository(BaseCRUDRepository):
             if search:
                 movie = self.db.query(Movie).filter(Movie.title.ilike(f"%{title}%")).all()
             else:
-                movie = self.db.query(Movie).filter(Movie.title == title).first()
+                movie = self.db.query(Movie).filter(Movie.title == title.title()).first()
             if not movie:
                 self.db.rollback()
                 raise NonExistingMovieTitleException

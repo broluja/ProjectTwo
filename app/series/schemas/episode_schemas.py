@@ -7,7 +7,7 @@ class EpisodeSchema(BaseModel):
     id: UUID4
     name: str
     link: str
-    series_id: str
+    series_id: UUID4
 
     class Config:
         """Configuration Class"""
@@ -17,7 +17,7 @@ class EpisodeSchema(BaseModel):
 class EpisodeSchemaIn(BaseModel):
     """Episode schema for input"""
     name: str
-    series_id: str
+    series_id: UUID4
 
     class Config:
         """Configuration Class"""

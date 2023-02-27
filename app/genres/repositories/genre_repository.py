@@ -35,7 +35,7 @@ class GenreRepository(BaseCRUDRepository):
         """
         try:
             return self.db.query(Genre).filter(Genre.name.ilike(f"%{name}%")).all() if search \
-                else self.db.query(Genre).filter(Genre.name == name).first()
+                else self.db.query(Genre).filter(Genre.name == name.title()).first()
         except Exception as exc:
             self.db.rollback()
             raise exc

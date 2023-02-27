@@ -1,6 +1,6 @@
 """Series Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.directors.service import DirectorServices
@@ -48,9 +48,7 @@ class SeriesController:
         """
         try:
             series = SeriesServices.read_all_series(page)
-            if not series:
-                return Response(content="End of query.", status_code=200)
-            return series
+            return series if series else JSONResponse(content="End of query.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -71,7 +69,7 @@ class SeriesController:
         try:
             series = SeriesServices.get_series_by_name(title, search=False)
             if not series:
-                return Response(content=f"No Series with name: {title}.", status_code=200)
+                return JSONResponse(content=f"No Series with name: {title}.", status_code=200)
             director = DirectorServices.get_director_by_id(series.director_id)
             genre = GenreServices.get_genre_by_id(series.genre_id)
             series.director = director
@@ -93,9 +91,7 @@ class SeriesController:
         """
         try:
             series = SeriesServices.get_series_by_director_name(director)
-            if not series:
-                return Response(content=f"No Series from Director: {director}.", status_code=200)
-            return series
+            return series if series else JSONResponse(content=f"No Series from Director: {director}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -111,8 +107,7 @@ class SeriesController:
         Return: A series object.
         """
         try:
-            series = SeriesServices.get_series_by_id(series_id)
-            return series
+            return SeriesServices.get_series_by_id(series_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -130,9 +125,7 @@ class SeriesController:
         """
         try:
             series = SeriesServices.get_my_series(user_id)
-            if not series:
-                return Response(content="You have not watched any series yet.", status_code=200)
-            return series
+            return series if series else JSONResponse(content="You have not watched any series yet.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -148,8 +141,7 @@ class SeriesController:
         Return: The series that the episode belongs to.
         """
         try:
-            series = SeriesServices.get_series_by_episode_id(episode_id)
-            return series
+            return SeriesServices.get_series_by_episode_id(episode_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -166,9 +158,7 @@ class SeriesController:
         """
         try:
             series = SeriesServices.get_series_by_name(series)
-            if not series:
-                return Response(content=f"No Series with name: {series}.", status_code=200)
-            return series
+            return series if series else JSONResponse(content=f"No Series with name: {series}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -185,9 +175,7 @@ class SeriesController:
         """
         try:
             series = SeriesServices.get_series_by_year(year)
-            if not series:
-                return Response(content=f"No Series from year: {year}.", status_code=200)
-            return series
+            return series if series else JSONResponse(content=f"No Series from year: {year}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -204,9 +192,7 @@ class SeriesController:
         """
         try:
             series = SeriesServices.get_series_by_genre(genre)
-            if not series:
-                return Response(content=f"No Series with genre: {genre}.", status_code=200)
-            return series
+            return series if series else JSONResponse(content=f"No Series with genre: {genre}.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -224,9 +210,7 @@ class SeriesController:
         """
         try:
             series = SeriesServices.get_latest_features(date_limit)
-            if not series:
-                return Response(content="No series in latest list.", status_code=200)
-            return series
+            return series if series else JSONResponse(content="No series in latest list.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -243,9 +227,10 @@ class SeriesController:
         """
         try:
             series = SeriesServices.show_series_never_downloaded()
-            if not series:
-                return Response(content="There are no series that never have been downloaded.", status_code=200)
-            return series
+            return series if series else JSONResponse(
+                content="There are no series that never have been downloaded.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -265,8 +250,7 @@ class SeriesController:
         Return: A series object.
         """
         try:
-            series = SeriesServices.update_series_data(series_id, attributes)
-            return series
+            return SeriesServices.update_series_data(series_id, attributes)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -283,7 +267,7 @@ class SeriesController:
         """
         try:
             SeriesServices.delete_series(series_id)
-            return Response(content=f"Series with ID: {series_id} deleted.", status_code=200)
+            return JSONResponse(content=f"Series with ID: {series_id} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

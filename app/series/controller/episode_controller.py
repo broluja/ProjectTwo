@@ -1,6 +1,6 @@
 """Episode Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.series.service import EpisodeServices
@@ -19,8 +19,7 @@ class EpisodeController:
         Return: A episode object.
         """
         try:
-            episode = EpisodeServices.create_new_episode(name, series_id)
-            return episode
+            return EpisodeServices.create_new_episode(name, series_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -39,7 +38,7 @@ class EpisodeController:
         try:
             episodes = EpisodeServices.get_all_episodes_by_series(series_title)
             if not episodes:
-                Response(content=f"No Episodes for Series: {series_title}.", status_code=200)
+                JSONResponse(content=f"No Episodes for Series: {series_title}.", status_code=200)
             return episodes
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -57,8 +56,7 @@ class EpisodeController:
         Return: A single episode by ID.
         """
         try:
-            episode = EpisodeServices.get_episode_by_id(episode_id)
-            return episode
+            return EpisodeServices.get_episode_by_id(episode_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -70,15 +68,15 @@ class EpisodeController:
         Function returns the episode with the highest rating.
         If there are multiple episodes with the same rating, it will return all of them.
 
-
         Param best:bool=True: Get the best rated episodes or not.
         Return: A list of episodes that are the best rated episodes.
         """
         try:
             episodes = EpisodeServices.get_best_rated_episode(best=best)
-            if not episodes:
-                return Response(content="We have not generated episode popularity list yet.", status_code=200)
-            return episodes
+            return episodes if episodes else JSONResponse(
+                content="We have not generated episode popularity list yet.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -94,8 +92,7 @@ class EpisodeController:
         Return: The updated episode.
         """
         try:
-            episode = EpisodeServices.update_episode(episode_id, attributes)
-            return episode
+            return EpisodeServices.update_episode(episode_id, attributes)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -114,7 +111,7 @@ class EpisodeController:
         """
         try:
             EpisodeServices.delete_episode(episode_id)
-            return Response(content=f"Episode with ID: {episode_id} deleted.", status_code=200)
+            return JSONResponse(content=f"Episode with ID: {episode_id} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
