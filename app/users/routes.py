@@ -8,6 +8,7 @@ from starlette.responses import Response
 from app.users.controller import UserController, SubuserController, AdminController
 from app.users.controller.user_auth_controller import JWTBearer
 from app.users.schemas import *
+from app.utils import validate_password
 
 user_router = APIRouter(prefix="/api/users", tags=["Users"])
 
@@ -25,6 +26,11 @@ def register_user(user: UserSchemaIn):
     Param user:UserSchemaIn: Tell the function that it will be receiving a user object.
     Return: A dictionary with the user's ID and token.
     """
+    if not validate_password(user.password):
+        raise HTTPException(
+            detail="Invalid password form. Please set at least 8 characters with at least one integer number.",
+            status_code=400
+        )
     user.password = hashlib.sha256(user.password.encode()).hexdigest()
     return UserController.create_user(**user.dict())
 
