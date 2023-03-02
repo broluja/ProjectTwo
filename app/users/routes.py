@@ -3,7 +3,7 @@ import hashlib
 
 from fastapi import APIRouter, status, Depends, HTTPException, Body, Query
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import Response, JSONResponse
 
 from app.users.controller import UserController, SubuserController, AdminController
 from app.users.controller.user_auth_controller import JWTBearer
@@ -49,7 +49,7 @@ def verify_user(verification_code: int = Body(embed=True)):
     Return: A response object.
     """
     UserController.verify_user(verification_code)
-    return Response(content="Account verified. You can log in now", status_code=200)
+    return JSONResponse(content="Account verified. You can log in now", status_code=200)
 
 
 @user_router.post("/login", summary="User Login")
@@ -68,7 +68,7 @@ def login_user(user: LoginUserSchema, response: Response):
     password_hashed = hashlib.sha256(user.password.encode()).hexdigest()
     token, user_id = UserController.login_user(user.email, password_hashed, user.username)
     response.set_cookie(key="user_id", value=user_id)
-    response.set_cookie(key="email_id", value=user.email)
+    response.set_cookie(key="user_email", value=user.email)
     return token
 
 
@@ -132,10 +132,15 @@ def reset_password_complete(request: Request, reset: PasswordResetSchema):
     if request.cookies.get("code") != "active":
         raise HTTPException(status_code=403, detail="Verification code expired. Ask for another one.")
     if reset.password != reset.repeat_password:
-        raise HTTPException(status_code=400, detail="Passwords must match. Try again")
+        raise HTTPException(status_code=400, detail="Passwords must match. Try again.")
+    if not validate_password(reset.password):
+        raise HTTPException(
+            detail="Invalid password form. Please set at least 8 characters with at least one integer number.",
+            status_code=400
+        )
     password_hashed = hashlib.sha256(reset.password.encode()).hexdigest()
     UserController.reset_password_complete(reset.code, password_hashed)
-    return Response(content="Reset password finished successfully. You can login now.", status_code=200)
+    return JSONResponse(content="Reset password finished successfully. You can login now.", status_code=200)
 
 
 @user_router.post("/admin/login",
@@ -368,7 +373,7 @@ subuser_router = APIRouter(prefix="/api/subusers", tags=["Subusers"])
                      dependencies=[Depends(JWTBearer(["regular_user"]))],
                      status_code=status.HTTP_201_CREATED
                      )
-def register_subuser(request: Request, name: str):
+def register_subuser(request: Request, name: str = Body(embed=True)):
     """
     Function creates a new subuser with the given name.
 
@@ -415,7 +420,7 @@ def get_subuser_by_id(subuser_id: str):
                     dependencies=[Depends(JWTBearer(["sub_user"]))],
                     status_code=status.HTTP_201_CREATED
                     )
-def update_subusers_name(request: Request, name: str):
+def update_subusers_name(request: Request, name: str = Body(embed=True)):
     """
     The update_subusers_name function updates the name of a subuser.
 
@@ -431,7 +436,7 @@ def update_subusers_name(request: Request, name: str):
                        summary="Delete my Subuser. User route",
                        dependencies=[Depends(JWTBearer(["regular_user"]))]
                        )
-def delete_subuser(request: Request, subuser_name: str):
+def delete_subuser(request: Request, subuser_name: str = Body(embed=True)):
     """
     Function deletes a subuser from the database.
 
@@ -494,12 +499,12 @@ def get_all_admins_by_country(country: str):
     return AdminController.get_all_admins_by_country(country)
 
 
-@admin_router.delete("/",
-                     response_model=UserSchema,
-                     summary="Deactivate Admin status. Admin route",
-                     dependencies=[Depends(JWTBearer(["super_user"]))]
-                     )
-def remove_admin_credentials(admin_id: str):
+@admin_router.patch("/",
+                    response_model=UserSchema,
+                    summary="Deactivate Admin status. Admin route",
+                    dependencies=[Depends(JWTBearer(["super_user"]))]
+                    )
+def remove_admin_credentials(admin_id: str = Body(embed=True)):
     """
     Function removes the admin credentials from the database.
     It takes one argument, an admin_id, which is a string that represents the
