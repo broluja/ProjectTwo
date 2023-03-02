@@ -1,7 +1,7 @@
 """User routes module"""
 import hashlib
 
-from fastapi import APIRouter, status, Depends, HTTPException, Body
+from fastapi import APIRouter, status, Depends, HTTPException, Body, Query
 from starlette.requests import Request
 from starlette.responses import Response
 
@@ -46,9 +46,7 @@ def verify_user(verification_code: int = Body(embed=True)):
     return Response(content="Account verified. You can log in now", status_code=200)
 
 
-@user_router.post("/login",
-                  summary="User Login",
-                  )
+@user_router.post("/login", summary="User Login")
 def login_user(user: LoginUserSchema, response: Response):
     """
     Function takes in a username, email, password and response object.
@@ -64,6 +62,7 @@ def login_user(user: LoginUserSchema, response: Response):
     password_hashed = hashlib.sha256(user.password.encode()).hexdigest()
     token, user_id = UserController.login_user(user.email, password_hashed, user.username)
     response.set_cookie(key="user_id", value=user_id)
+    response.set_cookie(key="email_id", value=user.email)
     return token
 
 
@@ -88,7 +87,7 @@ def forget_password(email: str = Body(embed=True)):
                   summary="Reset user's password. User route.",
                   dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))]
                   )
-def reset_password(email: str = Body(embed=True)):
+def reset_password(request: Request, email: str = Body(embed=True)):
     """
     Function is used to reset the password of a user.
     It takes in an email as a parameter and sends an email with instructions on how to reset their password.
@@ -96,6 +95,11 @@ def reset_password(email: str = Body(embed=True)):
     Param email:str: Specify the email address of the user that is requesting a password reset.
     Return: The response object.
     """
+    user_email = request.cookies.get("user_email")
+    if user_email != email:
+        raise HTTPException(detail="This is not your email.", status_code=400)
+    if not user_email:
+        raise HTTPException(detail="You have to login first.", status_code=400)
     UserController.change_password(email)
     response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
     response.set_cookie(key="code", value="active", max_age=600)
@@ -145,6 +149,7 @@ def login_admin(admin: LoginAdminSchema, response: Response):
     password_hashed = hashlib.sha256(admin.password.encode()).hexdigest()
     token, user_id = UserController.login_admin(admin.email, password_hashed)
     response.set_cookie(key="user_id", value=user_id)
+    response.set_cookie(key="email_id", value=admin.email)
     return token
 
 
@@ -205,22 +210,6 @@ def get_user_by_id(user_id: str):
     return UserController.get_user_by_id(user_id)
 
 
-@user_router.get("/search-user/email",
-                 response_model=list[UserSchemaOut],
-                 summary="Search for users by email. Admin route.",
-                 dependencies=[Depends(JWTBearer(["super_user"]))]
-                 )
-def search_users_by_email(email: str):
-    """
-    Function searches for users by email.
-    It takes an email as a parameter and returns the user with that email.
-
-    Param email:str: Search for a user with the given email.
-    Return: A list of users that match the email provided.
-    """
-    return UserController.search_users_by_email(email)
-
-
 @user_router.get("/get-user/subusers",
                  response_model=UserWithSubusersSchema,
                  summary="Get user by ID with all his subusers. Admin route.",
@@ -235,6 +224,27 @@ def get_user_with_subusers(user_id: str):
     Return: A user object with the subusers attribute set to a list of all the user's subusers.
     """
     return UserController.get_user_with_all_subusers(user_id)
+
+
+@user_router.get("/search-user",
+                 response_model=list[UserSchemaOut],
+                 summary="Search for users by email. Admin route.",
+                 dependencies=[Depends(JWTBearer(["super_user"]))]
+                 )
+def search_user(choice: str = Query("Username", enum=['Username', 'Email']), query: str = ""):
+    """
+    Function searches for users by email or username.
+    It takes a query as a parameter and returns the user with that email or username,
+    depending on selected search.
+
+    Param query:str: Search for a user with the given query.
+    Param choice:str: Selected search (by username or email).
+    Return: A list of users that match the query.
+    """
+    if choice == "Username":
+        return UserController.search_users_by_username(query)
+    elif choice == "Email":
+        return UserController.search_users_by_email(query)
 
 
 @user_router.get("/get-my-subusers",

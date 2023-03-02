@@ -56,6 +56,24 @@ class UserRepository(BaseCRUDRepository):
             self.db.rollback()
             raise exc
 
+    def search_user_by_username(self, username: str, search: bool):
+        """
+        Function searches users by email. If search parameter is False
+        then it looks for exact username match.
+
+        Param username: string value, represent User's username.
+        Param search: boolean value, defines search method.
+        Return: User object if query is successful.
+        """
+        try:
+            if search:
+                return self.db.query(User).filter(User.username.ilike(f"%{username}%")).all()
+            else:
+                return self.db.query(User).filter(User.username == username).all()
+        except Exception as exc:
+            self.db.rollback()
+            raise exc
+
     def read_user_by_code(self, verification_code: int):
         """
         Function takes a verification code as an argument and returns the user object associated with that

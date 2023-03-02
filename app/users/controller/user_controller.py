@@ -184,6 +184,22 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
+    def search_users_by_username(username: str, search: bool = True):
+        """
+        Function searches users by email. If search parameter is False
+        then it looks for exact username match.
+
+        Param username: string value, represent User's username.
+        Param search: boolean value, defines search method.
+        Return: User object if query is successful.
+        """
+        try:
+            users = UserServices.search_users_by_username(username, search)
+            return users if users else JSONResponse(content="No users found", status_code=200)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
     def login_user(email: str, password: str, username: str):
         """
         Function is used to authenticate a user.

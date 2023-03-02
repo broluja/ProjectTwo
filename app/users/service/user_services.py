@@ -129,6 +129,23 @@ class UserServices:
             raise exc
 
     @staticmethod
+    def search_users_by_username(username: str, search: bool):
+        """
+        Function searches users by email. If search parameter is False
+        then it looks for exact username match.
+
+        Param username: string value, represent User's username.
+        Param search: boolean value, defines search method.
+        Return: User object if query is successful.
+        """
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                return repository.search_user_by_username(username, search)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
     def login_user(email: str, password: str):
         """
         Function is used to authenticate a user by checking the email and password
