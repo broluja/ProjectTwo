@@ -1,4 +1,6 @@
 """User Service module"""
+import hashlib
+
 from starlette.responses import JSONResponse
 
 from app.users.repositories import UserRepository, SubuserRepository
@@ -25,8 +27,9 @@ class UserServices:
         """
         try:
             code = generate_random_int(6)
-            if validate_password(password):
+            if not validate_password(password):
                 raise InvalidPasswordForm
+            password = hashlib.sha256(password.encode()).hexdigest()
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
                 fields = {"email": email, "password_hashed": password, "username": username, "verification_code": code}

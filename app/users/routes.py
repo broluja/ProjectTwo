@@ -4,7 +4,7 @@ import hashlib
 from email_validator import validate_email, EmailNotValidError
 from fastapi import APIRouter, status, Depends, HTTPException, Body, Query
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.users.controller import UserController, SubuserController, AdminController
 from app.users.controller.user_auth_controller import JWTBearer
@@ -32,7 +32,6 @@ def register_user(user: UserSchemaIn):
         valid_email = valid.email
     except EmailNotValidError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    user.password = hashlib.sha256(user.password.encode()).hexdigest()
     return UserController.create_user(valid_email, user.password, user.username)
 
 
@@ -50,13 +49,13 @@ def verify_user(verification_code: int = Body(embed=True)):
     Return: A response object.
     """
     UserController.verify_user(verification_code)
-    return Response(content="Account verified. You can log in now", status_code=200)
+    return JSONResponse(content="Account verified. You can log in now", status_code=200)
 
 
 @user_router.post("/user-login",
                   summary="User Login",
                   )
-def login_user(login: UserLoginSchema, response: Response):
+def login_user(login: UserLoginSchema, response: JSONResponse):
     """
     Function takes in a username, email, password and response object.
     It hashes the password using sha256 and then uses the UserController to login user.
@@ -87,7 +86,7 @@ def forget_password(email: str = Body(embed=True)):
     Return: A response object.
     """
     UserController.change_password(email)
-    response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
+    response = JSONResponse(content="Request granted. Instructions are sent to your email.", status_code=200)
     response.set_cookie(key="code", value="active", max_age=600)
     return response
 
@@ -106,9 +105,9 @@ def reset_password(request: Request, email: str = Body(embed=True)):
     """
     user_email = request.cookies.get("user_email")
     if user_email != email:
-        raise HTTPException(detail="This is not your email.", status_code=400)
+        raise HTTPException(detail="Unrecognized email.", status_code=400)
     UserController.change_password(email)
-    response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
+    response = JSONResponse(content="Request granted. Instructions are sent to your email.", status_code=200)
     response.set_cookie(key="code", value="active", max_age=600)
     return response
 
@@ -136,7 +135,7 @@ def reset_password_complete(request: Request, reset: ChangePasswordSchema):
         raise HTTPException(status_code=400, detail="Passwords must match. Try again")
     password_hashed = hashlib.sha256(reset.new_password.encode()).hexdigest()
     UserController.reset_password_complete(reset.code, password_hashed)
-    response = Response(content="Reset password finished successfully. You can login now.", status_code=200)
+    response = JSONResponse(content="Reset password finished successfully. You can login now.", status_code=200)
     response.delete_cookie(key="code")
     return response
 
@@ -144,7 +143,7 @@ def reset_password_complete(request: Request, reset: ChangePasswordSchema):
 @user_router.post("/admin-login",
                   summary="Admin Login",
                   )
-def login_admin(login: AdminLoginSchema, response: Response):
+def login_admin(login: AdminLoginSchema, response: JSONResponse):
     """
     Function takes in an email and a password, hashes the password using SHA256,
     and then checks if the email and hashed password match. If they do it returns a token for that user
