@@ -64,6 +64,7 @@ def login_user(login: UserLoginSchema, response: Response):
     password_hashed = hashlib.sha256(login.password.encode()).hexdigest()
     token, user_id = UserController.login_user(login.email, password_hashed, login.username)
     response.set_cookie(key="user_id", value=user_id)
+    response.set_cookie(key="user_email", value=login.email)
     return token
 
 
@@ -88,7 +89,7 @@ def forget_password(email: str = Body(embed=True)):
                   summary="Reset user's password. User route.",
                   dependencies=[Depends(JWTBearer(["super_user", "regular_user"]))]
                   )
-def reset_password(email: str = Body(embed=True)):
+def reset_password(request: Request, email: str = Body(embed=True)):
     """
     Function is used to reset the password of a user.
     It takes in an email as a parameter and sends an email with instructions on how to reset their password.
@@ -96,6 +97,9 @@ def reset_password(email: str = Body(embed=True)):
     Param email:str: Specify the email address of the user that is requesting a password reset.
     Return: The response object.
     """
+    user_email = request.cookies.get("user_email")
+    if user_email != email:
+        raise HTTPException(detail="This is not your email.", status_code=400)
     UserController.change_password(email)
     response = Response(content="Request granted. Instructions are sent to your email.", status_code=200)
     response.set_cookie(key="code", value="active", max_age=600)
@@ -125,7 +129,9 @@ def reset_password_complete(request: Request, reset: ChangePasswordSchema):
         raise HTTPException(status_code=400, detail="Passwords must match. Try again")
     password_hashed = hashlib.sha256(reset.new_password.encode()).hexdigest()
     UserController.reset_password_complete(reset.code, password_hashed)
-    return Response(content="Reset password finished successfully. You can login now.", status_code=200)
+    response = Response(content="Reset password finished successfully. You can login now.", status_code=200)
+    response.delete_cookie(key="code")
+    return response
 
 
 @user_router.post("/admin-login",
