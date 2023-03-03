@@ -1,6 +1,6 @@
 """Admin Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.users.service import AdminServices
@@ -66,7 +66,7 @@ class AdminController:
         try:
             admins = AdminServices.get_all_admins_by_country(country)
             if not admins:
-                return Response(content=f"No admins from country: {country}.", status_code=200)
+                return JSONResponse(content=f"No admins from country: '{country}'.", status_code=200)
             return admins
         except Exception as exc:
             raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500) from exc

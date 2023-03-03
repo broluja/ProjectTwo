@@ -1,12 +1,12 @@
 """User Controller module"""
-from fastapi import HTTPException, Response
+from fastapi import HTTPException
+from starlette.responses import JSONResponse
 from email_validator import validate_email, EmailNotValidError
 
 from app.users.service import UserServices, SubuserServices
 from app.base.base_exception import AppException
 from app.users.service import sign_jwt
 from app.users.exceptions import UnknownProfileException, AdminLoginException
-from .subuser_controller import SubuserController
 
 
 class UserController:
@@ -166,7 +166,7 @@ class UserController:
         try:
             users = UserServices.search_users_by_email(email)
             if not users:
-                return Response(content="No users found", status_code=200)
+                return JSONResponse(content="No users found", status_code=200)
             return users
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -188,7 +188,7 @@ class UserController:
         try:
             users = UserServices.search_users_by_username(username, search)
             if not users:
-                return Response(content="No users found", status_code=200)
+                return JSONResponse(content="No users found", status_code=200)
             return users
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -344,7 +344,7 @@ class UserController:
         """
         try:
             UserServices.delete_user(user_id)
-            return Response(content=f"User with ID: {user_id} deleted.", status_code=200)
+            return JSONResponse(content=f"User with ID: {user_id} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

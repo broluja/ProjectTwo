@@ -431,7 +431,7 @@ def update_subusers_name(request: Request, name: str = Body(embed=True)):
                        summary="Delete my Subuser. User route",
                        dependencies=[Depends(JWTBearer(["regular_user"]))]
                        )
-def delete_subuser(request: Request, subuser_name: str):
+def delete_subuser(request: Request, subuser_name: str = Body(embed=True)):
     """
     Function deletes a subuser from the database.
 

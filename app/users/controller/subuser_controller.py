@@ -1,6 +1,6 @@
 """Subuser Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.users.service import SubuserServices
 from app.base.base_exception import AppException
@@ -37,7 +37,7 @@ class SubuserController:
         try:
             subusers = SubuserServices.get_all_subusers()
             if not subusers:
-                return Response(content="There are no Subusers created in our Database.", status_code=200)
+                return JSONResponse(content="There are no Subusers created in our Database.", status_code=200)
             return subusers
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -75,7 +75,7 @@ class SubuserController:
         try:
             subusers = SubuserServices.get_all_subusers_for_one_user(user_id)
             if not subusers:
-                return Response(content=f"No subusers made by user with ID: {user_id}.", status_code=200)
+                return JSONResponse(content=f"No subusers made by user with ID: {user_id}.", status_code=200)
             return subusers
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -111,7 +111,7 @@ class SubuserController:
         """
         try:
             SubuserServices.delete_subuser(user_id, subuser_name)
-            return Response(content=f"Subuser: {subuser_name} deleted.", status_code=200)
+            return JSONResponse(content=f"Subuser: '{subuser_name}' deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

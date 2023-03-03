@@ -58,7 +58,6 @@ class UserWithSubusersSchema(BaseModel):
     """User schema with subusers"""
     id: UUID4
     email: str
-    password_hashed: str
     username: str
     date_subscribed: date
     is_active: bool
