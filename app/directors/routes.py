@@ -1,5 +1,5 @@
 """Director routes"""
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 
 from app.directors.schemas import DirectorSchema, DirectorSchemaIn
 from app.directors.controller import DirectorController
@@ -50,7 +50,7 @@ def get_director_by_id(director_id: str):
 
 
 @director_router.get("/get-director/first-name", response_model=list[DirectorSchema])
-def search_directors_by_first_name(first_name: str):
+def get_director_by_first_name(first_name: str):
     """
     Function searches for directors by their first name.
     It takes a string as an argument and returns a list of dictionaries,
@@ -59,11 +59,11 @@ def search_directors_by_first_name(first_name: str):
     Param first_name:str: Specify the first name of the director to be searched.
     Return: A list of director objects that match the first name.
     """
-    return DirectorController.search_directors_by_first_name(first_name.strip())
+    return DirectorController.search_directors_by_first_name(first_name.strip(), search=False)
 
 
 @director_router.get("/get-director/last-name", response_model=list[DirectorSchema])
-def search_directors_by_last_name(last_name: str):
+def get_director_by_last_name(last_name: str):
     """
     Function searches for directors by last name.
     It takes a string as an argument and returns a list of dictionaries containing the director's
@@ -72,11 +72,11 @@ def search_directors_by_last_name(last_name: str):
     Param last_name:str: Specify the last name of the director.
     Return: A list of director objects.
     """
-    return DirectorController.search_directors_by_last_name(last_name.strip())
+    return DirectorController.search_directors_by_last_name(last_name.strip(), search=False)
 
 
 @director_router.get("/get-director/country", response_model=list[DirectorSchema])
-def search_directors_by_country(country: str):
+def get_director_by_country(country: str):
     """
     Function searches for directors by country. It takes a string as an argument
     and returns a list of dictionaries, where each dictionary contains information about one director.
@@ -84,7 +84,17 @@ def search_directors_by_country(country: str):
     Param country:str: Search for directors from a specific country.
     Return: A list of directors.
     """
-    return DirectorController.search_directors_by_country(country.strip())
+    return DirectorController.search_directors_by_country(country.strip(), search=False)
+
+
+@director_router.get("/search-directors", summary="Search Directors", response_model=list[DirectorSchema])
+def search_directors(choice: str = Query("First Name", enum=["First Name", "Last Name", "Country"]), query: str = ""):
+    if choice == "First Name":
+        return DirectorController.search_directors_by_first_name(query, search=True)
+    elif choice == "Last Name":
+        return DirectorController.search_directors_by_last_name(query, search=True)
+    elif choice == "Country":
+        return DirectorController.search_directors_by_country(query, search=True)
 
 
 @director_router.put("/",

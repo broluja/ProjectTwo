@@ -6,18 +6,22 @@ from app.directors.models import Director
 class DirectorRepository(BaseCRUDRepository):
     """Repository for Director Model"""
 
-    def read_directors_by_country(self, country: str):
+    def read_directors_by_country(self, country: str, search: bool = True):
         """
         Function takes a country as an argument and returns all the directors who have directed
         a movie in that country. It does this by querying the database for all directors
         with a given country, then returning them.
 
         Param country:str: Filter the query by country.
+        Param search:bool=True: Indicate whether the function is being used to search for a director or not.
         Return: A list of director objects that have the same country as the input parameter.
         """
         try:
-            directors = self.db.query(Director).filter(Director.country == country).all()
-            return directors
+            if search:
+                result = self.db.query(Director).filter(Director.country.ilike(f"%{country}%")).all()
+            else:
+                result = self.db.query(Director).filter(Director.country == country).all()
+            return result
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -30,7 +34,7 @@ class DirectorRepository(BaseCRUDRepository):
         it will return the first director with that exact last name in the database.
 
         Param last_name:str: Search for directors by last name
-        Param search:bool=True: Indicate whether the function is being used to search for a director or not
+        Param search:bool=True: Indicate whether the function is being used to search for a director or not.
         Return: A list of director objects.
         """
         try:

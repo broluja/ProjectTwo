@@ -58,7 +58,7 @@ class DirectorServices:
             raise exc
 
     @staticmethod
-    def search_directors_by_last_name(last_name: str):
+    def search_directors_by_last_name(last_name: str, search: bool):
         """
         Function searches for directors by last name. It takes a string as an argument and
         returns a list of dictionaries containing the director's first and last names,
@@ -70,12 +70,12 @@ class DirectorServices:
         try:
             with SessionLocal() as db:
                 repository = DirectorRepository(db, Director)
-                return repository.read_directors_by_last_name(last_name)
+                return repository.read_directors_by_last_name(last_name, search)
         except Exception as exc:
             raise exc
 
     @staticmethod
-    def search_directors_by_first_name(first_name: str):
+    def search_directors_by_first_name(first_name: str, search: bool):
         """
         Function searches for directors by first name. It takes a string as an
         argument and returns a list of dictionaries containing the director's details.
@@ -86,12 +86,12 @@ class DirectorServices:
         try:
             with SessionLocal() as db:
                 repository = DirectorRepository(db, Director)
-                return repository.read_directors_by_first_name(first_name)
+                return repository.read_directors_by_first_name(first_name, search)
         except Exception as exc:
             raise exc
 
     @staticmethod
-    def search_directors_by_country(country: str):
+    def search_directors_by_country(country: str, search: bool):
         """
         Function searches for directors by country. It takes a string as an argument
         and returns a list of dictionaries containing the director's name, birth year, and country.
@@ -102,7 +102,7 @@ class DirectorServices:
         try:
             with SessionLocal() as db:
                 repository = DirectorRepository(db, Director)
-                return repository.read_directors_by_country(country)
+                return repository.read_directors_by_country(country, search)
         except Exception as exc:
             raise exc
 

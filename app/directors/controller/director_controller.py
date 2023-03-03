@@ -1,6 +1,6 @@
 """Director Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.directors.service import DirectorServices
 from app.base.base_exception import AppException
@@ -39,7 +39,7 @@ class DirectorController:
         try:
             directors = DirectorServices.get_all_directors()
             if not directors:
-                return Response("No directors in our Database yet.", status_code=200)
+                return JSONResponse("No directors in our Database yet.", status_code=200)
             return directors
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -65,7 +65,7 @@ class DirectorController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def search_directors_by_last_name(last_name: str):
+    def search_directors_by_last_name(last_name: str, search: bool):
         """
         Function searches for a Director by last name in the database.
         It returns a list of Directors with that last name, or an
@@ -75,9 +75,9 @@ class DirectorController:
         Return: A list of director objects.
         """
         try:
-            director = DirectorServices.search_directors_by_last_name(last_name)
+            director = DirectorServices.search_directors_by_last_name(last_name, search)
             if not director:
-                return Response(content=f"No Director with last name: {last_name} in our Database.", status_code=200)
+                return JSONResponse(content=f"No Director with last name: '{last_name}' in our Database.", status_code=200)
             return director
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -85,7 +85,7 @@ class DirectorController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def search_directors_by_first_name(first_name: str):
+    def search_directors_by_first_name(first_name: str, search: bool):
         """
         Function searches for a Director in the database by first name.
         It returns a list of Directors that match the search criteria.
@@ -95,9 +95,12 @@ class DirectorController:
         Return: A list of directors with the first name specified.
         """
         try:
-            director = DirectorServices.search_directors_by_first_name(first_name)
+            director = DirectorServices.search_directors_by_first_name(first_name, search)
             if not director:
-                return Response(content=f"No Director with first name: {first_name} in our Database.", status_code=200)
+                return JSONResponse(
+                    content=f"No Director with first name: '{first_name}' in our Database.",
+                    status_code=200
+                )
             return director
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -105,7 +108,7 @@ class DirectorController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def search_directors_by_country(country: str):
+    def search_directors_by_country(country: str, search):
         """
         Function searches for a director by country.
         It takes in a string representing the country and returns all
@@ -115,9 +118,12 @@ class DirectorController:
         Return: A list of directors that have the country name in their description.
         """
         try:
-            director = DirectorServices.search_directors_by_country(country)
+            director = DirectorServices.search_directors_by_country(country, search)
             if not director:
-                return Response(content=f"No Director with first name: {country} in our Database.", status_code=200)
+                return JSONResponse(
+                    content=f"No Director with first name: '{country}' in our Database.",
+                    status_code=200
+                )
             return director
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -154,7 +160,7 @@ class DirectorController:
         """
         try:
             DirectorServices.delete_director(director_id)
-            return Response(content=f"Director with ID: {director_id} deleted.", status_code=200)
+            return JSONResponse(content=f"Director with ID: {director_id} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
