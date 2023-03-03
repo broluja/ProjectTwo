@@ -1,6 +1,6 @@
 """Movie Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.base import AppException
 from app.movies.service import MovieServices
@@ -11,7 +11,7 @@ from app.genres.service import GenreServices
 class MovieController:
     """Controller for movie routes"""
     @staticmethod
-    def create_movie(title: str, year_published: str, director_id: str, genre_id: str):
+    def create_movie(title: str, description: str, year_published: str, director_id: str, genre_id: str):
         """
         Function creates a new movie object and returns it.
         It takes in the title, year_published, director_id, and genre_id as parameters.
@@ -27,7 +27,7 @@ class MovieController:
         try:
             director = DirectorServices.get_director_by_id(director_id)
             genre = GenreServices.get_genre_by_id(genre_id)
-            movie = MovieServices.create_new_movie(title, year_published, director_id, genre_id)
+            movie = MovieServices.create_new_movie(title, description, year_published, director_id, genre_id)
             movie.director = director
             movie.genre = genre
             return movie
@@ -49,7 +49,7 @@ class MovieController:
         try:
             movies = MovieServices.get_all_movies(page)
             if not movies:
-                return Response(content="End of query.", status_code=200)
+                return JSONResponse(content="End of query.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -88,8 +88,7 @@ class MovieController:
         Return: A movie object.
         """
         try:
-            movie = MovieServices.get_movie_by_id(movie_id)
-            return movie
+            return MovieServices.get_movie_by_id(movie_id)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -107,7 +106,7 @@ class MovieController:
         try:
             movies = MovieServices.search_movies_by_name(title)
             if not movies:
-                return Response(content=f"No Movie with title: {title} in our Database.", status_code=200)
+                return JSONResponse(content=f"No Movie with title: '{title}' in our Database.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -127,7 +126,7 @@ class MovieController:
         try:
             movies = MovieServices.search_movies_by_director(director)
             if not movies:
-                return Response(content=f"No Movie from Director: {director} in our Database.", status_code=200)
+                return JSONResponse(content=f"No Movie from Director: '{director}' in our Database.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -146,7 +145,7 @@ class MovieController:
         try:
             movies = MovieServices.search_movies_by_genre(genre)
             if not movies:
-                return Response(content=f"No Movie with genre: {genre} in our Database.", status_code=200)
+                return JSONResponse(content=f"No Movie with genre: '{genre}' in our Database.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -165,7 +164,7 @@ class MovieController:
         try:
             movies = MovieServices.get_movies_by_year(year)
             if not movies:
-                return Response(content=f"No Movie from year: {year} in our Database.", status_code=200)
+                return JSONResponse(content=f"No Movie from year: '{year}' in our Database.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -185,7 +184,7 @@ class MovieController:
         try:
             movies = MovieServices.get_latest_features(date_limit)
             if not movies:
-                return Response(content="No movies in latest list.", status_code=200)
+                return JSONResponse(content="No movies in latest list.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -204,8 +203,7 @@ class MovieController:
         Return: The updated movie data.
         """
         try:
-            movie = MovieServices.update_movie_data(movie_id, attributes)
-            return movie
+            return MovieServices.update_movie_data(movie_id, attributes)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -222,7 +220,7 @@ class MovieController:
         """
         try:
             MovieServices.delete_movie(movie_id)
-            return Response(content=f"Movie with ID: {movie_id} deleted.", status_code=200)
+            return JSONResponse(content=f"Movie with ID: {movie_id} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -239,7 +237,7 @@ class MovieController:
         try:
             movies = MovieServices.show_least_popular_movies()
             if not movies:
-                return Response(content="There are no movies that never have been downloaded.", status_code=200)
+                return JSONResponse(content="There are no movies that never have been downloaded.", status_code=200)
             return movies
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

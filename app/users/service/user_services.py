@@ -26,7 +26,7 @@ class UserServices:
         Return: The user object that was created.
         """
         try:
-            code = generate_random_int(6)
+            code = generate_random_int()
             if not validate_password(password):
                 raise InvalidPasswordForm
             password = hashlib.sha256(password.encode()).hexdigest()
@@ -324,7 +324,7 @@ class UserServices:
                 user = repository.read_user_by_email(email)
                 if not user:
                     raise UserEmailDoesNotExistsException(message=f"Email: {email} does not exist in our Database.")
-                code = generate_random_int(6)
+                code = generate_random_int()
                 obj = repository.update(user, {"verification_code": code})
                 EmailServices.send_code_for_password_reset(user.email, code)
                 return obj

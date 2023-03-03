@@ -2,6 +2,7 @@
 from datetime import date
 
 from app.config import settings
+from app.db import SessionLocal
 from app.directors.exceptions.director_exceptions import NonExistingDirectorException
 from app.directors.models import Director
 from app.directors.repositories import DirectorRepository
@@ -10,8 +11,6 @@ from app.genres.models import Genre
 from app.genres.repositories import GenreRepository
 from app.movies.models import Movie
 from app.movies.repositories import MovieRepository
-from app.db import SessionLocal
-
 
 PER_PAGE = settings.PER_PAGE
 
@@ -19,7 +18,7 @@ PER_PAGE = settings.PER_PAGE
 class MovieServices:
     """Service for movie routes"""
     @staticmethod
-    def create_new_movie(title: str, year_published: str, director_id: str, genre_id: str):
+    def create_new_movie(title: str, description: str, year_published: str, director_id: str, genre_id: str):
         """
         Function creates a new movie in the database.
         It takes as input the title, year_published, director_id and genre_id of the movie to be created.
@@ -35,6 +34,7 @@ class MovieServices:
             with SessionLocal() as db:
                 repository = MovieRepository(db, Movie)
                 fields = {"title": title,
+                          "description": description,
                           "date_added": date.today(),
                           "year_published": year_published,
                           "director_id": director_id,
@@ -126,7 +126,7 @@ class MovieServices:
                 director_repo = DirectorRepository(db, Director)
                 obj = director_repo.read_directors_by_last_name(director, search=False)
                 if not obj:
-                    raise NonExistingDirectorException(message=f"No movies by director: {director}")
+                    raise NonExistingDirectorException(message=f"No movies by director: '{director}'")
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_all()
                 response = [movie for movie in movies if movie.director_id == obj.id]
@@ -148,7 +148,7 @@ class MovieServices:
                 genre_repo = GenreRepository(db, Genre)
                 obj = genre_repo.read_genres_by_name(genre, search=False)
                 if not obj:
-                    raise NonExistingGenreException(message=f"No movies with genre: {genre}")
+                    raise NonExistingGenreException(message=f"No movies with genre: '{genre}'")
                 repository = MovieRepository(db, Movie)
                 movies = repository.read_all()
                 response = [movie for movie in movies if movie.genre_id == obj.id]

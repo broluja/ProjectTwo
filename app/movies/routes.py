@@ -86,7 +86,7 @@ def update_movie_data(movie: MovieSchemaIn, movie_id):
                      summary="Delete movie. Admin route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))]
                      )
-def delete_movie(movie_id: str):
+def delete_movie(movie_id: str = Body(embed=True)):
     """
     Function deletes a movie from the database.
 
@@ -120,7 +120,7 @@ def add_actor_to_movie(movie_id: str = Body(embed=True), actor_id: str = Body(em
                            summary="Remove actor from Movie. Admin Route.",
                            status_code=status.HTTP_201_CREATED
                            )
-def remove_actor_from_movie(movie_id: str, actor_id: str):
+def remove_actor_from_movie(movie_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     The remove_actor_from_movie function removes an actor from a movie.
 
@@ -387,16 +387,16 @@ def show_least_popular_movies():
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
 def get_my_recommendations(request: Request, page: int = 1):
-    user_id = request.cookies.get("user_id")
     """
     Function returns a list of movies that the user has not watched, but is recommended
     for them based on their previous movie ratings. The function takes in a page number as an argument and returns
     a list of movies from that page.
 
     Param request:Request: Get the user_id from the cookie
-    Param page:int=1: Specify which page of the recommendation list to display
+    Param page:int=1: Specify, which page of the recommendation list to display
     Return: A list of movies that are recommended for the user.
     """
+    user_id = request.cookies.get("user_id")
     return UserWatchMovieController.get_my_recommendations(user_id, page)
 
 
