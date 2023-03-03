@@ -26,7 +26,7 @@ class ActorRepository(BaseCRUDRepository):
             self.db.rollback()
             raise exc
 
-    def read_actors_by_last_name(self, last_name: str, literal=False):
+    def read_actors_by_last_name(self, last_name: str, search: bool = True):
         """
         Function takes a last name as an argument and returns all actors with that last name.
         It is case-insensitive, so it will return results even if the user enters a
@@ -37,16 +37,16 @@ class ActorRepository(BaseCRUDRepository):
         Return: The list of actors whose last name contains the string passed as an argument.
         """
         try:
-            if literal:
-                actors = self.db.query(Actor).filter(Actor.last_name == last_name).first()
-            else:
+            if search:
                 actors = self.db.query(Actor).filter(Actor.last_name.ilike(f"%{last_name}%")).all()
+            else:
+                actors = self.db.query(Actor).filter(Actor.last_name == last_name).first()
             return actors
         except Exception as exc:
             self.db.rollback()
             raise exc
 
-    def read_actors_by_country(self, country: str):
+    def read_actors_by_country(self, country: str, search: bool = True):
         """
         Function accepts a country name as an argument and returns all actors from that country.
 
@@ -54,8 +54,10 @@ class ActorRepository(BaseCRUDRepository):
         Return: A list of actors that are from the specified country.
         """
         try:
-            actors = self.db.query(Actor).filter(Actor.country == country).all()
-            return actors
+            if search:
+                return self.db.query(Actor).filter(Actor.country.ilike(f"%{country}%")).all()
+            else:
+                return self.db.query(Actor).filter(Actor.country == country).first()
         except Exception as exc:
             self.db.rollback()
             raise exc

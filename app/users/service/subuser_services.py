@@ -4,8 +4,7 @@ from app.users.repositories import SubuserRepository
 from app.users.service import UserServices
 from app.db.database import SessionLocal
 from app.users.models import Subuser
-from app.users.exceptions import NonExistingUserIdException, MaxLimitSubusersException, AdminSubuserException, \
-    UnknownProfileException
+from app.users.exceptions import *
 
 MAX_NUMBER_SUBUSERS = settings.MAX_NUMBER_SUBUSERS
 

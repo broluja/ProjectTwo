@@ -1,5 +1,5 @@
 """UserWatchMovie Service module"""
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.db import SessionLocal
 from app.movies.models import Movie
@@ -76,7 +76,7 @@ class UserWatchMovieServices:
                 repository = UserWatchMovieRepository(db, UserWatchMovie)
                 objects = repository.read_movies_from_user(user_id)
                 if not objects:
-                    return Response(content="You have not watched any Movie yet.", status_code=200)
+                    return JSONResponse(content="You have not watched any Movie yet.", status_code=200)
                 movie_ids = [obj.movie_id for obj in objects]
                 movie_repo = MovieRepository(db, Movie)
                 movie_objects = [movie_repo.read_by_id(movie_id) for movie_id in movie_ids]
@@ -222,7 +222,7 @@ class UserWatchMovieServices:
                 movie_repository = MovieRepository(db, Movie)
                 movies = movie_repository.read_movies_by_year(str(year))
                 if not movies:
-                    return Response(content=f"No Movies from this year: {year}", status_code=200)
+                    return JSONResponse(content=f"No Movies from this year: {year}", status_code=200)
                 movie_ids = [movie.id for movie in movies]
                 user_watch_movie_repository = UserWatchMovieRepository(db, Movie)
                 ratings = user_watch_movie_repository.read_average_rating_for_movies(movie_ids)

@@ -74,7 +74,7 @@ class ActorServices:
             raise exc
 
     @staticmethod
-    def get_actor_by_last_name(actor: str):
+    def get_actor_by_last_name(actor: str, search: bool):
         """
         Function is used to retrieve all actors with a given last name.
         It takes in the actor as a string and returns an array of actors that match the last name.
@@ -85,13 +85,13 @@ class ActorServices:
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actors = repository.read_actors_by_last_name(actor)
+                actors = repository.read_actors_by_last_name(actor, search)
                 return actors
         except Exception as exc:
             raise exc
 
     @staticmethod
-    def get_actor_by_first_name(actor: str):
+    def get_actor_by_first_name(actor: str, search: bool):
         """
         Function is used to retrieve a list of actors from the database that have the same first name.
         The function takes in one argument, which is the actor's first name.
@@ -103,7 +103,17 @@ class ActorServices:
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actors = repository.read_actors_by_first_name(actor)
+                actors = repository.read_actors_by_first_name(actor, search)
+                return actors
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_actor_by_country(country: str, search: bool):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                actors = repository.read_actors_by_country(country, search)
                 return actors
         except Exception as exc:
             raise exc

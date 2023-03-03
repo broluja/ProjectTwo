@@ -1,6 +1,6 @@
 """Actor controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.actors.service import ActorServices
 from app.base import AppException
@@ -42,7 +42,7 @@ class ActorController:
         try:
             actors = ActorServices.get_all_actors(page)
             if not actors:
-                return Response(content="End of query.", status_code=200)
+                return JSONResponse(content="End of query.", status_code=200)
             return actors
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -68,7 +68,7 @@ class ActorController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def get_actor_by_last_name(actor: str):
+    def get_actor_by_last_name(actor: str, search: bool):
         """
         Function is used to retrieve a list of actors with the same last name.
         It takes in an actor's last name as a parameter and returns all actors that have the same last name.
@@ -77,9 +77,9 @@ class ActorController:
         Return: A list of actors with the same last name.
         """
         try:
-            actors = ActorServices.get_actor_by_last_name(actor)
+            actors = ActorServices.get_actor_by_last_name(actor, search)
             if not actors:
-                return Response(content=f"No actor with last name: {actor}", status_code=200)
+                return JSONResponse(content=f"No actor with last name: '{actor}'", status_code=200)
             return actors
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -87,7 +87,7 @@ class ActorController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def get_actor_by_first_name(actor: str):
+    def get_actor_by_first_name(actor: str, search: bool):
         """
         Function is used to retrieve all actors with a given first name.
         It takes in the actor parameter as an input and returns a list of actors that match the given first name.
@@ -96,9 +96,21 @@ class ActorController:
         Return: A list of actors with the first name 'james'
         """
         try:
-            actors = ActorServices.get_actor_by_first_name(actor)
+            actors = ActorServices.get_actor_by_first_name(actor, search)
             if not actors:
-                return Response(content=f"No actor with first name: {actor}", status_code=200)
+                return JSONResponse(content=f"No actor with first name: '{actor}'", status_code=200)
+            return actors
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def get_actor_by_country(country: str, search: bool):
+        try:
+            actors = ActorServices.get_actor_by_country(country, search)
+            if not actors:
+                return JSONResponse(content=f"No actor from country: '{country}'", status_code=200)
             return actors
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -118,7 +130,7 @@ class ActorController:
         try:
             actor = ActorServices.get_actor_movies(last_name)
             if not actor:
-                return Response(content=f"No actor with last name: {last_name}", status_code=200)
+                return JSONResponse(content=f"No actor with last name: '{last_name}'", status_code=200)
             return [movie.title for movie in actor.movies]
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -154,7 +166,7 @@ class ActorController:
         """
         try:
             ActorServices.delete_actor(actor_id)
-            return Response(content=f"Actor with ID: {actor_id} deleted.", status_code=200)
+            return JSONResponse(content=f"Actor with ID: {actor_id} deleted.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

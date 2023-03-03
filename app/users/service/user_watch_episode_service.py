@@ -1,5 +1,5 @@
 """UserWatchEpisode Service module"""
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.db import SessionLocal
 from app.series.exceptions.series_exceptions import UnknownSeriesException
@@ -120,7 +120,7 @@ class UserWatchEpisodeServices:
                 series_repository = SeriesRepository(db, Series)
                 series = series_repository.read_series_by_year(str(year))
                 if not series:
-                    return Response(content=f"No Series from this year: {year}", status_code=200)
+                    return JSONResponse(content=f"No Series from this year: {year}", status_code=200)
                 episode_ids = [episode.id for obj in series for episode in obj.episodes]
                 user_watch_episode_repo = UserWatchEpisodeRepository(db, Episode)
                 average = user_watch_episode_repo.read_average_rating(episode_ids)

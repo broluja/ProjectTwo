@@ -1,5 +1,5 @@
 """Actor routes"""
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 
 from app.actors.controller import ActorController
 from app.actors.schemas import ActorSchema, ActorSchemaIn
@@ -61,7 +61,7 @@ def get_actor_by_last_name(actor: str):
     Param actor:str: Pass the last name of the actor to be searched.
     Return: A dictionary with the actor's details.
     """
-    return ActorController.get_actor_by_last_name(actor.strip())
+    return ActorController.get_actor_by_last_name(actor.strip(), search=False)
 
 
 @actor_router.get("/get-actor/first-name", response_model=list[ActorSchema])
@@ -73,7 +73,24 @@ def get_actor_by_first_name(actor: str):
     Param actor:str: Specify the name of the actor that is being searched for.
     Return: A list of actors that match the first name given.
     """
-    return ActorController.get_actor_by_first_name(actor.strip())
+    return ActorController.get_actor_by_first_name(actor.strip(), search=False)
+
+
+@actor_router.get("/search-actors", response_model=list[ActorSchema], summary="Search Actors")
+def search_actors(choice: str = Query("First Name", enum=["First Name", "Last Name", "Country"]), query: str = ""):
+    """
+    Function searches through Actors by first name, last name or country.
+
+    Param choice: Parameter for filtering Actor Database
+    Param query: Query for search.
+    Return: List of Actor objects.
+    """
+    if choice == "First Name":
+        return ActorController.get_actor_by_first_name(query, search=True)
+    elif choice == "Last Name":
+        return ActorController.get_actor_by_last_name(query, search=True)
+    elif choice == "Country":
+        return ActorController.get_actor_by_country(query, search=True)
 
 
 @actor_router.get("/get-actor-movies")
