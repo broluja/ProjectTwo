@@ -6,7 +6,7 @@ from app.db.database import SessionLocal
 from app.users.models import User, Subuser
 from app.users.exceptions import *
 from .mail_service import EmailServices
-from app.utils import generate_random_int
+from app.utils import generate_random_int, validate_password
 
 
 class UserServices:
@@ -25,6 +25,8 @@ class UserServices:
         """
         try:
             code = generate_random_int(6)
+            if validate_password(password):
+                raise InvalidPasswordForm
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
                 fields = {"email": email, "password_hashed": password, "username": username, "verification_code": code}

@@ -8,6 +8,7 @@ from starlette.responses import Response
 
 from app.users.controller import UserController, SubuserController, AdminController
 from app.users.controller.user_auth_controller import JWTBearer
+
 from app.users.schemas import *
 
 user_router = APIRouter(prefix="/api/users", tags=["Users"])

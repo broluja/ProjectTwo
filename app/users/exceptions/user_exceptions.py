@@ -14,6 +14,12 @@ class UserEmailDoesNotExistsException(AppException):
     code = 404
 
 
+class InvalidPasswordForm(AppException):
+    """Exception is raised when user's password form is not valid."""
+    message = "Password must be at least 8 characters long with at least one number."
+    code = 400
+
+
 class InvalidVerificationCode(AppException):
     """Exception raised when user try to verify account with wrong verification code."""
     message = "Verification code unrecognized."
