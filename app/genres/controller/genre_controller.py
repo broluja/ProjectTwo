@@ -1,6 +1,6 @@
 """Genre Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.genres.service import GenreServices
 from app.base.base_exception import AppException
@@ -37,7 +37,7 @@ class GenreController:
         try:
             genres = GenreServices.get_all_genres()
             if not genres:
-                return Response(content="No Genres in our Database yet.", status_code=200)
+                return JSONResponse(content="No Genres in our Database yet.", status_code=200)
             return genres
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -73,7 +73,7 @@ class GenreController:
         try:
             genres = GenreServices.search_genres_by_name(name)
             if not genres:
-                return Response(content=f"No Genre: {name} in our Database.", status_code=200)
+                return JSONResponse(content=f"No Genre: '{name}' in our Database.", status_code=200)
             return genres
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

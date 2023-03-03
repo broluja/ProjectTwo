@@ -30,7 +30,6 @@ def get_all_genres():
     """
     Function returns a list of all genres in the database.
 
-
     Return: A list of all the genres in the database.
     """
     return GenreController.get_all_genres()
@@ -44,8 +43,7 @@ def get_genre_by_id(genre_id: str):
     """
     Function takes a genre_id as an argument and returns the Genre object associated with that ID.
 
-
-    Param genre_id:str: Identify the genre to be returned
+    Param genre_id:str: Identify the genre to be returned.
     Return: A genre object.
     """
     return GenreController.get_genre_by_id(genre_id)
@@ -71,7 +69,7 @@ def search_genres_by_name(name: str):
                   summary="Update Genre`s data. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))],
                   status_code=status.HTTP_201_CREATED)
-def update_genre(genre_id: str, name: str = Body(embed=True)):
+def update_genre(genre_id: str = Body(embed=True), name: str = Body(embed=True)):
     """
     Function updates a genre's name.
 
