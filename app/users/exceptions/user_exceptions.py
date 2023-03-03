@@ -52,7 +52,7 @@ class NonExistingUserIdException(AppException):
 class UnknownProfileException(AppException):
     """Exception raised when provided username is non-existing."""
     code = 401
-    message = "Unknown profile"
+    message = "Unknown username."
 
 
 class MaxLimitSubusersException(AppException):

@@ -2,12 +2,10 @@
 from fastapi import HTTPException, Response
 from email_validator import validate_email, EmailNotValidError
 
-from app.users.service import UserServices
+from app.users.service import UserServices, SubuserServices
 from app.base.base_exception import AppException
 from app.users.service import sign_jwt
-from app.users.exceptions import UnknownProfileException, AdminLoginException, UserEmailDoesNotExistsException
-from app.users.service import EmailServices
-from app.utils import generate_random_int
+from app.users.exceptions import UnknownProfileException, AdminLoginException
 from .subuser_controller import SubuserController
 
 
@@ -26,15 +24,7 @@ class UserController:
         Return: A response object.
         """
         try:
-            valid = validate_email(email)
-            valid_email = valid.email
-        except EmailNotValidError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        try:
-            code = generate_random_int(5)
-            user = UserServices.create_new_user(valid_email, password, username, code)
-            EmailServices.send_code_for_verification(user.email, code)
-            return Response(content="Finish your registration. Instructions are sent to your email.", status_code=200)
+            return UserServices.create_new_user(email, password, username)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -136,13 +126,7 @@ class UserController:
         Return: A verification code.
         """
         try:
-            user = UserServices.get_user_by_email(email)
-            if user:
-                code = generate_random_int(5)
-                obj = UserServices.generate_verification_code(user.id, code)
-                EmailServices.send_code_for_password_reset(user.email, code)
-                return obj
-            raise UserEmailDoesNotExistsException
+            return UserServices.change_password(email)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -190,6 +174,28 @@ class UserController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
+    def search_users_by_username(username: str, search: bool = True):
+        """
+        Function searches for users by a username.
+        It takes a string as an argument and returns a list of dictionaries,
+        each dictionary representing one user. If search is False, it looks for exact match.
+        If no users are found, it returns the response 'No users found'.
+
+        Param username:str: Search for users by a username.
+        Param search: bool: If True it searches by LIKE, else searches for exact match.
+        Return: A list of users that match the given email.
+        """
+        try:
+            users = UserServices.search_users_by_username(username, search)
+            if not users:
+                return Response(content="No users found", status_code=200)
+            return users
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
     def login_user(email: str, password: str, username: str):
         """
         Function is used to authenticate a user.
@@ -208,9 +214,10 @@ class UserController:
             if user.username == username:
                 return sign_jwt(user.id, "regular_user"), user.id
             user_with_subs = UserController.get_user_with_all_subusers(user.id)
-            for sub in user_with_subs.subusers:
-                if sub.name == username:
-                    return sign_jwt(user.id, "sub_user"), sub.id
+            if user_with_subs.subusers:
+                for sub in user_with_subs.subusers:
+                    if sub.name == username:
+                        return sign_jwt(user.id, "sub_user"), sub.id
             raise UnknownProfileException
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
@@ -315,7 +322,7 @@ class UserController:
         Return: A user with all subusers.
         """
         try:
-            subusers = SubuserController.get_subusers_by_user_id(user_id)
+            subusers = SubuserServices.get_all_subusers_for_one_user(user_id)
             user = UserServices.get_user_by_id(user_id)
             user.subusers = subusers
             return user

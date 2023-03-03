@@ -34,3 +34,14 @@ def get_day_before_one_month() -> str:
     current_date_time = datetime.now() - relativedelta(months=1)
     date = current_date_time.strftime('%Y-%m-%d')
     return date
+
+
+def validate_password(password: str) -> bool:
+    """
+    Function takes password and validates if it has
+    at least 8 characters and at least one integer number.
+
+    Param password: string parameter to validate.
+    Return: bool
+    """
+    return len(password) >= 8 and any(char in password for char in "0123456789")

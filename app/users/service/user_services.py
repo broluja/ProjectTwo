@@ -1,14 +1,18 @@
 """User Service module"""
+from starlette.responses import JSONResponse
+
 from app.users.repositories import UserRepository, SubuserRepository
 from app.db.database import SessionLocal
 from app.users.models import User, Subuser
-from app.users.exceptions import InvalidCredentialsException, UnverifiedAccountException, InactiveUserException
+from app.users.exceptions import *
+from .mail_service import EmailServices
+from app.utils import generate_random_int
 
 
 class UserServices:
     """Service for User routes."""
     @staticmethod
-    def create_new_user(email: str, password: str, username: str, code: int):
+    def create_new_user(email: str, password: str, username: str):
         """
         The create_new_user function creates a new user in the database.
         It takes as input an email, password, username and verification code.
@@ -17,14 +21,19 @@ class UserServices:
         Param email:str: Store the email of the user.
         Param password:str: Hash the password.
         Param username:str: Set the username of the new user.
-        Param code:int: Verify the user's email address.
         Return: The user object that was created.
         """
         try:
+            code = generate_random_int(6)
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
                 fields = {"email": email, "password_hashed": password, "username": username, "verification_code": code}
-                return repository.create(fields)
+                obj = repository.create(fields)
+            EmailServices.send_code_for_verification(obj.email, code)
+            return JSONResponse(
+                content="Finish your registration. Instructions are sent to your email.",
+                status_code=200
+            )
         except Exception as exc:
             raise exc
 
@@ -107,7 +116,10 @@ class UserServices:
         try:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
-                return repository.read_user_by_email(email)
+                user = repository.read_user_by_email(email)
+                if not user:
+                    raise InvalidCredentialsException
+                return user
         except Exception as exc:
             raise exc
 
@@ -128,6 +140,23 @@ class UserServices:
             raise exc
 
     @staticmethod
+    def search_users_by_username(username: str, search: bool):
+        """
+        Function searches for a user by a username and returns the user(s) if found.
+        It takes a username as a parameter, and returns the user object if found.
+
+        Param username:str: Search for a user by a username.
+        Param search:bool: If false it looks for exact match.
+        Return: A list of users with the similar username as the input.
+        """
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                return repository.search_users_by_username(username, search)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
     def login_user(email: str, password: str):
         """
         Function is used to authenticate a user by checking the email and password
@@ -142,7 +171,7 @@ class UserServices:
             with SessionLocal() as db:
                 repository = UserRepository(db, User)
                 user = repository.read_user_by_email(email)
-                if user.password_hashed != password:
+                if not user or user.password_hashed != password:
                     raise InvalidCredentialsException
                 if user.verification_code is not None:
                     raise UnverifiedAccountException
@@ -273,6 +302,27 @@ class UserServices:
                 user = repository.read_user_by_code(code)
                 updates = {"password_hashed": password_hashed, "verification_code": None}
                 return repository.update(user, updates)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def change_password(email: str):
+        """
+        Function takes email parameter and after check, sets User for password change.
+
+        Param email: str: email string
+        Return: User object
+        """
+        try:
+            with SessionLocal() as db:
+                repository = UserRepository(db, User)
+                user = repository.read_user_by_email(email)
+                if not user:
+                    raise UserEmailDoesNotExistsException(message=f"Email: {email} does not exist in our Database.")
+                code = generate_random_int(6)
+                obj = repository.update(user, {"verification_code": code})
+                EmailServices.send_code_for_password_reset(user.email, code)
+                return obj
         except Exception as exc:
             raise exc
 

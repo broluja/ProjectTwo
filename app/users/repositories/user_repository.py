@@ -32,11 +32,7 @@ class UserRepository(BaseCRUDRepository):
         Return: A user object.
         """
         try:
-            user = self.db.query(User).filter(User.email == email).first()
-            if not user:
-                self.db.rollback()
-                raise InvalidCredentialsException
-            return user
+            return self.db.query(User).filter(User.email == email).first()
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -51,8 +47,25 @@ class UserRepository(BaseCRUDRepository):
         Return: A list of users that match the search criteria.
         """
         try:
-            users = self.db.query(User).filter(User.email.ilike(f"%{email}%")).all()
-            return users
+            return self.db.query(User).filter(User.email.ilike(f"%{email}%")).all()
+        except Exception as exc:
+            self.db.rollback()
+            raise exc
+
+    def search_users_by_username(self, username, search):
+        """
+        Function searches users by a username.
+        If search parameter is False, it looks for exact match.
+
+        Param username: Query parameter
+        Param search: bool: If False function looks for exact match.
+        Return: list of User objects.
+        """
+        try:
+            if search:
+                return self.db.query(User).filter(User.username.ilike(f"%{username}%")).all()
+            else:
+                return self.db.query(User).filter(User.username == username).first()
         except Exception as exc:
             self.db.rollback()
             raise exc

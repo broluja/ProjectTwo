@@ -1,7 +1,8 @@
 """User routes module"""
 import hashlib
 
-from fastapi import APIRouter, status, Depends, HTTPException, Body
+from email_validator import validate_email, EmailNotValidError
+from fastapi import APIRouter, status, Depends, HTTPException, Body, Query
 from starlette.requests import Request
 from starlette.responses import Response
 
@@ -25,8 +26,13 @@ def register_user(user: UserSchemaIn):
     Param user:UserSchemaIn: Tell the function that it will be receiving a user object.
     Return: A dictionary with the user's ID and token.
     """
+    try:
+        valid = validate_email(user.email)
+        valid_email = valid.email
+    except EmailNotValidError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     user.password = hashlib.sha256(user.password.encode()).hexdigest()
-    return UserController.create_user(**user.dict())
+    return UserController.create_user(valid_email, user.password, user.username)
 
 
 @user_router.patch("/user-verification",
@@ -211,20 +217,24 @@ def get_user_by_id(user_id: str):
     return UserController.get_user_by_id(user_id)
 
 
-@user_router.get("/search-user-by-email",
+@user_router.get("/search-users",
                  response_model=list[UserSchemaOut],
                  summary="Search for users by email. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
-def search_users_by_email(email: str):
+def search_users(choice: str = Query("Username", enum=["Username", "Email"]), query: str = ""):
     """
-    Function searches for users by email.
-    It takes an email as a parameter and returns the user with that email.
+    Function searches for users by email or username.
+    It takes an email/username as a parameter and returns
+    users that possible match provided email/username.
 
-    Param email:str: Search for a user with the given email.
-    Return: A list of users that match the email provided.
+    Param query:str: Search for a user with the given email/username.
+    Return: A list of users that match the email/username provided.
     """
-    return UserController.search_users_by_email(email)
+    if choice == "Username":
+        return UserController.search_users_by_username(query)
+    elif choice == "Email":
+        return UserController.search_users_by_email(query)
 
 
 @user_router.get("/get-user-with-subusers",
