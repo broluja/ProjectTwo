@@ -239,7 +239,7 @@ def get_user_with_subusers(user_id: str):
 
 @user_router.get("/search-user",
                  response_model=list[UserSchemaOut],
-                 summary="Search for users by email. Admin route.",
+                 summary="Search for users by email or username. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
 def search_user(choice: str = Query("Username", enum=['Username', 'Email']), query: str = ""):
@@ -252,10 +252,11 @@ def search_user(choice: str = Query("Username", enum=['Username', 'Email']), que
     Param choice:str: Selected search (by username or email).
     Return: A list of users that match the query.
     """
-    if choice == "Username":
-        return UserController.search_users_by_username(query)
-    elif choice == "Email":
-        return UserController.search_users_by_email(query)
+    match choice:
+        case "Username":
+            return UserController.search_users_by_username(query)
+        case "Email":
+            return UserController.search_users_by_email(query)
 
 
 @user_router.get("/get-my-subusers",

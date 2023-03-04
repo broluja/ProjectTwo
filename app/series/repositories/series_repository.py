@@ -41,6 +41,13 @@ class SeriesRepository(BaseCRUDRepository):
             self.db.rollback()
             raise exc
 
+    def read_series_by_director_ids(self, director_ids: list):
+        try:
+            return self.db.query(Series).filter(Series.director_id.in_(director_ids)).all()
+        except Exception as exc:
+            self.db.rollback()
+            raise exc
+
     def read_series_by_title(self, title: str, search: bool = False):
         """
         Function accepts a title as an argument and returns the Series object with that title.

@@ -78,10 +78,10 @@ class SeriesServices:
             raise exc
 
     @staticmethod
-    def get_series_by_director_name(director: str):
+    def get_series_by_director_last_name(director: str):
         """
-        Function takes a director name as an argument and returns all the series that
-        the director has directed. If no such director exists, it raises NonExistingDirectorException.
+        Function takes a director's last name as an argument and returns all the series that
+        the director or directors has directed. If no such director exists, it raises NonExistingDirectorException.
 
         Param director:str: Get the director object from the database.
         Return: A list of series objects.
@@ -89,11 +89,59 @@ class SeriesServices:
         try:
             with SessionLocal() as db:
                 director_repo = DirectorRepository(db, Director)
-                obj = director_repo.read_directors_by_last_name(director, search=False)
-                if not obj:
+                response = director_repo.read_directors_by_last_name(director, search=False)
+                if not response:
                     raise NonExistingDirectorException(message=f"We do not have Director: {director} in our Database.")
                 series_repo = SeriesRepository(db, Series)
-                return series_repo.read_series_by_director_id(obj.id)
+                objs = series_repo.read_series_by_director_ids([director.id for director in response])
+                for obj in objs:
+                    for director in response:
+                        if obj.director_id == director.id:
+                            obj.director = director
+                return objs
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_series_by_director_first_name(director: str):
+        """
+        Function takes a director's first name as an argument and returns all the series that
+        the director or directors has directed. If no such director exists, it raises NonExistingDirectorException.
+
+        Param director:str: Get the director object from the database.
+        Return: A list of series objects.
+        """
+        try:
+            with SessionLocal() as db:
+                director_repo = DirectorRepository(db, Director)
+                response = director_repo.read_directors_by_first_name(director, search=False)
+                if not response:
+                    raise NonExistingDirectorException(message=f"We do not have Director: {director} in our Database.")
+                series_repo = SeriesRepository(db, Series)
+                objs = series_repo.read_series_by_director_ids([director.id for director in response])
+                for obj in objs:
+                    for director in response:
+                        if obj.director_id == director.id:
+                            obj.director = director
+                return objs
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_series_by_director_country(country: str):
+        try:
+            with SessionLocal() as db:
+                director_repo = DirectorRepository(db, Director)
+                response = director_repo.read_directors_by_country(country)
+                if not response:
+                    raise NonExistingDirectorException(message=f"We do not have directors from: '{country}' in our DB.")
+                series_repo = SeriesRepository(db, Series)
+                objs = series_repo.read_series_by_director_ids([director.id for director in response])
+                for obj in objs:
+                    for director in response:
+                        if obj.director_id == director.id:
+                            obj.director = director
+                return objs
         except Exception as exc:
             raise exc
 

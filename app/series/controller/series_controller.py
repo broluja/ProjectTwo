@@ -81,17 +81,54 @@ class SeriesController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def get_series_by_director_name(director: str):
+    def get_series_by_director_last_name(director: str):
         """
         Function is used to retrieve all series from a given director.
         It takes in the name of the director as an argument and returns a list of Series objects.
 
-        Param director:str: Filter the series by director name.
-        Return: A list of series that match the director name.
+        Param director:str: Filter the series by a director's last name.
+        Return: A list of series that match the director's last name.
         """
         try:
-            series = SeriesServices.get_series_by_director_name(director)
+            series = SeriesServices.get_series_by_director_last_name(director)
             return series if series else JSONResponse(content=f"No Series from Director: {director}.", status_code=200)
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def get_series_by_director_first_name(director: str):
+        """
+        Function is used to retrieve all series from a given director.
+        It takes in the name of the director as an argument and returns a list of Series objects.
+
+        Param director:str: Filter the series by a director's first name.
+        Return: A list of series that match the director's first name.
+        """
+        try:
+            series = SeriesServices.get_series_by_director_first_name(director)
+            return series if series else JSONResponse(content=f"No Series from Director: {director}.", status_code=200)
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def get_series_by_director_country(country: str):
+        """
+        Function is used to retrieve all series directed by directors from specific country.
+        It takes in the country as an argument and returns a list of Series objects.
+
+        Param country:str: Filter the series by a director's country.
+        Return: A list of series that match the director's first name.
+        """
+        try:
+            series = SeriesServices.get_series_by_director_country(country)
+            return series if series else JSONResponse(
+                content=f"No Series by Director(s) from: {country}.",
+                status_code=200
+            )
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

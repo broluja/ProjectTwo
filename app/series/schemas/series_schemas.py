@@ -73,6 +73,20 @@ class SeriesWithDirectorAndGenreSchema(BaseModel):
         orm_mode = True
 
 
+class SeriesWithDirectorSchema(BaseModel):
+    """Base Series Schema with Genres and Directors"""
+    id: UUID4
+    title: str
+    description: str
+    date_added: date
+    year_published: str
+    director: DirectorSchema
+
+    class Config:
+        """Configuration Class"""
+        orm_mode = True
+
+
 class SeriesFullSchema(BaseModel):
     """Full Series Schema"""
     id: UUID4

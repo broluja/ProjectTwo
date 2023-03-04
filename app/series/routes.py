@@ -1,5 +1,5 @@
 """Series and episodes routes"""
-from fastapi import APIRouter, Depends, status, HTTPException, Body
+from fastapi import APIRouter, Depends, status, HTTPException, Body, Query
 from starlette.requests import Request
 
 from app.series.controller import SeriesController, EpisodeController
@@ -81,7 +81,7 @@ def update_series_data(series: SeriesSchemaIn, series_id: str):
                       summary="Delete Series. Admin Route.",
                       dependencies=[Depends(JWTBearer(["super_user"]))]
                       )
-def delete_series(series_id: str):
+def delete_series(series_id: str = Body(embed=True)):
     """
     Function deletes a series from the database.
 
@@ -146,7 +146,7 @@ def get_episode_by_id(episode_id: str):
                     response_model=EpisodeSchema,
                     status_code=status.HTTP_201_CREATED
                     )
-def update_episode(episode_id: str, episode: EpisodeSchemaIn):
+def update_episode(episode: EpisodeSchemaIn, episode_id: str = Body(embed=True)):
     """
     Function updates an existing episode in the database.
 
@@ -162,7 +162,7 @@ def update_episode(episode_id: str, episode: EpisodeSchemaIn):
                        summary="Delete episode by ID. Admin Route.",
                        dependencies=[Depends(JWTBearer(["super_user"]))]
                        )
-def delete_episode(episode_id: str):
+def delete_episode(episode_id: str = Body(embed=True)):
     """
     Function deletes an episode from the database.
 
@@ -195,7 +195,7 @@ def add_actor_to_series(series_id: str = Body(embed=True), actor_id: str = Body(
                             dependencies=[Depends(JWTBearer(["super_user"]))],
                             summary="Remove actor from Series. Admin Route."
                             )
-def remove_actor_from_series(series_id: str, actor_id: str):
+def remove_actor_from_series(series_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     Function removes an actor from a series.
 
@@ -288,7 +288,7 @@ def search_series_by_name(series: str):
     Param series:str: Specify the name of the series that is being searched for.
     Return: A list of series objects that match the search criteria.
     """
-    return SeriesController.get_series_by_name(series, search=True)
+    return SeriesController.get_series_by_name(series.strip(), search=True)
 
 
 @watch_episode.get("/get-series/data",
@@ -320,8 +320,13 @@ def search_series_by_genre(genre: str):
     return SeriesController.get_series_by_genre(genre.strip())
 
 
-@watch_episode.get("/search-series/director", summary="Search Series by Director's Last Name.")
-def get_series_by_director_name(director: str):
+@watch_episode.get("/search-series/director",
+                   summary="Search Series by Director's Last Name.",
+                   response_model=list[SeriesWithDirectorSchema])
+def get_series_by_director_name(
+        choice: str = Query("Last Name", enum=["First Name", "Last Name", "Country"]),
+        query: str = ""
+):
     """
     Function takes a director name as an argument and returns all the series that have
     that director. The function first strips any whitespace from the inputted string, then checks if it is empty.
@@ -330,7 +335,13 @@ def get_series_by_director_name(director: str):
     Param director:str: Specify the name of the director.
     Return: A list of series objects.
     """
-    return SeriesController.get_series_by_director_name(director.strip())
+    match choice:
+        case "First Name":
+            return SeriesController.get_series_by_director_first_name(query.strip())
+        case "Last Name":
+            return SeriesController.get_series_by_director_last_name(query.strip())
+        case "Country":
+            return SeriesController.get_series_by_director_country(query.strip())
 
 
 @watch_episode.get("/get-average-rating-for-series",
