@@ -1,6 +1,6 @@
 """Admin Repository module"""
 from app.base import BaseCRUDRepository, AppException
-from app.users.models import Admin
+from app.users.models import Admin, User
 
 
 class AdminRepository(BaseCRUDRepository):
@@ -18,6 +18,13 @@ class AdminRepository(BaseCRUDRepository):
         """
         try:
             return self.db.query(Admin).filter(Admin.country == country).all()
+        except Exception as exc:
+            self.db.rollback()
+            raise AppException(message=str(exc), code=500) from exc
+
+    def read_admin_by_user_id(self, user_id: str):
+        try:
+            return self.db.query(Admin).filter(User.id == user_id).first()
         except Exception as exc:
             self.db.rollback()
             raise AppException(message=str(exc), code=500) from exc

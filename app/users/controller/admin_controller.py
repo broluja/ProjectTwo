@@ -71,3 +71,12 @@ class AdminController:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
             raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500) from exc
+
+    @staticmethod
+    def update_admin(admin: dict, admin_id: str):
+        try:
+            return AdminServices.update_admin(admin, admin_id)
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(detail="Unknown Error occurred. Please try again later.", status_code=500) from exc

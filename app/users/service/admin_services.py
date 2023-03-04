@@ -81,3 +81,14 @@ class AdminServices:
                 return admin_repository.read_admins_by_country(country)
         except Exception as exc:
             raise exc
+
+    @staticmethod
+    def update_admin(admin: dict, user_id: str):
+        try:
+            with SessionLocal() as db:
+                admin_repository = AdminRepository(db, Admin)
+                obj = admin_repository.read_admin_by_user_id(user_id)
+                attributes = {key: value for key, value in admin.items() if value}
+                return admin_repository.update(obj, attributes)
+        except Exception as exc:
+            raise exc

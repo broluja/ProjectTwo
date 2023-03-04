@@ -31,9 +31,7 @@ def create_new_series(series: SeriesSchemaIn):
     return SeriesController.create_series(**series.dict())
 
 
-@series_router.get("/",
-                   response_model=list[SeriesWithActorsSchema]
-                   )
+@series_router.get("/", response_model=list[SeriesWithActorsSchema])
 def get_all_series(page: int = 1):
     """
     Function returns a list of all series in the database.
@@ -240,7 +238,7 @@ def user_rate_episode(request: Request,
                       series_title: str = Body(embed=True),
                       rating: int = Body(embed=True)):
     """
-    The user_rate_episode function allows a user to rate an episode of a series.
+    Function allows a user to rate an episode of a series.
     The function takes in the name of the episode, the title of the series it belongs to,
     and what rating they want to give it.
     It returns whether their rating was successful.
@@ -328,11 +326,12 @@ def get_series_by_director_name(
         query: str = ""
 ):
     """
-    Function takes a director name as an argument and returns all the series that have
-    that director. The function first strips any whitespace from the inputted string, then checks if it is empty.
-    If it is empty, an error message will be returned to the user.
+    Function takes a director first, last name or country as an argument
+    and returns all the series that have director with those queries.
+    The function first strips any whitespace from the inputted string
 
-    Param director:str: Specify the name of the director.
+    Param choice:str: Specify the criteria to query.
+    Param query: str: Query to search for.
     Return: A list of series objects.
     """
     match choice:
@@ -465,9 +464,8 @@ def show_least_popular_series():
 def get_users_series_recommendations(request: Request, page: int = 1):
     """
     Function is used to get the recommendations for a specific user.
-    It takes in a request and page number than parameters, and returns an array of
-    dictionaries containing the series IDS, titles
-    and images of all recommended series.
+    It takes in a request and page number and returns an array of
+    dictionaries containing the series objects.
 
     Param request:Request: Get the user_id from the cookies.
     Param page:int=1: Specify the page number to be returned.

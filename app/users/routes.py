@@ -516,3 +516,12 @@ def remove_admin_credentials(admin_id: str = Body(embed=True)):
     Return: The admin_id of the admin that is being removed from the system.
     """
     return AdminController.derogate_admin(admin_id)
+
+
+@admin_router.put("/",
+                  summary="Update admins data. Admin route",
+                  dependencies=[Depends(JWTBearer(["super_user"]))]
+                  )
+def update_admin(admin: AdminSchemaUpdate, request: Request):
+    admin_id = request.cookies.get("user_id")
+    return AdminController.update_admin(vars(admin), admin_id)

@@ -38,3 +38,23 @@ class AdminSchemaIn(BaseModel):
                 "user_id": ""
             }
         }
+
+
+class AdminSchemaUpdate(BaseModel):
+    """Base Admin schema for update"""
+    first_name: str
+    last_name: str
+    address: str
+    country: str
+
+    class Config:
+        """Configuration Class"""
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "first_name": "John",
+                "last_name": "Doe",
+                "address": "1st Street, Chicago",
+                "country": "USA"
+            }
+        }
