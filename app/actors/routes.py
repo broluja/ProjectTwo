@@ -92,6 +92,12 @@ def get_actor_movies(actor_last_name: str):
 
 @actor_router.get("/get-actor/year-of-birth")
 def get_actor_by_year_of_birth(year: int):
+    """
+    Function returns list of actors born on specified year.
+
+    Param year:int: Year to query.
+    Return: List of Actor objects.
+    """
     return ActorController.get_actor_by_year_of_birth(year)
 
 

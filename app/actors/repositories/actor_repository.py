@@ -60,6 +60,12 @@ class ActorRepository(BaseCRUDRepository):
             raise exc
 
     def read_actors_by_year_of_birth(self, year: int):
+        """
+        Function returns list of Actors born on specified year.
+
+        Param year: int: Year to query.
+        Return: list of Actor objects.
+        """
         try:
             start_date = f"{year}-01-01"
             end_date = f"{year}-12-31"

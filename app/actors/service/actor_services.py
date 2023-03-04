@@ -122,6 +122,12 @@ class ActorServices:
 
     @staticmethod
     def get_actors_by_year_of_birth(year: int):
+        """
+        Function returns list of Actors born on specified year.
+
+        Param year: int: Year to query.
+        Return: list of Actor objects.
+        """
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
