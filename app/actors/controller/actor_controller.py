@@ -1,6 +1,6 @@
 """Actor controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import JSONResponse
 
 from app.actors.service import ActorServices
 from app.base import AppException
@@ -40,7 +40,7 @@ class ActorController:
         """
         try:
             actors = ActorServices.get_all_actors(page)
-            return actors if actors else Response(content="End of query.", status_code=200)
+            return actors if actors else JSONResponse(content="End of query.", status_code=200)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:
@@ -74,7 +74,7 @@ class ActorController:
         """
         try:
             actors = ActorServices.get_actor_by_last_name(actor)
-            return actors if actors else Response(content=f"No actor with last name: {actor}", status_code=200)
+            return actors if actors else JSONResponse(content=f"No actor with last name: '{actor}'", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -89,7 +89,7 @@ class ActorController:
         """
         try:
             actors = ActorServices.get_actor_by_first_name(actor)
-            return actors if actors else Response(content=f"No actor with first name: {actor}", status_code=200)
+            return actors if actors else JSONResponse(content=f"No actor with first name: '{actor}'", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -105,8 +105,23 @@ class ActorController:
         """
         try:
             actor = ActorServices.get_actor_movies(last_name)
-            return [movie.title for movie in actor.movies] if actor else Response(
-                content=f"No actor with last name: {last_name}",
+            if not actor:
+                return JSONResponse(content=f"No actor with last name: '{last_name}'.", status_code=200)
+            movies = [movie.title for movie in actor.movies]
+            if not movies:
+                return JSONResponse(
+                    content=f"No movies in our Database yet from actor: '{actor.first_name} {actor.last_name}'.",
+                    status_code=200
+                )
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def get_actor_by_year_of_birth(year: int):
+        try:
+            actors = ActorServices.get_actors_by_year_of_birth(year)
+            return actors if actors else JSONResponse(
+                content="No actors born on this year in our Database.",
                 status_code=200
             )
         except Exception as exc:
@@ -140,6 +155,6 @@ class ActorController:
         """
         try:
             ActorServices.delete_actor(actor_id)
-            return Response(content=f"Actor with ID: {actor_id} deleted.", status_code=200)
+            return JSONResponse(content=f"Actor with ID: '{actor_id}' deleted.", status_code=200)
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc

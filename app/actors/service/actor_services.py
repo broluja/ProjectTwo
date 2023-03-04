@@ -121,6 +121,15 @@ class ActorServices:
             raise exc
 
     @staticmethod
+    def get_actors_by_year_of_birth(year: int):
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                return repository.read_actors_by_year_of_birth(year)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
     def update_actor(actor_id, attributes):
         """
         Function updates an actor's information.

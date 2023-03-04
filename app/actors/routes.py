@@ -90,6 +90,11 @@ def get_actor_movies(actor_last_name: str):
     return ActorController.get_actor_movies(actor_last_name.strip())
 
 
+@actor_router.get("/get-actor/year-of-birth")
+def get_actor_by_year_of_birth(year: int):
+    return ActorController.get_actor_by_year_of_birth(year)
+
+
 @actor_router.put("/",
                   response_model=ActorSchema,
                   summary="Update Actor. Admin Route.",
