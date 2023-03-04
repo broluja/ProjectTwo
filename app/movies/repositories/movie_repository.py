@@ -10,6 +10,7 @@ PER_PAGE = settings.PER_PAGE
 
 class MovieRepository(BaseCRUDRepository):
     """Repository for Movie Model"""
+
     def read_movie_by_title(self, title: str, search=False):
         """
         Function takes a title as an argument and returns the movie object with that title.
@@ -28,6 +29,20 @@ class MovieRepository(BaseCRUDRepository):
                 self.db.rollback()
                 raise NonExistingMovieTitleException
             return movie
+        except Exception as exc:
+            self.db.rollback()
+            raise exc
+
+    def read_movies_by_director_id(self, director_id: str):
+        try:
+            return self.db.query(Movie).filter(Movie.director_id == director_id).all()
+        except Exception as exc:
+            self.db.rollback()
+            raise exc
+
+    def read_movies_by_director_ids(self, director_ids: list):
+        try:
+            return self.db.query(Movie).filter(Movie.director_id.in_(director_ids)).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

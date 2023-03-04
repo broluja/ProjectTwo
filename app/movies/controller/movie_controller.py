@@ -1,6 +1,6 @@
 """Movie Controller module"""
 from fastapi import HTTPException
-from starlette.responses import Response
+from starlette.responses import Response, JSONResponse
 
 from app.base import AppException
 from app.movies.service import MovieServices
@@ -114,7 +114,20 @@ class MovieController:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @staticmethod
-    def search_movies_by_director(director: str):
+    def search_movies_by_director_first_name(first_name: str):
+        try:
+            movies = MovieServices.search_movies_by_director_first_name(first_name)
+            return movies if movies else JSONResponse(
+                content=f"No Movie from Director: '{first_name}' in our Database.",
+                status_code=200
+            )
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def search_movies_by_director_last_name(director: str):
         """
         Function searches for movies by a given director.
         It takes in a string representing the name of the director and returns all movies from that director.
@@ -124,9 +137,22 @@ class MovieController:
         Return: A list of movies from the given director.
         """
         try:
-            movies = MovieServices.search_movies_by_director(director)
-            return movies if movies else Response(
-                content=f"No Movie from Director: {director} in our Database.",
+            movies = MovieServices.search_movies_by_director_last_name(director)
+            return movies if movies else JSONResponse(
+                content=f"No Movie from Director: '{director}' in our Database.",
+                status_code=200
+            )
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def search_movies_by_director_full_name(full_name: str):
+        try:
+            movies = MovieServices.search_movies_by_director_full_name(full_name)
+            return movies if movies else JSONResponse(
+                content=f"No movies in Database from director '{full_name}'",
                 status_code=200
             )
         except AppException as exc:

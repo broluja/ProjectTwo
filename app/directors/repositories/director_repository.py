@@ -36,7 +36,7 @@ class DirectorRepository(BaseCRUDRepository):
             if search:
                 result = self.db.query(Director).filter(Director.last_name.ilike(f"%{last_name}%")).all()
             else:
-                result = self.db.query(Director).filter(Director.last_name == last_name).first()
+                result = self.db.query(Director).filter(Director.last_name == last_name).all()
             return result
         except Exception as exc:
             self.db.rollback()
@@ -56,8 +56,24 @@ class DirectorRepository(BaseCRUDRepository):
             if search:
                 directors = self.db.query(Director).filter(Director.first_name.ilike(f"%{first_name}%")).all()
             else:
-                directors = self.db.query(Director).filter(Director.first_name == first_name).first()
+                directors = self.db.query(Director).filter(Director.first_name == first_name).all()
             return directors
+        except Exception as exc:
+            self.db.rollback()
+            raise exc
+
+    def read_director_by_full_name(self, first_name: str, last_name: str):
+        """
+        Function is used to retrieve directors searching them by first and last name.
+
+        Param full_name:str: Full name of director that is split on first and last name.
+        Return: Director object.
+        """
+        try:
+            return self.db.query(Director).\
+                filter(Director.first_name == first_name).\
+                filter(Director.last_name == last_name).\
+                first()
         except Exception as exc:
             self.db.rollback()
             raise exc

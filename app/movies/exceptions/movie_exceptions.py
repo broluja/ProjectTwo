@@ -25,3 +25,10 @@ class NoLatestReleasesException(AppException):
     """Exception raised when user search for latest releases but in our Database there is no."""
     message = "No latest releases."
     code = 200
+
+
+class NoMoviesFromDirectorException(AppException):
+    """Exception raised when user search for Movie from a specific director
+     for whom there is still no data in our Database."""
+    message = "There is no movies from this director in our Database yet."
+    code = 200

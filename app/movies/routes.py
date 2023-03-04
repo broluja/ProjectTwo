@@ -1,5 +1,5 @@
 """Movie and Movie-Actor routes"""
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Query
 from starlette.requests import Request
 
 from app.movies.controller import MovieController, MovieActorController
@@ -241,16 +241,26 @@ def search_movies_by_title(title: str):
                  summary="Search Movies by director.",
                  response_model=list[MovieWithActorsSchema]
                  )
-def search_movies_by_director(director: str):
+def search_movies_by_director(
+        choice: str = Query("Last Name", enum=["First Name", "Last Name", "Full Name"]),
+        query: str = ""
+):
     """
     Function searches for all movies by a given director.
-    It takes in a string representing the director's name and returns a list of dictionaries,
-    each dictionary containing information about one movie.
+    It takes in a string representing the director's name, surname or full name
+    and returns a list of dictionaries, each dictionary containing information about one movie.
 
-    Param director:str: Search for a movie by the director's name
+    Param director:str: Search for a movie by the director's name, surname or full name
+    Param query:str: Given query to search by.
     Return: A list of movies that match the director's name.
     """
-    return MovieController.search_movies_by_director(director)
+    match choice:
+        case "Full Name":
+            return MovieController.search_movies_by_director_full_name(query.strip())
+        case "First Name":
+            return MovieController.search_movies_by_director_first_name(query.strip())
+        case "Last Name":
+            return MovieController.search_movies_by_director_last_name(query.strip())
 
 
 @watch_movie.get("/search-movies/genre",
