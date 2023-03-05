@@ -65,7 +65,7 @@ class ActorRepository(BaseCRUDRepository):
         try:
             start_date = f"{year}-01-01"
             end_date = f"{year}-12-31"
-            return self.db.query(Actor).filter(Actor.date_of_birth.between(end_date, start_date)).all()
+            return self.db.query(Actor).filter(Actor.date_of_birth.between(start_date, end_date)).all()
         except Exception as exc:
             self.db.rollback()
             raise exc

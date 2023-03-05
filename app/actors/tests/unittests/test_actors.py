@@ -2,6 +2,7 @@
 import pytest
 from sqlalchemy.exc import IntegrityError, ProgrammingError
 
+from app.base import AppException
 from app.tests import TestClass, TestingSessionLocal
 from app.actors.repositories import ActorRepository
 from app.actors.models import Actor
@@ -75,12 +76,42 @@ class TestActorRepo(TestClass):
                               "country": "USA"}
                 actor_repository.create(attributes)
 
+    def test_read_actor_by_id(self):
+        """
+        Function tests reading actor from Database by its ID.
+
+        Return: Actor object.
+        """
+        self.create_actor()
+        with TestingSessionLocal() as db:
+            repository = ActorRepository(db, Actor)
+            actor = repository.read_by_id(self.actor.id)
+
+        assert actor.id == self.actor.id
+        assert actor.first_name == self.actor.first_name
+        assert actor.last_name == self.actor.last_name
+        assert actor.country == self.actor.country
+
+    def test_read_actor_by_id_error(self):
+        """
+        Function tests reading actor by ID error when we try
+        to find an Actor by unknown ID.
+
+        Return: AppException error.
+        """
+        self.create_actor()
+        with pytest.raises(AppException):
+            with TestingSessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                ID = self.actor.id
+                repository.delete(ID)
+                repository.read_by_id(ID)
+
     def test_create_actor_date_of_birth_error(self):
         """
         Function is used to test the create method of the ActorRepository class.
         It creates an actor with a first name that is empty and checks if it raises an error.
 
-        Param self: Access the test class and its methods.
         Return: A dictionary with an error message.
         """
         with pytest.raises(ProgrammingError):

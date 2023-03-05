@@ -2,6 +2,8 @@
 import pytest
 
 from sqlalchemy.exc import IntegrityError
+
+from app.base import AppException
 from app.tests import TestClass, TestingSessionLocal
 from app.genres.repositories import GenreRepository
 from app.genres.models import Genre
@@ -9,8 +11,9 @@ from app.genres.models import Genre
 
 class TestGenreRepo(TestClass):
     """Test Genre functionalities"""
-    @staticmethod
-    def create_genres_for_methods():
+    genre = None
+
+    def create_genres_for_tests(self):
         """
         Function creates three genres in the database.
 
@@ -18,9 +21,10 @@ class TestGenreRepo(TestClass):
         """
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)
-            genre_repository.create({"name": "Action"})
             genre_repository.create({"name": "SciFi"})
             genre_repository.create({"name": "Comedy"})
+            genre = genre_repository.create({"name": "Action"})
+            self.genre = genre
 
     def test_create_genre(self):
         """
@@ -43,7 +47,7 @@ class TestGenreRepo(TestClass):
 
         Return: A 'integrity-error' exception.
         """
-        self.create_genres_for_methods()
+        self.create_genres_for_tests()
         with pytest.raises(IntegrityError):
             with TestingSessionLocal() as db:
                 genre_repository = GenreRepository(db, Genre)
@@ -54,12 +58,40 @@ class TestGenreRepo(TestClass):
         Function tests retrieving genres from Database by name.
         Return: Genre object.
         """
-        self.create_genres_for_methods()
+        self.create_genres_for_tests()
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)
             genre = genre_repository.read_genres_by_name("Action", search=False)
 
         assert genre.name == "Action"
+
+    def test_read_genre_by_id(self):
+        """
+        Function tests reading genre from Database by its ID.
+
+        Return: Genre object.
+        """
+        self.create_genres_for_tests()
+        with TestingSessionLocal() as db:
+            repository = GenreRepository(db, Genre)
+            genre = repository.read_by_id(self.genre.id)
+
+        assert genre.name == self.genre.name
+        assert genre.id == self.genre.id
+
+    def test_read_genre_by_id_error(self):
+        """
+        Function tests error on reading genre object by unknown ID.
+
+        Return: AppException error.
+        """
+        self.create_genres_for_tests()
+        with pytest.raises(AppException):
+            with TestingSessionLocal() as db:
+                repository = GenreRepository(db, Genre)
+                ID = self.genre.id
+                repository.delete(ID)
+                repository.read_by_id(ID)
 
     def test_search_genre_by_name(self):
         """
@@ -70,7 +102,7 @@ class TestGenreRepo(TestClass):
         Param self: Access the class instance inside a method
         Return: A list of genre objects that match the search query.
         """
-        self.create_genres_for_methods()
+        self.create_genres_for_tests()
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)
             genres = genre_repository.read_genres_by_name("a", search=True)
@@ -84,10 +116,40 @@ class TestGenreRepo(TestClass):
         Function tests reading all tests from Database.
         Return: A list of genres.
         """
-        self.create_genres_for_methods()
+        self.create_genres_for_tests()
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)
             genres = genre_repository.read_all()
 
         assert isinstance(genres, list)
         assert len(genres) == 3
+
+    def test_update_genre(self):
+        """
+        Function tests update of Genre object.
+
+        Return : Genre object.
+        """
+        self.create_genres_for_tests()
+        with TestingSessionLocal() as db:
+            repository = GenreRepository(db, Genre)
+            obj = repository.update(self.genre, {"name": "Test Genre"})
+
+        assert self.genre.name == obj.name
+        assert self.genre.id == obj.id
+
+    def test_delete_genre(self):
+        """
+        Function tests deletion of Genre.
+
+        Return: None.
+        """
+        self.create_genres_for_tests()
+        with TestingSessionLocal() as db:
+            repository = GenreRepository(db, Genre)
+            repository.delete(self.genre.id)
+            genres = repository.read_all()
+
+        assert isinstance(genres, list)
+        assert len(genres) == 2
+        assert "Action" not in (genre.name for genre in genres)
