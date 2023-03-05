@@ -100,3 +100,17 @@ class TestActorRepo(TestClass):
         assert actors[0].first_name == "John"
         assert actors[0].last_name == "Doe"
         assert actors[0].country == "USA"
+
+    def test_get_actor_by_year_of_birth(self):
+        """
+        Function tests search of actors by a year of birth.
+
+        Return: List of actors in the database, born in 1983.
+        """
+        self.create_actor()
+        with TestingSessionLocal() as db:
+            actor_repository = ActorRepository(db, Actor)
+            actors = actor_repository.read_actors_by_year_of_birth(1983)
+        assert actors[0].first_name == "John"
+        assert actors[0].last_name == "Doe"
+        assert actors[0].country == "USA"
