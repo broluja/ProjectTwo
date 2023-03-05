@@ -1,4 +1,7 @@
 """Test Actor module"""
+import pytest
+from sqlalchemy.exc import IntegrityError, ProgrammingError
+
 from app.tests import TestClass, TestingSessionLocal
 from app.actors.repositories import ActorRepository
 from app.actors.models import Actor
@@ -46,13 +49,48 @@ class TestActorRepo(TestClass):
         Param self: Access the test class and its methods.
         Return: A dictionary with an error message.
         """
-        with TestingSessionLocal() as db:
-            actor_repository = ActorRepository(db, Actor)
-            attributes = {"first_name": "",
-                          "last_name": "Doe",
-                          "date_of_birth": "1983-10-10",
-                          "country": "USA"}
-            actor_repository.create(attributes)
+        with pytest.raises(IntegrityError):
+            with TestingSessionLocal() as db:
+                actor_repository = ActorRepository(db, Actor)
+                attributes = {"first_name": None,
+                              "last_name": "Doe",
+                              "date_of_birth": "1983-10-10",
+                              "country": "USA"}
+                actor_repository.create(attributes)
+
+    def test_create_actor_last_name_error(self):
+        """
+        Function is used to test the create method of the ActorRepository class.
+        It creates an actor with a first name that is empty and checks if it raises an error.
+
+        Param self: Access the test class and its methods.
+        Return: A dictionary with an error message.
+        """
+        with pytest.raises(IntegrityError):
+            with TestingSessionLocal() as db:
+                actor_repository = ActorRepository(db, Actor)
+                attributes = {"first_name": "John",
+                              "last_name": None,
+                              "date_of_birth": "1983-10-10",
+                              "country": "USA"}
+                actor_repository.create(attributes)
+
+    def test_create_actor_date_of_birth_error(self):
+        """
+        Function is used to test the create method of the ActorRepository class.
+        It creates an actor with a first name that is empty and checks if it raises an error.
+
+        Param self: Access the test class and its methods.
+        Return: A dictionary with an error message.
+        """
+        with pytest.raises(ProgrammingError):
+            with TestingSessionLocal() as db:
+                actor_repository = ActorRepository(db, Actor)
+                attributes = {"first_name": "John",
+                              "last_name": "Doe",
+                              "date_of_birth": 1983,
+                              "country": "USA"}
+                actor_repository.create(attributes)
 
     def test_get_actor_by_first_name(self):
         """
@@ -114,3 +152,33 @@ class TestActorRepo(TestClass):
         assert actors[0].first_name == "John"
         assert actors[0].last_name == "Doe"
         assert actors[0].country == "USA"
+
+    def test_update_actor(self):
+        """
+        Function tests update of Actor object.
+
+        Return: Actor Object.
+        """
+        self.create_actor()
+        with TestingSessionLocal() as db:
+            repository = ActorRepository(db, Actor)
+            repository.update(self.actor, {"first_name": "Jake", "last_name": "Johns"})
+
+        assert self.actor.first_name == "Jake"
+        assert self.actor.last_name == "Johns"
+        assert self.actor.country == "USA"
+
+    def test_delete_actor(self):
+        """
+        Function tests deletion of Actor.
+
+        Return: None.
+        """
+        self.create_actor()
+        with TestingSessionLocal() as db:
+            repository = ActorRepository(db, Actor)
+            repository.delete(self.actor.id)
+            actors = repository.read_all()
+
+        assert isinstance(actors, list)
+        assert len(actors) == 0

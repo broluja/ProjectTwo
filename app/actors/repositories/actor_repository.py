@@ -13,15 +13,13 @@ class ActorRepository(BaseCRUDRepository):
         list of actors that match the search criteria.
 
         Param first_name:str: Store the first name of the actor
-        Param search:bool=True: Determine whether the search should be case-sensitive or not
+        Param search:bool=True: Determine whether the search should be strict or not.
         Return: All actors whose first name contains the first_name argument.
         """
         try:
-            if search:
-                actors = self.db.query(Actor).filter(Actor.first_name.ilike(f"%{first_name}%")).all()
-            else:
-                actors = self.db.query(Actor).filter(Actor.first_name == first_name).first()
-            return actors
+            return self.db.query(Actor).filter(Actor.first_name.ilike(f"%{first_name}%")).all() if search else \
+                self.db.query(Actor).filter(Actor.first_name == first_name).first()
+
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -33,15 +31,13 @@ class ActorRepository(BaseCRUDRepository):
         capitalized version of the same last name.
 
         Param last_name:str: Filter the actors by last name
-        Param literal=False: Indicate whether the last_name parameter is a literal or not.
+        Param literal=False: Determine whether the search should be strict or not.
         Return: The list of actors whose last name contains the string passed as an argument.
         """
         try:
-            if literal:
-                actors = self.db.query(Actor).filter(Actor.last_name == last_name).first()
-            else:
-                actors = self.db.query(Actor).filter(Actor.last_name.ilike(f"%{last_name}%")).all()
-            return actors
+            return self.db.query(Actor).filter(Actor.last_name == last_name).first() if literal else \
+                self.db.query(Actor).filter(Actor.last_name.ilike(f"%{last_name}%")).all()
+
         except Exception as exc:
             self.db.rollback()
             raise exc
@@ -69,7 +65,7 @@ class ActorRepository(BaseCRUDRepository):
         try:
             start_date = f"{year}-01-01"
             end_date = f"{year}-12-31"
-            return self.db.query(Actor).filter(Actor.date_of_birth.between(start_date, end_date)).all()
+            return self.db.query(Actor).filter(Actor.date_of_birth.between(end_date, start_date)).all()
         except Exception as exc:
             self.db.rollback()
             raise exc
