@@ -96,14 +96,13 @@ def delete_movie(movie_id: str):
     return MovieController.delete_movie(movie_id)
 
 
-movie_actor_router = APIRouter(tags=["MoviesActors"], prefix="/api/movies-actors")
+movie_actor_router = APIRouter(tags=["MoviesActors"],
+                               prefix="/api/movies-actors",
+                               dependencies=[Depends(JWTBearer(["super_user"]))]
+                               )
 
 
-@movie_actor_router.post("/",
-                         dependencies=[Depends(JWTBearer(["super_user"]))],
-                         summary="Add actor to Movie. Admin Route",
-                         status_code=status.HTTP_201_CREATED
-                         )
+@movie_actor_router.post("/", summary="Add actor to Movie. Admin Route", status_code=status.HTTP_201_CREATED)
 def add_actor_to_movie(movie_id: str, actor_id: str):
     """
     The add_actor_to_movie function adds an actor to a movie.
@@ -115,11 +114,7 @@ def add_actor_to_movie(movie_id: str, actor_id: str):
     return MovieActorController.create_movie_actor(movie_id, actor_id)
 
 
-@movie_actor_router.delete("/",
-                           dependencies=[Depends(JWTBearer(["super_user"]))],
-                           summary="Remove actor from Movie. Admin Route.",
-                           status_code=status.HTTP_201_CREATED
-                           )
+@movie_actor_router.delete("/", summary="Remove actor from Movie. Admin Route.", status_code=status.HTTP_201_CREATED)
 def remove_actor_from_movie(movie_id: str, actor_id: str):
     """
     The remove_actor_from_movie function removes an actor from a movie.

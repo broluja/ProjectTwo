@@ -170,14 +170,13 @@ def delete_episode(episode_id: str = Body(embed=True)):
     return EpisodeController.delete_episode(episode_id)
 
 
-series_actor_router = APIRouter(tags=["SeriesActors"], prefix="/api/series-actors")
+series_actor_router = APIRouter(tags=["SeriesActors"],
+                                prefix="/api/series-actors",
+                                dependencies=[Depends(JWTBearer(["super_user"]))]
+                                )
 
 
-@series_actor_router.post("/",
-                          dependencies=[Depends(JWTBearer(["super_user"]))],
-                          summary="Add actor to Series. Admin Route.",
-                          status_code=status.HTTP_201_CREATED
-                          )
+@series_actor_router.post("/", summary="Add actor to Series. Admin Route.", status_code=status.HTTP_201_CREATED)
 def add_actor_to_series(series_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     Function adds an actor to a series.
@@ -189,10 +188,7 @@ def add_actor_to_series(series_id: str = Body(embed=True), actor_id: str = Body(
     return SeriesActorController.create_series_actor(series_id, actor_id)
 
 
-@series_actor_router.delete("/",
-                            dependencies=[Depends(JWTBearer(["super_user"]))],
-                            summary="Remove actor from Series. Admin Route."
-                            )
+@series_actor_router.delete("/", summary="Remove actor from Series. Admin Route.")
 def remove_actor_from_series(series_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     Function removes an actor from a series.

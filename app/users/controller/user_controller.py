@@ -223,7 +223,10 @@ class UserController:
                     return sign_jwt(user.id, "sub_user"), sub.id
             raise UnknownProfileException
         except AppException as exc:
-            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+            raise HTTPException(
+                status_code=exc.code,
+                detail=exc.message,
+                headers=exc.headers) from exc
         except Exception as exc:
             raise HTTPException(status_code=500, detail=str(exc)) from exc
 

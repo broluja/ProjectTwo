@@ -25,7 +25,7 @@ def sign_jwt(user_id: str, role: str) -> Dict[str, str]:
     }
     token = jwt.encode(payload, USER_SECRET, algorithm=JWT_ALGORITHM)
 
-    return {"access_token": token}
+    return {"access_token": token, "token_type": "bearer"}
 
 
 def decode_jwt(token: str) -> dict:

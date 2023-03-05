@@ -449,14 +449,13 @@ def delete_subuser(request: Request, subuser_name: str = Body(embed=True)):
     return SubuserController.delete_subuser(user_id, subuser_name)
 
 
-admin_router = APIRouter(prefix="/api/admins", tags=["Admins"])
+admin_router = APIRouter(prefix="/api/admins", tags=["Admins"], dependencies=[Depends(JWTBearer(["super_user"]))])
 
 
 @admin_router.post("/",
                    response_model=AdminSchema,
                    summary="Create new Admin. Admin route",
-                   status_code=status.HTTP_201_CREATED,
-                   dependencies=[Depends(JWTBearer(["super_user"]))]
+                   status_code=status.HTTP_201_CREATED
                    )
 def create_new_admin(admin: AdminSchemaIn):
     """
@@ -469,11 +468,7 @@ def create_new_admin(admin: AdminSchemaIn):
     return AdminController.create_new_admin(admin.dict())
 
 
-@admin_router.get("/",
-                  response_model=list[AdminSchema],
-                  summary="Get all Admins. Admin route",
-                  dependencies=[Depends(JWTBearer(["super_user"]))]
-                  )
+@admin_router.get("/", response_model=list[AdminSchema], summary="Get all Admins. Admin route")
 def get_all_admins():
     """
     Function returns a list of all the admins in the database.
@@ -485,9 +480,7 @@ def get_all_admins():
 
 @admin_router.get("/read-admins/country",
                   summary="Get all Admins by country. Admin Route",
-                  dependencies=[Depends(JWTBearer(["super_user"]))],
-                  response_model=list[AdminSchema]
-                  )
+                  response_model=list[AdminSchema])
 def get_all_admins_by_country(country: str):
     """
     Function returns a list of all the admins in a given country.
@@ -500,11 +493,7 @@ def get_all_admins_by_country(country: str):
     return AdminController.get_all_admins_by_country(country)
 
 
-@admin_router.patch("/",
-                    response_model=UserSchema,
-                    summary="Deactivate Admin status. Admin route",
-                    dependencies=[Depends(JWTBearer(["super_user"]))]
-                    )
+@admin_router.patch("/", response_model=UserSchema, summary="Deactivate Admin status. Admin route")
 def remove_admin_credentials(admin_id: str = Body(embed=True)):
     """
     Function removes the admin credentials from the database.
@@ -518,10 +507,7 @@ def remove_admin_credentials(admin_id: str = Body(embed=True)):
     return AdminController.derogate_admin(admin_id)
 
 
-@admin_router.put("/",
-                  summary="Update admins data. Admin route",
-                  dependencies=[Depends(JWTBearer(["super_user"]))]
-                  )
+@admin_router.put("/", summary="Update admins data. Admin route")
 def update_admin(admin: AdminSchemaUpdate, request: Request):
     admin_id = request.cookies.get("user_id")
     return AdminController.update_admin(vars(admin), admin_id)

@@ -1,4 +1,5 @@
 """Admin Schema module"""
+from typing import Optional
 from uuid import uuid4
 
 from pydantic import BaseModel, UUID4, Field
@@ -42,10 +43,10 @@ class AdminSchemaIn(BaseModel):
 
 class AdminSchemaUpdate(BaseModel):
     """Base Admin schema for update"""
-    first_name: str
-    last_name: str
-    address: str
-    country: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    address: Optional[str] = None
+    country: Optional[str] = None
 
     class Config:
         """Configuration Class"""
