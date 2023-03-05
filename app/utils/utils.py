@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
-def generate_random_int(n: int) -> int:
+def generate_random_int(n: int = 6) -> int:
     """
     Function that generates random code made from n integer numbers
     Param n: number of integers

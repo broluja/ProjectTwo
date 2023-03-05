@@ -1,6 +1,7 @@
 """Main module"""
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 
 from app.db.database import engine, Base
 from app.users.routes import user_router, subuser_router, admin_router
@@ -45,7 +46,7 @@ app = init_app()
 
 @app.get("/", include_in_schema=False)
 def root():
-    return {"Hello": "planet Earth!"}
+    return RedirectResponse(url="/docs")
 
 
 if __name__ == "__main__":

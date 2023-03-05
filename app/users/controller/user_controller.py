@@ -34,7 +34,7 @@ class UserController:
         except EmailNotValidError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         try:
-            code = generate_random_int(5)
+            code = generate_random_int()
             user = UserServices.create_new_user(valid_email, password, username, code)
             EmailServices.send_code_for_verification(user.email, code)
             return JSONResponse(
@@ -137,7 +137,7 @@ class UserController:
         try:
             user = UserServices.get_user_by_email(email)
             if user:
-                code = generate_random_int(5)
+                code = generate_random_int()
                 obj = UserServices.generate_verification_code(user.id, code)
                 EmailServices.send_code_for_password_reset(user.email, code)
                 return obj
