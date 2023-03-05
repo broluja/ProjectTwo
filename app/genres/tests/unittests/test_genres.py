@@ -33,7 +33,8 @@ class TestGenreRepo(TestClass):
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)
             genre = genre_repository.create({"name": "Thriller"})
-            assert genre.name == "Thriller"
+
+        assert genre.name == "Thriller"
 
     def test_create_genre_error(self):
         """
@@ -57,6 +58,7 @@ class TestGenreRepo(TestClass):
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)
             genre = genre_repository.read_genres_by_name("Action", search=False)
+
         assert genre.name == "Action"
 
     def test_search_genre_by_name(self):
@@ -72,5 +74,20 @@ class TestGenreRepo(TestClass):
         with TestingSessionLocal() as db:
             genre_repository = GenreRepository(db, Genre)
             genres = genre_repository.read_genres_by_name("a", search=True)
+
         assert isinstance(genres, list)
         assert len(genres) == 1
+        assert genres[0].name == "Action"
+
+    def test_read_all_genres(self):
+        """
+        Function tests reading all tests from Database.
+        Return: A list of genres.
+        """
+        self.create_genres_for_methods()
+        with TestingSessionLocal() as db:
+            genre_repository = GenreRepository(db, Genre)
+            genres = genre_repository.read_all()
+
+        assert isinstance(genres, list)
+        assert len(genres) == 3
