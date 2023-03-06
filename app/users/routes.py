@@ -349,7 +349,7 @@ def activate_user(user_id: str = Body(embed=True)):
                     summary="Delete User. Admin route",
                     dependencies=[Depends(JWTBearer(["super_user"]))]
                     )
-def delete_user(user_id: str):
+def delete_user(user_id: str = Body(embed=True)):
     """
     Function deletes a user from the database.
 
@@ -494,12 +494,12 @@ def get_all_admins_by_country(country: str):
     return AdminController.get_all_admins_by_country(country)
 
 
-@admin_router.delete("/delete-admin",
-                     response_model=UserSchema,
-                     summary="Deactivate Admin status. Admin route",
-                     dependencies=[Depends(JWTBearer(["super_user"]))]
-                     )
-def remove_admin_credentials(admin_id: str):
+@admin_router.patch("/derogate-admin",
+                    response_model=UserSchema,
+                    summary="Deactivate Admin status. Admin route",
+                    dependencies=[Depends(JWTBearer(["super_user"]))]
+                    )
+def remove_admin_credentials(admin_id: str = Body(embed=True)):
     """
     Function removes the admin credentials from the database.
     It takes one argument, an admin_id, which is a string that represents the
