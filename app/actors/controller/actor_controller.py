@@ -121,13 +121,30 @@ class ActorController:
         """
         Function returns list of Actors born on specified year.
 
-        Param year: int: Year to query.
+        Param year: int: Year to query by.
         Return: list of Actor objects or Response with status code 200 if no actors found.
         """
         try:
             actors = ActorServices.get_actors_by_year_of_birth(year)
             return actors if actors else JSONResponse(
                 content="No actors born on this year in our Database.",
+                status_code=200
+            )
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def get_actors_by_country(country: str):
+        """
+        Function returns list of actors from specified country.
+
+        Param country: str: Country to query by.
+        Return: list of Actor objects or Response with status code 200 if no actors found.
+        """
+        try:
+            actors = ActorServices.get_actors_by_country(country)
+            return actors if actors else JSONResponse(
+                content=f"No actors from: '{country}' in our Database.",
                 status_code=200
             )
         except Exception as exc:

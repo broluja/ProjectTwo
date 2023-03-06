@@ -136,6 +136,21 @@ class ActorServices:
             raise exc
 
     @staticmethod
+    def get_actors_by_country(country: str):
+        """
+        Function returns list of Actors from specified country.
+
+        Param country: str: Country to query by.
+        Return: List of Actor objects.
+        """
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                return repository.read_actors_by_country(country)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
     def update_actor(actor_id, attributes):
         """
         Function updates an actor's information.

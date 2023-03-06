@@ -90,7 +90,9 @@ def get_actor_movies(actor_last_name: str):
     return ActorController.get_actor_movies(actor_last_name.strip())
 
 
-@actor_router.get("/get-actor/year-of-birth")
+@actor_router.get("/get-actor/year-of-birth",
+                  response_model=list[ActorSchema],
+                  summary="Get actors born on specified year.")
 def get_actor_by_year_of_birth(year: int):
     """
     Function returns list of actors born on specified year.
@@ -99,6 +101,17 @@ def get_actor_by_year_of_birth(year: int):
     Return: List of Actor objects.
     """
     return ActorController.get_actor_by_year_of_birth(year)
+
+
+@actor_router.get("/get-actor/country", response_model=list[ActorSchema], summary="Get actors from a specified Country")
+def get_actors_by_country(country: str):
+    """
+    Function returns a list of Actors from specified country.
+
+    Param country:str: Country to query by.
+    Return: list of Actor objects.
+    """
+    return ActorController.get_actors_by_country(country)
 
 
 @actor_router.put("/",
