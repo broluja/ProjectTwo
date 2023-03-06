@@ -110,11 +110,34 @@ class ActorServices:
 
     @staticmethod
     def get_actor_by_country(country: str, search: bool):
+        """
+        Function returns a list of actors from the database that match the country provided.
+        The search parameter is optional and if true, will return all actors from matching country.
+
+        Param country:str: Filter the actors by country.
+        Param search:bool: Search for a specific actor by name.
+        Return: A list of actors filtered by country.
+        """
         try:
             with SessionLocal() as db:
                 repository = ActorRepository(db, Actor)
-                actors = repository.read_actors_by_country(country, search)
-                return actors
+                return repository.read_actors_by_country(country, search)
+        except Exception as exc:
+            raise exc
+
+    @staticmethod
+    def get_actors_by_year_of_birth(year: int):
+        """
+        Function returns a list of actors who were born in the given year.
+        The function accepts one argument, year, which is an integer representing the birth year to search for.
+
+        Param year:int: Filter the actors by a year of birth.
+        Return: A list of actors that have their birth year set to the specified year.
+        """
+        try:
+            with SessionLocal() as db:
+                repository = ActorRepository(db, Actor)
+                return repository.read_actors_by_year_of_birth(year)
         except Exception as exc:
             raise exc
 

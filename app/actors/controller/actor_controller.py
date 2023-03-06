@@ -107,10 +107,39 @@ class ActorController:
 
     @staticmethod
     def get_actor_by_country(country: str, search: bool):
+        """
+        Function returns a list of actors from the given country.
+        The function accepts two parameters: country: The name of the country to search for actors in.
+        and search: A boolean value that indicates whether
+        to use fuzzy matching when searching for an actor by name.
+
+        Param country:str: Filter the actors by country.
+        Param search:bool: Search for a specific actor.
+        Return: The list of actors from a specific country.
+        """
         try:
             actors = ActorServices.get_actor_by_country(country, search)
             if not actors:
                 return JSONResponse(content=f"No actor from country: '{country}'", status_code=200)
+            return actors
+        except AppException as exc:
+            raise HTTPException(status_code=exc.code, detail=exc.message) from exc
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    @staticmethod
+    def get_actor_by_year(year: int):
+        """
+        Function returns a list of actors born in the given year.
+        If no actor was found, it returns an empty list.
+
+        Param year:int: Filter the actors by a year of birth.
+        Return: A list of actors born in the specified year.
+        """
+        try:
+            actors = ActorServices.get_actors_by_year_of_birth(year)
+            if not actors:
+                return JSONResponse(content=f"No actor born on: '{year}'", status_code=200)
             return actors
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc

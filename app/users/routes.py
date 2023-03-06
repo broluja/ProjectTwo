@@ -487,7 +487,6 @@ def get_all_admins_by_country(country: str):
     Function returns a list of all the admins in a given country.
     The function takes one parameter, which is the name of the country to search for.
 
-
     Param country:str: Filter the admins by country.
     Return: A list of all the admins in a country.
     """

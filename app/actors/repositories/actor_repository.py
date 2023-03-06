@@ -61,3 +61,18 @@ class ActorRepository(BaseCRUDRepository):
         except Exception as exc:
             self.db.rollback()
             raise exc
+
+    def read_actors_by_year_of_birth(self, year: int):
+        """
+        Function takes a year as an argument and returns all actors born in that year.
+
+        Param year:int: Filter the actors by a year of birth.
+        Return: A list of actors who were born in the specified year.
+        """
+        try:
+            start_date = f"{year}-01-01"
+            end_date = f"{year}-12-31"
+            return self.db.query(Actor).filter(Actor.date_of_birth.between(start_date, end_date)).all()
+        except Exception as exc:
+            self.db.rollback()
+            raise exc
