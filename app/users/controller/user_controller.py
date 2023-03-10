@@ -12,7 +12,7 @@ from app.users.exceptions import UnknownProfileException, AdminLoginException
 class UserController:
     """Controller for User routes"""
     @staticmethod
-    def create_user(email, password, username):
+    def create_user(worker, email, password, username):
         """
         Function creates a new user in the database.
         It takes as input an email, password and username. It returns a response with
@@ -24,7 +24,7 @@ class UserController:
         Return: A response object.
         """
         try:
-            return UserServices.create_new_user(email, password, username)
+            return UserServices.create_new_user(worker, email, password, username)
         except AppException as exc:
             raise HTTPException(status_code=exc.code, detail=exc.message) from exc
         except Exception as exc:

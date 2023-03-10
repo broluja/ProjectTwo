@@ -2,7 +2,7 @@
 import hashlib
 
 from email_validator import validate_email, EmailNotValidError
-from fastapi import APIRouter, status, Depends, HTTPException, Body, Query
+from fastapi import APIRouter, status, Depends, HTTPException, Body, Query, BackgroundTasks
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
@@ -18,7 +18,7 @@ user_router = APIRouter(prefix="/api/users", tags=["Users"])
                   summary="User Registration",
                   status_code=status.HTTP_201_CREATED
                   )
-def register_user(user: UserSchemaIn):
+def register_user(user: UserSchemaIn, worker: BackgroundTasks):
     """
     Function creates a new user in the database.
     It takes as input a UserSchemaIn object, which is validated and converted to an equivalent UserSchemaOut object.
@@ -32,7 +32,7 @@ def register_user(user: UserSchemaIn):
         valid_email = valid.email
     except EmailNotValidError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    return UserController.create_user(valid_email, user.password, user.username)
+    return UserController.create_user(worker, valid_email, user.password, user.username)
 
 
 @user_router.patch("/user-verification",

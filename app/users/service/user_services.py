@@ -1,6 +1,7 @@
 """User Service module"""
 import hashlib
 
+from fastapi import BackgroundTasks
 from starlette.responses import JSONResponse
 
 from app.users.repositories import UserRepository, SubuserRepository
@@ -14,7 +15,7 @@ from app.utils import generate_random_int, validate_password
 class UserServices:
     """Service for User routes."""
     @staticmethod
-    def create_new_user(email: str, password: str, username: str):
+    def create_new_user(worker: BackgroundTasks, email: str, password: str, username: str):
         """
         The create_new_user function creates a new user in the database.
         It takes as input an email, password, username and verification code.
@@ -34,7 +35,7 @@ class UserServices:
                 repository = UserRepository(db, User)
                 fields = {"email": email, "password_hashed": password, "username": username, "verification_code": code}
                 obj = repository.create(fields)
-            EmailServices.send_code_for_verification(obj.email, code)
+            worker.add_task(EmailServices.send_code_for_verification, obj.email, code)
             return JSONResponse(
                 content="Finish your registration. Instructions are sent to your email.",
                 status_code=200
