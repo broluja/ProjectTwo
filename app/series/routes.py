@@ -13,7 +13,7 @@ from app.utils import get_day_before_one_month
 series_router = APIRouter(tags=["Series"], prefix="/api/series")
 
 
-@series_router.post("/",
+@series_router.post("",
                     summary="Create new Series. Admin Route.",
                     dependencies=[Depends(JWTBearer(["super_user"]))],
                     response_model=SeriesWithDirectorAndGenreSchema,
@@ -31,7 +31,7 @@ def create_new_series(series: SeriesSchemaIn):
     return SeriesController.create_series(**series.dict())
 
 
-@series_router.get("/", response_model=list[SeriesWithActorsSchema])
+@series_router.get("", response_model=list[SeriesWithActorsSchema])
 def get_all_series(page: int = 1):
     """
     Function returns a list of all series in the database.
@@ -44,7 +44,7 @@ def get_all_series(page: int = 1):
     return SeriesController.read_all_series(page)
 
 
-@series_router.get("/get-series/episode-id",
+@series_router.get("/episode-id",
                    summary="Get Series using ID. Admin Route",
                    dependencies=[Depends(JWTBearer(["super_user"]))]
                    )
@@ -58,10 +58,9 @@ def get_series_by_episode_id(episode_id: str):
     return SeriesController.get_series_by_episode_id(episode_id)
 
 
-@series_router.put("/",
+@series_router.put("",
                    summary="Update Series Data. Admin Route",
-                   dependencies=[Depends(JWTBearer(["super_user"]))],
-                   status_code=status.HTTP_201_CREATED
+                   dependencies=[Depends(JWTBearer(["super_user"]))]
                    )
 def update_series_data(series: SeriesSchemaIn, series_id: str):
     """
@@ -75,10 +74,7 @@ def update_series_data(series: SeriesSchemaIn, series_id: str):
     return SeriesController.update_series_data(series_id, attributes)
 
 
-@series_router.delete("/",
-                      summary="Delete Series. Admin Route.",
-                      dependencies=[Depends(JWTBearer(["super_user"]))]
-                      )
+@series_router.delete("", summary="Delete Series. Admin Route.", dependencies=[Depends(JWTBearer(["super_user"]))])
 def delete_series(series_id: str = Body(embed=True)):
     """
     Function deletes a series from the database.
@@ -92,7 +88,7 @@ def delete_series(series_id: str = Body(embed=True)):
 episode_router = APIRouter(tags=["Episodes"], prefix="/api/episodes")
 
 
-@episode_router.post("/",
+@episode_router.post("",
                      response_model=EpisodeSchema,
                      summary="Create new Episode. Admin route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -109,7 +105,7 @@ def create_new_episode(episode: EpisodeSchemaIn):
     return EpisodeController.create_episode(**episode.dict())
 
 
-@episode_router.get("/get-all-episodes-for-series", response_model=list[EpisodeSchema])
+@episode_router.get("/all-episodes-for-series", response_model=list[EpisodeSchema])
 def get_all_episodes_for_series(series_title: str):
     """
     The get_all_episodes_for_series function returns all episodes for a given series.
@@ -122,7 +118,7 @@ def get_all_episodes_for_series(series_title: str):
     return EpisodeController.get_all_episodes_by_series(series_title)
 
 
-@episode_router.get("/get-episode/id",
+@episode_router.get("/id",
                     summary="Get episode by ID. Admin Route",
                     response_model=EpisodeSchema,
                     dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -138,11 +134,10 @@ def get_episode_by_id(episode_id: str):
     return EpisodeController.get_episode_by_id(episode_id)
 
 
-@episode_router.put("/",
+@episode_router.put("",
                     summary="Update Episode. Admin Route.",
                     dependencies=[Depends(JWTBearer(["super_user"]))],
-                    response_model=EpisodeSchema,
-                    status_code=status.HTTP_201_CREATED
+                    response_model=EpisodeSchema
                     )
 def update_episode(episode: EpisodeSchemaIn, episode_id: str = Body(embed=True)):
     """
@@ -156,7 +151,7 @@ def update_episode(episode: EpisodeSchemaIn, episode_id: str = Body(embed=True))
     return EpisodeController.update_episode(episode_id, attributes)
 
 
-@episode_router.delete("/",
+@episode_router.delete("",
                        summary="Delete episode by ID. Admin Route.",
                        dependencies=[Depends(JWTBearer(["super_user"]))]
                        )
@@ -176,7 +171,7 @@ series_actor_router = APIRouter(tags=["SeriesActors"],
                                 )
 
 
-@series_actor_router.post("/", summary="Add actor to Series. Admin Route.", status_code=status.HTTP_201_CREATED)
+@series_actor_router.post("", summary="Add actor to Series. Admin Route.", status_code=status.HTTP_201_CREATED)
 def add_actor_to_series(series_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     Function adds an actor to a series.
@@ -188,7 +183,7 @@ def add_actor_to_series(series_id: str = Body(embed=True), actor_id: str = Body(
     return SeriesActorController.create_series_actor(series_id, actor_id)
 
 
-@series_actor_router.delete("/", summary="Remove actor from Series. Admin Route.")
+@series_actor_router.delete("", summary="Remove actor from Series. Admin Route.")
 def remove_actor_from_series(series_id: str = Body(embed=True), actor_id: str = Body(embed=True)):
     """
     Function removes an actor from a series.
@@ -203,7 +198,7 @@ def remove_actor_from_series(series_id: str = Body(embed=True), actor_id: str = 
 watch_episode = APIRouter(prefix="/api/watch-episode", tags=["Watch Episode"])
 
 
-@watch_episode.post("/",
+@watch_episode.post("",
                     status_code=status.HTTP_201_CREATED,
                     summary="Watch Episode. User Route.",
                     dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -251,7 +246,7 @@ def user_rate_episode(request: Request,
     return UserWatchEpisodeController.user_rate_episode(user_id, episode_name, series_title, rating)
 
 
-@watch_episode.get("/get-my-series",
+@watch_episode.get("/my-series",
                    summary="Get my series. User Route.",
                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                    )
@@ -285,7 +280,7 @@ def search_series_by_name(series: str):
     return SeriesController.get_series_by_name(series.strip(), search=True)
 
 
-@watch_episode.get("/get-series/data",
+@watch_episode.get("/data",
                    summary="Get Series data.",
                    response_model=SeriesFullSchema
                    )
@@ -300,7 +295,7 @@ def get_series_data(title: str):
     return SeriesController.get_series_data(title.strip())
 
 
-@watch_episode.get("/search-series/genre",
+@watch_episode.get("/genre",
                    response_model=list[SeriesWithActorsSchema]
                    )
 def search_series_by_genre(genre: str):
@@ -314,7 +309,7 @@ def search_series_by_genre(genre: str):
     return SeriesController.get_series_by_genre(genre.strip())
 
 
-@watch_episode.get("/search-series/director",
+@watch_episode.get("/director",
                    summary="Search Series by Director's Last Name.",
                    response_model=list[SeriesWithDirectorSchema])
 def get_series_by_director_name(
@@ -339,7 +334,7 @@ def get_series_by_director_name(
             return SeriesController.get_series_by_director_country(query.strip())
 
 
-@watch_episode.get("/get-average-rating-for-series",
+@watch_episode.get("/average-rating-for-series",
                    summary="Get average rating for specific Series. User Route",
                    )
 def get_average_rating_for_series(title: str):
@@ -353,7 +348,7 @@ def get_average_rating_for_series(title: str):
     return UserWatchEpisodeController.get_average_rating_for_series(title)
 
 
-@watch_episode.get("/get-series/year",
+@watch_episode.get("/year",
                    response_model=list[SeriesSchema],
                    summary="Get Series by specific year. User Route.",
                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -371,7 +366,7 @@ def get_series_by_year(year: int):
     return SeriesController.get_series_by_year(year)
 
 
-@watch_episode.get("/get-average-rating-series-by-year",
+@watch_episode.get("/average-rating-series-by-year",
                    summary="Get average series rating for a specific year. User Route.",
                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                    )
@@ -388,7 +383,7 @@ def get_average_series_rating_for_year(year: int):
     return UserWatchEpisodeController.get_average_series_rating_for_year(year)
 
 
-@watch_episode.get("/get-popular-series", description="Get most popular Series.")
+@watch_episode.get("/popular-series", description="Get most popular Series.")
 def get_most_popular_series():
     """
     The get_most_popular_series function returns a dictionary of the most popular series in the database.
@@ -401,7 +396,7 @@ def get_most_popular_series():
     return {k: {"Views": v} for k, v in sorted(series.items(), key=lambda item: item[1], reverse=True)}
 
 
-@watch_episode.get("/get-best-rated-episodes", description="Get best rated episodes.")
+@watch_episode.get("/best-rated-episodes", description="Get best rated episodes.")
 def get_best_rated_episodes():
     """
     Function returns the best rated episodes.
@@ -411,7 +406,7 @@ def get_best_rated_episodes():
     return EpisodeController.get_best_rated_episode()
 
 
-@watch_episode.get("/get-worst-rated-episodes",
+@watch_episode.get("/worst-rated-episodes",
                    summary="Get worst rated episodes. Admin Route.",
                    dependencies=[Depends(JWTBearer(["super_user"]))]
                    )
@@ -424,7 +419,7 @@ def get_worst_rated_episodes():
     return EpisodeController.get_best_rated_episode(best=False)
 
 
-@watch_episode.get("/get-latest-features",
+@watch_episode.get("/latest-features",
                    summary="Get latest features."
                    )
 def get_latest_features():
@@ -439,7 +434,7 @@ def get_latest_features():
     return SeriesController.get_latest_features(date_limit)
 
 
-@watch_episode.get("/show-series-never-downloaded",
+@watch_episode.get("/never-downloaded",
                    summary="Show series that never have been watched. Admin Route.",
                    dependencies=[Depends(JWTBearer(["super_user"]))]
                    )
@@ -453,7 +448,7 @@ def show_least_popular_series():
     return SeriesController.show_series_never_downloaded()
 
 
-@watch_episode.get("/get-users-series-recommendations",
+@watch_episode.get("/my-series-recommendations",
                    summary="Show Users recommendations. User Route.",
                    dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                    )

@@ -11,7 +11,7 @@ from app.utils import get_day_before_one_month
 movie_router = APIRouter(tags=["Movies"], prefix="/api/movies")
 
 
-@movie_router.post("/",
+@movie_router.post("",
                    response_model=MovieWithDirectorAndGenreSchema,
                    summary="Add new Movie to Database. Admin Route.",
                    dependencies=[Depends(JWTBearer(["super_user"]))],
@@ -29,10 +29,7 @@ def add_new_movie(movie: MovieSchemaIn):
     return MovieController.create_movie(**vars(movie))
 
 
-@movie_router.get("/",
-                  response_model=list[MovieSchema],
-                  summary="Search all Movies."
-                  )
+@movie_router.get("", response_model=list[MovieSchema], summary="Search all Movies.")
 def get_all_movies(page: int = 1):
     """
     Function returns a list of all movies in the database.
@@ -45,7 +42,7 @@ def get_all_movies(page: int = 1):
     return MovieController.get_all_movies(page)
 
 
-@movie_router.get("/get-movie/director/genre",
+@movie_router.get("/director/genre",
                   response_model=MovieWithDirectorAndGenreSchema,
                   summary="Read Movie with Genre and Director. Admin Route.",
                   dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -63,11 +60,10 @@ def get_movie_with_genre_and_director(movie_id: str):
     return MovieActorController.get_movie_with_director_and_genre(movie_id)
 
 
-@movie_router.put("/",
+@movie_router.put("",
                   response_model=MovieSchema,
                   summary="Update Movie Data. Admin Route.",
-                  dependencies=[Depends(JWTBearer(["super_user"]))],
-                  status_code=status.HTTP_201_CREATED
+                  dependencies=[Depends(JWTBearer(["super_user"]))]
                   )
 def update_movie_data(movie: MovieSchemaIn, movie_id):
     """
@@ -82,7 +78,7 @@ def update_movie_data(movie: MovieSchemaIn, movie_id):
     return MovieController.update_movie_data(movie_id, attributes)
 
 
-@movie_router.delete("/",
+@movie_router.delete("",
                      summary="Delete movie. Admin route.",
                      dependencies=[Depends(JWTBearer(["super_user"]))]
                      )
@@ -102,7 +98,7 @@ movie_actor_router = APIRouter(tags=["MoviesActors"],
                                )
 
 
-@movie_actor_router.post("/", summary="Add actor to Movie. Admin Route", status_code=status.HTTP_201_CREATED)
+@movie_actor_router.post("", summary="Add actor to Movie. Admin Route", status_code=status.HTTP_201_CREATED)
 def add_actor_to_movie(movie_id: str, actor_id: str):
     """
     The add_actor_to_movie function adds an actor to a movie.
@@ -114,7 +110,7 @@ def add_actor_to_movie(movie_id: str, actor_id: str):
     return MovieActorController.create_movie_actor(movie_id, actor_id)
 
 
-@movie_actor_router.delete("/", summary="Remove actor from Movie. Admin Route.", status_code=status.HTTP_201_CREATED)
+@movie_actor_router.delete("", summary="Remove actor from Movie. Admin Route.", status_code=status.HTTP_201_CREATED)
 def remove_actor_from_movie(movie_id: str, actor_id: str):
     """
     The remove_actor_from_movie function removes an actor from a movie.
@@ -129,7 +125,7 @@ def remove_actor_from_movie(movie_id: str, actor_id: str):
 watch_movie = APIRouter(prefix="/api/watch-movie", tags=["Watch Movie"])
 
 
-@watch_movie.post("/",
+@watch_movie.post("",
                   summary="Select movie to watch. User Route.",
                   status_code=status.HTTP_201_CREATED,
                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -150,8 +146,7 @@ def user_watch_movie(request: Request, title: str):
 @watch_movie.patch("/rate-movie",
                    response_model=UserWatchMovieSchema,
                    summary="Rate movie. User Route.",
-                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))],
-                   status_code=status.HTTP_201_CREATED
+                   dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                    )
 def user_rate_movie(request: Request, title: str, rating: int):
     """
@@ -170,7 +165,7 @@ def user_rate_movie(request: Request, title: str, rating: int):
     return UserWatchMovieController.user_rate_movie(user_id, title.strip(), rating)
 
 
-@watch_movie.get("/get-movie/data",
+@watch_movie.get("/data",
                  response_model=MovieFullSchema,
                  summary="See actors, director and Genre for specific Movie."
                  )
@@ -184,7 +179,7 @@ def get_movie_data(title: str):
     return MovieController.get_movie_data(title)
 
 
-@watch_movie.get("/get-my-watched-movies",
+@watch_movie.get("/my-watched-movies",
                  response_model=list[MovieSchema],
                  summary="Get user's watched Movies list. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -217,7 +212,7 @@ def get_top_ten_movies():
     return {k: {"Views": v} for k, v in sorted(top_ten.items(), key=lambda item: item[1], reverse=True)}
 
 
-@watch_movie.get("/search-movies/title",
+@watch_movie.get("/title",
                  summary="Search Movies by title.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -232,7 +227,7 @@ def search_movies_by_title(title: str):
     return MovieController.search_movies_by_name(title)
 
 
-@watch_movie.get("/search-movies/director",
+@watch_movie.get("/director",
                  summary="Search Movies by director.",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -258,10 +253,7 @@ def search_movies_by_director(
             return MovieController.search_movies_by_director_last_name(query.strip())
 
 
-@watch_movie.get("/search-movies/genre",
-                 summary="Search Movies by genre.",
-                 response_model=list[MovieWithActorsSchema]
-                 )
+@watch_movie.get("/genre", summary="Search Movies by genre.", response_model=list[MovieWithActorsSchema])
 def search_movies_by_genre(genre: str):
     """
     Function searches for movies by a genre.
@@ -273,7 +265,7 @@ def search_movies_by_genre(genre: str):
     return MovieController.search_movies_by_genre(genre)
 
 
-@watch_movie.get("/get-movie/actors",
+@watch_movie.get("/actors",
                  response_model=MovieWithActorsSchema,
                  summary="Read Movie by ID. Admin Route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
@@ -289,7 +281,7 @@ def get_movie_with_actors(movie_id: str):
     return MovieActorController.get_movie_with_actors(movie_id)
 
 
-@watch_movie.get("/get-movie/rating",
+@watch_movie.get("/movie/rating",
                  summary="Get average rating for specific Movie. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -304,7 +296,7 @@ def get_average_rating_for_movie(name: str):
     return UserWatchMovieController.get_average_rating_for_movie(name)
 
 
-@watch_movie.get("/get-movies/year",
+@watch_movie.get("/year",
                  summary="Get Movies from specific year. User Route.",
                  response_model=list[MovieSchema],
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
@@ -322,7 +314,7 @@ def get_movies_by_year(year: int):
     return MovieController.get_movies_by_year(year)
 
 
-@watch_movie.get("/get-average-ratings",
+@watch_movie.get("/average-ratings",
                  summary="Get average Movie ratings. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -336,7 +328,7 @@ def get_average_ratings():
     return UserWatchMovieController.get_average_ratings()
 
 
-@watch_movie.get("/get-movies/by-rating",
+@watch_movie.get("/movies/by-rating",
                  summary="Get Movies with average rating higher than requested. User Route",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -351,7 +343,7 @@ def get_movie_with_average_rating_above_requested(rating: float):
     return UserWatchMovieController.get_movies_with_higher_average_rating(rating)
 
 
-@watch_movie.get("/get-average-rating-by-year",
+@watch_movie.get("/average-rating-by-year",
                  summary="Get average movie rating for a specific year. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -368,7 +360,7 @@ def get_average_movie_rating_for_year(year: int):
     return UserWatchMovieController.get_average_movie_rating_for_year(year)
 
 
-@watch_movie.get("/get-most-successful-movie-year",
+@watch_movie.get("/most-successful-movie-year",
                  summary="Get most successful year in terms of Movie ratings. User Route.",
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
                  )
@@ -406,7 +398,7 @@ def show_worst_rated_movie():
     return UserWatchMovieController.get_best_rated_movie(best=False)
 
 
-@watch_movie.get("/show-latest-features",
+@watch_movie.get("/latest-features",
                  summary="Show latest features",
                  response_model=list[MovieWithActorsSchema]
                  )
@@ -421,7 +413,7 @@ def show_latest_features():
     return MovieController.get_latest_features(date_limit)
 
 
-@watch_movie.get("/show-movies-never-downloaded",
+@watch_movie.get("/never-downloaded",
                  summary="Show unpopular movies that never have been watched. Admin route.",
                  dependencies=[Depends(JWTBearer(["super_user"]))]
                  )
@@ -434,7 +426,7 @@ def show_least_popular_movies():
     return MovieController.show_least_popular_movies()
 
 
-@watch_movie.get("/get-my-recommendations",
+@watch_movie.get("/my-recommendations",
                  summary="Show recommended Movies. User route.",
                  response_model=list[MovieSchema],
                  dependencies=[Depends(JWTBearer(["regular_user", "sub_user"]))]
